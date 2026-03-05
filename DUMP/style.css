@@ -1,0 +1,359 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto", serif;
+    font-weight: 300;
+    font-style: normal;
+}
+/* Default Light Theme */
+:root {
+    --background: #F5F5F5;
+    --primary-text: #333333;
+    --secondary-text: #666666;
+    --accent: #4CAF50;
+    --highlight: #FF5722;
+    --navbar: #FFFFFF;
+    --border: #E0E0E0;
+}
+
+/* Dark Theme */
+/* :root {
+    --background: #121212;
+    --primary-text: #FFFFFF;
+    --secondary-text: #B3B3B3;
+    --accent: #4CAF50;
+    --highlight: #FF5722;
+    --navbar: #1E1E1E;
+    --border: #424242;
+} */
+body{
+    background-color: var(--background);
+    color: var(--primary-text);
+}
+.navbar{
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-around;
+    position: fixed;
+    width: 100%;
+    right: 0px;
+    background: var(--navbar);
+    color: var(--primary-text);
+    overflow: hidden;
+    z-index: 9;
+}
+#leftnav{
+    position: relative;
+    left: 70px;
+}
+#leftnav span{
+    font-size: 20px;
+    font-weight: 300 !important;
+}
+#rightnav ul{
+    display: flex;
+    justify-content: space-around;
+    list-style: none;
+    gap: 50px;
+    color: var(--primary-text);
+}
+#rightnav ul a{
+    text-decoration: none;
+    color: var(--primary-text);
+    font-size: 14px;
+}
+
+
+
+
+/* hero */
+.hero {
+    color: var(--primary-text);
+    /* width: 10px; */
+    text-align: center;
+    padding: 80px;
+    letter-spacing: 10px;
+    background: url('/Images/hero_background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 300px;
+    font-family: "Roboto", serif;
+    font-weight: 100;
+    font-style: normal;
+}
+.hero b{
+    font-family: "Roboto", serif;
+    font-weight: 400 !important;
+    font-style: normal;
+}
+
+
+.blog-card {
+    max-width: 1200px;
+    display: flex;
+    flex-direction: row;
+    width: 70%;
+    margin: auto;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* border-radius: 8px; */
+    overflow: hidden;
+    margin-top: 50px;
+    border: 1px solid rgba(0, 0, 0, 0.144);
+    height: 400px;
+  }
+
+  .blog-card img {
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .blog-content {
+    max-width: 400px;
+    padding: 50px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between; */
+  }
+
+  .meta {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    font-size: 40px;
+    font-weight: 200;
+    margin: 0 0 10px;
+  }
+
+  p {
+    font-size: 15px;
+    color: #333;
+    margin: 0 0 20px;
+    font-weight: 500;
+  }
+
+  .blog-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .like {
+    color: red;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+.all_posts_btn button{
+    margin-top: 50px;
+    padding: 15px 150px;
+    background: black;
+    color: white;
+    border: 0px;
+    transition: 0.3s;
+}
+.all_posts_btn button:hover{
+    background: rgb(214, 214, 214);
+    transition: 0.3s;
+    color: black;
+}
+
+.gallery-container {
+    width: 70%;
+    margin: auto;
+    max-width: 1200px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 50px;
+  }
+
+  .gallery-title {
+    font-size: 18px;
+    font-weight: 300;
+    margin-bottom: 10px;
+  }
+
+  .gallery-slider {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+
+  .gallery-item {
+    min-width: 25%; /* Adjust for the number of visible images */
+    box-sizing: border-box;
+    padding: 10px;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: auto;
+    /* border-radius: 8px; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .gallery-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .gallery-button:hover {
+    background: rgba(255, 255, 255, 1);
+  }
+
+  .gallery-button.left {
+    left: 10px;
+  }
+
+  .gallery-button.right {
+    right: 10px;
+  }
+
+  .gallery-button svg {
+    width: 20px;
+    height: 20px;
+    fill: #333;
+  }
+
+  .whole_footer{
+    background: black;
+  }
+  footer {
+    width: 70%;
+    margin: auto;
+    display: flex;
+    background: black;
+    justify-content: space-around;
+    align-items: center;
+    padding: 50px;
+    border-top: 1px solid #555;
+    margin-top: 50px;
+    color: white;
+    padding-bottom: 100px;
+}
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+.social-icons a {
+    color: #fff;
+    font-size: 20px;
+    text-decoration: none;
+}
+.newsletter {
+    text-align: center;
+}
+.newsletter h1{
+  margin-bottom: 50px;
+  letter-spacing: 10px;
+}
+.newsletter input[type="email"] {
+    padding: 10px;
+    width: 250px;
+    margin-bottom: 10px;
+    border: 1px solid white;
+    background: transparent;
+    color: #fff;
+    outline: none;
+    margin-top: -10px;
+}
+.newsletter input::placeholder{
+  color: rgba(255, 255, 255, 0.342);
+}
+.newsletter input[type="checkbox"] {
+    margin-right: 5px;
+    margin-top: 10px;
+}
+.newsletter button {
+    padding: 10px 20px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 20px;
+    width: 250px;
+}
+.newsletter button:hover {
+    background-color: #555;
+    color: #fff;
+}
+.copyright {
+    text-align: right;
+    color: white;
+}
+.copyright p{
+  color: white;
+  font-weight: lighter;
+}
+.copyright a {
+    color: #fff;
+    text-decoration: none;
+}
+label{
+  color: rgba(255, 255, 255, 0.452);
+  font-size: 13px;
+}
+
+ /* Hide the default checkbox */
+ input[type="checkbox"] {
+  appearance: none; /* Removes default styling */
+  -webkit-appearance: none; /* For Safari */
+  width: 10px;
+  height: 10px;
+  border: 1px solid white;
+  border-radius: 4px; /* Rounded corners */
+  outline: none;
+  cursor: pointer;
+  background-color: transparent;
+  transition: background-color 0.3s, border-color 0.3s;
+  color: white;
+}
+
+/* Add styles for when checkbox is checked */
+input[type="checkbox"]:checked {
+  background-color: transparent;
+  border: 0px solid white;
+  position: relative;
+}
+
+/* Add a custom checkmark */
+input[type="checkbox"]:checked::after {
+  content: '✔';
+  font-size: 14px;
+  color: #fff;
+  position: absolute;
+  top: 2px;
+  left: 4px;
+}
+
+/* Add hover effects */
+/* input[type="checkbox"]:hover {
+  border-color: #000;
+} */
+
+.footer_hr{
+  height: 150px;
+}
+form p{
+  margin-left: 10px;
+}
