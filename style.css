@@ -7,7 +7,7 @@ body{
 
 }
 nav{
-    background-color: rgb(248, 248, 248);
+    background-color: rgb(250, 250, 250);
     font-size: 18px;
 }
 #navbar{
@@ -172,7 +172,7 @@ nav{
     font-size: 18px;
 }
 #exhibition-note{
-    font-size: 14px;
+    font-size: 18px;
     font-style: italic;
 }
 
@@ -187,7 +187,7 @@ nav{
     font-size: 18px;
 }
 #recognition-note{
-    font-size: 14px;
+    font-size: 18px;
     font-style: italic;
 }
 
@@ -202,3 +202,58 @@ footer p{
     font-size: 14px;
     color: #555;
 }               
+
+
+
+
+
+
+
+/* course */
+#whole-course-title-tagline-container{
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+}
+#course-content{
+    width: 90%;
+    margin: 50px auto;
+}
+#course-content p{
+    font-size: 18px;
+    line-height: 1.5;
+}
+#course-content img{
+    width: 50%;
+}
+#enrollment-button{
+    padding: 20px;
+    border: none;
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 50%;
+}
+#whole-container-course{
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    width: 90%;
+    margin: auto;
+}
+#course-image{
+    width: 40%;
+    border-radius: 10px;
+}
+.download-course-details-button{
+    padding: 15px;
+    border: none;
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 200px;
+}
