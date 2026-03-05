@@ -206,7 +206,7 @@ nav{
 }
 #exhibition-note{
     font-size: 18px;
-    font-style: italic;
+    /* font-style: italic; */
 }
 
 /* awards and recognition */
@@ -221,7 +221,7 @@ nav{
 }
 #recognition-note{
     font-size: 18px;
-    font-style: italic;
+    /* font-style: italic; */
 }
 
 /* footer */
@@ -292,4 +292,16 @@ footer p{
     cursor: pointer;
     font-size: 16px;
     width: 200px;
+}
+
+
+#bonus{
+    padding: 15px;
+    border: none;
+    background: rgb(230, 230, 230);
+    color: black;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
 }
