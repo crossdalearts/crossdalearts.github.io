@@ -15,6 +15,14 @@ if (navbar && navToggle) {
     });
 }
 
+document.querySelectorAll("#navbar a").forEach((link) => {
+    link.addEventListener("click", () => {
+        if (!navbar || !navToggle || window.innerWidth > 768) return;
+        navbar.classList.remove("nav-open");
+        navToggle.setAttribute("aria-expanded", "false");
+    });
+});
+
 // Add image/video paths directly in this single array.
 // String form (easy): "Videos/gallery-video-1.mov"
 // Object form (optional): { src: "Videos/gallery-video-1.mov", alt: "Studio Clip" }
