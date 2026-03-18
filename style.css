@@ -115,6 +115,16 @@ nav{
     background: #111;
     border-radius: 2px;
 }
+#alert-banner{
+    background: rgb(255, 66, 66);
+    /* background: linear-gradient(270deg, #ff1945 0%, rgb(240, 97, 97) 100%); */
+    color: white;
+    text-align: center;
+    padding: 12px;
+    margin-top: -25px;
+    font-size: 14px;
+}
+
 
 /* artist-statement */
 #artist-statement{
@@ -699,6 +709,20 @@ footer p{
     width: 100%;
     color: #2d2d2d;
 }
+.story-copy{
+    width: 100%;
+}
+.story-copy .story-intro:first-child{
+    margin-top: 0;
+}
+.story-intro-image{
+    float: right;
+    width: min(42%, 280px);
+    margin: 4px 0 14px 24px;
+    border-radius: 18px;
+    object-fit: cover;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
 .story-grid{
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -744,6 +768,14 @@ footer p{
     font-style: italic;
     font-size: 22px;
     line-height: 1.6;
+}
+#my-story-button{
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: black;
+    color: white;
+    margin-left: 20px;
+    font-size: 15px;
 }
 
 #whole-course-title-tagline-container{
@@ -1001,6 +1033,10 @@ footer p{
     .story-quote p{
         font-size: 19px;
     }
+    .story-intro-image{
+        width: min(45%, 220px);
+        margin-left: 18px;
+    }
 
     iframe{
         min-height: 78vh;
@@ -1034,6 +1070,13 @@ footer p{
         min-height: 30vh;
         object-fit: contain;
         margin-left: calc(50% - 50vw);
+    }
+    .story-intro-image{
+        float: none;
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto 18px;
     }
     footer{
         margin-top: 36px;
