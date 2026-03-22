@@ -24,6 +24,16 @@ a{
     text-decoration: none;
     color: inherit;
 }
+:root{
+    --surface-lift-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 10px 22px rgba(0, 0, 0, 0.035);
+    --surface-lift-shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.1);
+    --glass-hover-light: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.06) 38%, rgba(255, 255, 255, 0.2) 100%);
+    --glass-hover-dark: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0.11) 100%);
+    --glass-hover-edge-light: rgba(255, 255, 255, 0.45);
+    --glass-hover-edge-dark: rgba(255, 255, 255, 0.18);
+    --glass-hover-glow: linear-gradient(120deg, rgba(255, 255, 255, 0) 18%, rgba(255, 255, 255, 0.3) 42%, rgba(255, 255, 255, 0.12) 58%, rgba(255, 255, 255, 0) 82%);
+    --hover-bump-distance: -3px;
+}
 body{
     padding-top: 112px;
     min-height: 100vh;
@@ -68,6 +78,377 @@ a:active{
 button:active{
     box-shadow: 0 0 6px rgba(255, 255, 255, 0.45), 0 0 10px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+){
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+)::before{
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.24s ease;
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+)::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: var(--glass-hover-glow);
+    transform: translateX(-32%) translateY(-10%) rotate(-8deg);
+    transition: opacity 0.24s ease, transform 0.3s ease;
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+) > *{
+    position: relative;
+    z-index: 1;
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media
+)::before{
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.34), transparent 45%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.04) 45%, rgba(255, 255, 255, 0.14));
+}
+:is(
+    .nav-toggle,
+    .feedback-modal-close,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    #bonus
+)::before{
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.3), transparent 48%),
+        var(--glass-hover-light);
+}
+:is(
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-form-submit,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button
+)::before{
+    background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 45%),
+        var(--glass-hover-dark);
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media
+):hover,
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box
+):focus-within{
+    border-color: var(--glass-hover-edge-light);
+}
+:is(
+    .nav-toggle,
+    .feedback-modal-close,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    #bonus
+):hover,
+:is(
+    .nav-toggle,
+    .feedback-modal-close,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    #bonus
+):focus-visible{
+    border-color: var(--glass-hover-edge-light);
+}
+:is(
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-form-submit,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button
+):hover,
+:is(
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-form-submit,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button
+):focus-visible{
+    border-color: var(--glass-hover-edge-dark);
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+):hover::before,
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+):focus-visible::before,
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box
+):focus-within::before{
+    opacity: 1;
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+):hover::after,
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+):focus-visible::after,
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    .feedback-modal,
+    .gallery-lightbox-box
+):focus-within::after{
+    opacity: 1;
+    transform: translateX(0) translateY(0) rotate(-8deg);
 }
 nav{
     background-color: rgb(250, 250, 250);
@@ -196,7 +577,7 @@ nav{
     border-radius: 12px;
     /* background: linear-gradient(180deg, #fcfcfc 0%, #f3f3f3 100%); */
     background: rgb(230, 230, 230);
-    /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08); */
+    box-shadow: var(--surface-lift-shadow);
     padding: 14px;
     display: flex;
     flex-direction: column;
@@ -219,6 +600,7 @@ nav{
     border: 1px solid #e0e0e0;
     background: #fff;
     border-radius: 10px;
+    box-shadow: var(--surface-lift-shadow);
     padding: 12px;
     min-height: 98px;
     cursor: pointer;
@@ -231,7 +613,7 @@ nav{
 .feedback-card:hover,
 .feedback-card:focus-visible{
     transform: translateY(-1px);
-    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 .feedback-stars{
     font-size: 14px;
@@ -266,6 +648,186 @@ nav{
     font-size: 13px;
     cursor: pointer;
 }
+.feedback-social-links{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.feedback-social-label{
+    font-size: 16px;
+    color: #2a2a2a;
+    margin-right: 2px;
+}
+.feedback-social-link{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #111;
+    padding: 4px;
+    transition: color 0.22s ease, transform 0.22s ease;
+}
+.feedback-social-icon{
+    width: 23px;
+    height: 23px;
+    display: block;
+    background-color: currentColor;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+}
+.feedback-social-icon.is-instagram{
+    mask-image: url("https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/instagram.svg");
+    -webkit-mask-image: url("https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/instagram.svg");
+}
+.feedback-social-icon.is-whatsapp{
+    mask-image: url("https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/whatsapp.svg");
+    -webkit-mask-image: url("https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/whatsapp.svg");
+}
+.feedback-social-icon.is-email{
+    mask-image: url("https://cdn.jsdelivr.net/npm/feather-icons/dist/icons/mail.svg");
+    -webkit-mask-image: url("https://cdn.jsdelivr.net/npm/feather-icons/dist/icons/mail.svg");
+}
+.feedback-social-link:hover,
+.feedback-social-link:focus-visible{
+    color: rgb(255, 66, 66);
+    text-shadow: none;
+    transform: translateY(-1px);
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+){
+    transition:
+        transform 0.26s cubic-bezier(0.22, 1.2, 0.36, 1),
+        box-shadow 0.24s ease,
+        border-color 0.24s ease,
+        background-color 0.24s ease,
+        color 0.2s ease;
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+):hover,
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+):focus-visible,
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote
+):focus-within{
+    transform: translateY(var(--hover-bump-distance)) scale(1.01);
+}
+
+@keyframes subtle-bump{
+    0%{
+        transform: translateY(0) scale(1);
+    }
+    55%{
+        transform: translateY(calc(var(--hover-bump-distance) - 1px)) scale(1.012);
+    }
+    100%{
+        transform: translateY(var(--hover-bump-distance)) scale(1.01);
+    }
+}
+:is(
+    .feedback-widget,
+    .feedback-card,
+    #qualification-note,
+    #artist-network-note,
+    .course-card,
+    .story-card,
+    .story-section,
+    .story-quote,
+    #art-gallery-images .gallery-media,
+    .nav-toggle,
+    #enrollment-buttons button,
+    .feedback-leave-btn,
+    .feedback-modal-close,
+    .feedback-form-submit,
+    .gallery-nav,
+    .gallery-lightbox-close,
+    .gallery-video-fallback a,
+    .course-card-link,
+    #my-story-button,
+    #enrollment-button,
+    .download-course-details-button,
+    #bonus
+):hover{
+    animation: subtle-bump 0.28s cubic-bezier(0.22, 1.2, 0.36, 1);
+}
 .feedback-overlay{
     position: fixed;
     inset: 0;
@@ -285,7 +847,7 @@ nav{
     background: #fff;
     border-radius: 12px;
     border: 1px solid #e4e4e4;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+    box-shadow: var(--surface-lift-shadow-strong);
     padding: 16px;
     overflow: auto;
 }
@@ -374,10 +936,26 @@ nav{
 }
 
 /* art-expertise */
-#art-expertise{
+#expertise-note-row{
     width: 90%;
-    margin: auto;
-    margin-top: 50px;
+    margin: 50px auto 0;
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+#art-expertise{
+    flex: 1 1 320px;
+}
+#qualification-note{
+    flex: 1 1 320px;
+}
+#qualification-note{
+    background: #f6f6f6;
+    border: 1px solid #e6e6e6;
+    border-radius: 16px;
+    box-shadow: var(--surface-lift-shadow);
+    padding: 28px;
 }
 #art-expertise ul{
     list-style-type: disc;
@@ -388,133 +966,250 @@ nav{
     margin-bottom: 10px;
     font-size: 18px;
 }
+#qualification-note p{
+    font-size: 18px;
+    line-height: 1.6;
+}
+#artist-network-note{
+    width: 90%;
+    margin: 24px auto 0;
+    background: #f6f6f6;
+    border: 1px solid #e6e6e6;
+    border-radius: 16px;
+    box-shadow: var(--surface-lift-shadow);
+    padding: 28px;
+}
+#artist-network-note p{
+    font-size: 18px;
+    line-height: 1.6;
+}
 
 /* art-gallery */
 #art-gallery{
     width: 90%;
     margin: 50px auto;
 }
-.gallery-slider{
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-.gallery-viewport{
-    overflow: hidden;
+.gallery-showcase{
     width: 100%;
-    padding: 8px 2px;
-    touch-action: pan-y;
+    border: 1px solid #e8e8e8;
+    border-radius: 28px;
+    background:
+        linear-gradient(135deg, rgba(247, 247, 247, 0.98), rgba(236, 236, 236, 0.96)),
+        #f3f3f3;
+    padding: 22px;
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) minmax(260px, 0.9fr);
+    gap: 18px;
+    align-items: center;
+    text-align: left;
+    cursor: pointer;
 }
-#art-gallery-images{
+.gallery-showcase-copy{
     display: flex;
-    transition: transform 0.35s ease;
-    will-change: transform;
+    flex-direction: column;
+    gap: 12px;
 }
-#art-gallery-images .slide{
-    flex: 0 0 33.333%;
-    padding-right: 10px;
-    box-sizing: border-box;
-    border-radius: 16px;
-    overflow: hidden;
-    height: clamp(240px, 30vw, 360px);
-    background: transparent;
-    border: none;
-    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); */
+.gallery-showcase-eyebrow{
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgb(255, 66, 66);
+}
+.gallery-showcase h4{
+    font-size: clamp(28px, 3.8vw, 42px);
+    line-height: 1.02;
+    color: #161616;
+}
+.gallery-showcase-text{
+    font-size: 17px;
+    line-height: 1.65;
+    color: #363636;
+    max-width: 52ch;
+}
+.gallery-showcase-meta{
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 6px;
 }
-#art-gallery-images .gallery-media{
+#gallery-showcase-count{
+    font-size: 14px;
+    color: #585858;
+}
+.gallery-showcase-action{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+.gallery-showcase-preview{
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    min-height: 0;
+    max-height: 320px;
+    display: block;
+}
+.gallery-showcase-tile{
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    background: #e9e9e9;
     width: 100%;
     height: 100%;
+    min-height: 0;
+}
+.gallery-showcase-tile-hero{
+    width: 100%;
+    height: 100%;
+}
+.gallery-preview-media{
+    width: 100%;
+    height: 100%;
+    display: block;
     object-fit: cover;
     border-radius: inherit;
-    display: block;
-    background: transparent;
-    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); */
-    /* box-shadow: 1px 1px 10px black; */
+    background: #ececec;
 }
-#art-gallery-images video.gallery-media{
-    cursor: pointer;
-}
-#art-gallery-images .slide.media-error{
-    position: relative;
-}
-#art-gallery-images .slide.media-error::after{
-    content: "Unsupported video";
-    position: absolute;
-    left: 12px;
-    bottom: 12px;
-    background: rgba(20, 20, 20, 0.78);
-    color: #fff;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 999px;
-}
-.gallery-nav{
-    border: 1px solid #d8d8d8;
-    background: rgba(255, 255, 255, 0.9);
-    color: #1a1a1a;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1;
-    box-shadow: none;
-}
-.gallery-nav:hover,
-.gallery-nav:focus-visible{
-    background: #fff;
-    border-color: #bfbfbf;
-    box-shadow: none;
-    transform: none;
-}
-.gallery-nav:active{
-    box-shadow: none;
-    transform: none;
-}
-.gallery-nav:disabled{
-    opacity: 0.35;
-    cursor: not-allowed;
+.gallery-showcase-tile video.gallery-preview-media,
+.gallery-browser-media-wrap video.gallery-preview-media{
+    background: #000;
 }
 
+.gallery-browser-modal,
 .gallery-lightbox{
     position: fixed;
     inset: 0;
     display: none;
     align-items: center;
     justify-content: center;
-    background: rgba(10, 10, 10, 0.65);
+    background: rgba(10, 10, 10, 0.72);
     padding: 4vh 4vw;
+}
+.gallery-browser-modal{
+    z-index: 1990;
+}
+.gallery-lightbox{
     z-index: 2000;
 }
+.gallery-browser-modal.is-open,
 .gallery-lightbox.is-open{
     display: flex;
 }
+.gallery-browser-box,
 .gallery-lightbox-box{
-    width: min(1000px, 92vw);
-    height: min(84vh, 760px);
     background: #fff;
-    border-radius: 14px;
     border: 1px solid #e7e7e7;
-    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
+.gallery-browser-box{
+    width: min(1240px, 95vw);
+    height: min(88vh, 920px);
+    border-radius: 24px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.22);
+}
+.gallery-lightbox-box{
+    width: min(1080px, 92vw);
+    height: min(84vh, 780px);
+    border-radius: 20px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.24);
+}
+.gallery-browser-header,
+.gallery-lightbox-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #ececec;
+    background: #fafafa;
+}
+.gallery-browser-title{
+    font-size: 22px;
+    color: #161616;
+}
+.gallery-browser-count{
+    margin-top: 4px;
+    font-size: 13px;
+    color: #626262;
+}
+.gallery-lightbox-title{
+    font-size: 18px;
+    color: #171717;
+}
+.gallery-browser-actions,
+.gallery-lightbox-actions{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.gallery-browser-fullscreen,
+.gallery-browser-close,
+.gallery-lightbox-fullscreen,
 .gallery-lightbox-close{
-    align-self: flex-end;
-    margin: 10px 10px 0 0;
     border: 1px solid #d6d6d6;
     background: #fff;
     color: #151515;
     border-radius: 999px;
-    padding: 6px 12px;
+    padding: 8px 14px;
     font-size: 13px;
     line-height: 1;
     cursor: pointer;
+}
+.gallery-browser-grid{
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    background: linear-gradient(180deg, #fcfcfc 0%, #f5f5f5 100%);
+}
+.gallery-browser-card{
+    border: 1px solid #e7e7e7;
+    border-radius: 20px;
+    background: #fff;
+    padding: 10px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.gallery-browser-media-wrap{
+    aspect-ratio: 4 / 5;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #efefef;
+}
+.gallery-browser-media-wrap .gallery-preview-media{
+    border-radius: 16px;
+}
+.gallery-browser-meta{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+.gallery-browser-item-title{
+    font-size: 15px;
+    line-height: 1.45;
+    color: #202020;
+}
+.gallery-browser-item-type{
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6a6a6a;
+    white-space: nowrap;
 }
 .gallery-lightbox-content{
     flex: 1;
@@ -522,13 +1217,13 @@ nav{
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 16px 16px;
+    padding: 16px 18px 18px;
 }
 .gallery-lightbox-media{
     width: 100%;
     height: 100%;
     object-fit: contain;
-    border-radius: 10px;
+    border-radius: 16px;
     background: #f4f4f4;
 }
 .gallery-video-fallback{
@@ -550,15 +1245,83 @@ nav{
 body.gallery-lightbox-open{
     overflow: hidden;
 }
+.pdf-viewer-modal{
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 10, 0.68);
+    padding: 3vh 3vw;
+    z-index: 2050;
+}
+.pdf-viewer-modal.is-open{
+    display: flex;
+}
+.pdf-viewer-box{
+    width: min(1180px, 95vw);
+    height: min(88vh, 920px);
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.pdf-viewer-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #ececec;
+    background: #fafafa;
+}
+.pdf-viewer-title{
+    font-size: 18px;
+    color: #181818;
+}
+.pdf-viewer-actions{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.pdf-viewer-open-link,
+.pdf-viewer-fullscreen,
+.pdf-viewer-close{
+    border: 1px solid #d7d7d7;
+    background: #fff;
+    color: #111;
+    border-radius: 999px;
+    padding: 9px 14px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.pdf-viewer-frame{
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    background: #f5f5f5;
+}
 
 @media (max-width: 900px){
-    #art-gallery-images .slide{
-        flex-basis: 50%;
-        height: clamp(220px, 46vw, 340px);
+    .gallery-showcase{
+        grid-template-columns: 1fr;
+        padding: 22px;
     }
-    #art-gallery-images .gallery-media{
-        object-fit: contain;
-        background: transparent;
+    .gallery-showcase-preview{
+        aspect-ratio: 16 / 10;
+        max-height: 280px;
+    }
+    .gallery-browser-grid{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .gallery-browser-box{
+        width: 96vw;
+        height: 90vh;
     }
 }
 
@@ -567,27 +1330,53 @@ body.gallery-lightbox-open{
         width: 100%;
         padding: 0 10px;
     }
-    .gallery-slider{
-        gap: 0;
+    .gallery-showcase{
+        padding: 18px;
+        border-radius: 22px;
     }
-    .gallery-viewport{
-        padding: 0;
+    .gallery-showcase h4{
+        font-size: 28px;
     }
-    #art-gallery-images .slide{
-        flex-basis: 100%;
-        padding-right: 0;
-        height: clamp(220px, 72vw, 360px);
+    .gallery-showcase-text{
+        font-size: 15px;
     }
-    .gallery-nav{
-        display: none;
+    .gallery-showcase-preview{
+        aspect-ratio: 5 / 4;
+        max-height: none;
     }
+    .gallery-browser-modal,
     .gallery-lightbox{
         padding: 2vh 2vw;
     }
+    .gallery-browser-box,
     .gallery-lightbox-box{
         width: 96vw;
-        height: 88vh;
-        border-radius: 10px;
+        height: 90vh;
+        border-radius: 14px;
+    }
+    .gallery-browser-header,
+    .gallery-lightbox-header{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .gallery-browser-grid{
+        grid-template-columns: 1fr;
+        padding: 14px;
+    }
+    .pdf-viewer-modal{
+        padding: 2vh 2vw;
+    }
+    .pdf-viewer-box{
+        width: 96vw;
+        height: 90vh;
+        border-radius: 12px;
+    }
+    .pdf-viewer-header{
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .pdf-viewer-title{
+        font-size: 16px;
     }
 }
 
@@ -666,7 +1455,7 @@ footer p{
     border-radius: 14px;
     overflow: hidden;
     background: #fff;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--surface-lift-shadow);
 }
 .course-card-anchor{
     display: block;
@@ -801,7 +1590,7 @@ footer p{
     border: 1px solid #e8e8e8;
     border-radius: 16px;
     background: #fff;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--surface-lift-shadow);
 }
 .story-card{
     padding: 22px;
@@ -964,7 +1753,7 @@ footer p{
         display: inline-flex;
     }
     #navbar ul{
-        display: none;
+        display: flex;
         position: absolute;
         top: calc(100% + 8px);
         left: 0;
@@ -978,9 +1767,24 @@ footer p{
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition:
+            opacity 0.24s ease,
+            transform 0.24s ease,
+            max-height 0.24s ease,
+            visibility 0.24s ease;
     }
     #navbar.nav-open ul{
-        display: flex;
+        max-height: 320px;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
     }
     #navbar ul li{
         margin: 0;
@@ -995,7 +1799,7 @@ footer p{
     #artist-statement,
     #enrollment,
     #about-me,
-    #art-expertise,
+    #expertise-note-row,
     #art-gallery,
     #exhibitions,
     #recognitions,
@@ -1022,6 +1826,8 @@ footer p{
     #popular-quote,
     #about-me p,
     #art-expertise ul,
+    #qualification-note p,
+    #artist-network-note p,
     #course-content p,
     #exhibitions .exhibitions-names,
     #recognitions .recognition-names,
@@ -1029,6 +1835,15 @@ footer p{
     #recognition-note{
         font-size: 16px;
         line-height: 1.6;
+    }
+    #expertise-note-row{
+        gap: 18px;
+    }
+    #qualification-note{
+        padding: 22px;
+    }
+    #artist-network-note{
+        padding: 22px;
     }
 
     #enrollment-buttons{
@@ -1127,13 +1942,23 @@ footer p{
     #artist-statement,
     #enrollment,
     #about-me,
-    #art-expertise,
+    #expertise-note-row,
     #art-gallery,
     #exhibitions,
     #recognitions,
     #whole-container-course,
     #courses-page{
         width: 90%;
+    }
+    #expertise-note-row{
+        gap: 16px;
+    }
+    #qualification-note{
+        flex-basis: 100%;
+        padding: 20px;
+    }
+    #artist-network-note{
+        padding: 20px;
     }
     #art-expertise ul{
         margin-left: 22px;

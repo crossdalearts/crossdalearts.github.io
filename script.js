@@ -2,15 +2,37 @@ const navbar = document.getElementById("navbar");
 const navToggle = navbar ? navbar.querySelector(".nav-toggle") : null;
 
 if (navbar && navToggle) {
+    const closeNavMenu = () => {
+        navbar.classList.remove("nav-open");
+        navToggle.setAttribute("aria-expanded", "false");
+    };
+
+    const openNavMenu = () => {
+        navbar.classList.add("nav-open");
+        navToggle.setAttribute("aria-expanded", "true");
+    };
+
     navToggle.addEventListener("click", () => {
-        const isOpen = navbar.classList.toggle("nav-open");
-        navToggle.setAttribute("aria-expanded", String(isOpen));
+        const isOpen = navbar.classList.contains("nav-open");
+        if (isOpen) closeNavMenu();
+        else openNavMenu();
+    });
+
+    document.addEventListener("click", (event) => {
+        if (window.innerWidth > 768) return;
+        if (!navbar.classList.contains("nav-open")) return;
+        if (navbar.contains(event.target)) return;
+        closeNavMenu();
+    });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        closeNavMenu();
     });
 
     window.addEventListener("resize", () => {
         if (window.innerWidth > 768) {
-            navbar.classList.remove("nav-open");
-            navToggle.setAttribute("aria-expanded", "false");
+            closeNavMenu();
         }
     });
 }
@@ -23,37 +45,8 @@ document.querySelectorAll("#navbar a").forEach((link) => {
     });
 });
 
-// Add image/video paths directly in this single array.
-// String form (easy): "Videos/gallery-video-1.mov"
-// Object form (optional): { src: "Videos/gallery-video-1.mov", alt: "Studio Clip" }
-const galleryMedia = [
-    "Videos/gallery-video-2.mov.mp4",
-    "images/Gallery/gallery-image-1.jpeg",
-    "images/Gallery/gallery-image-2.jpeg",
-    "images/Gallery/gallery-image-3.jpeg",
-    "images/Gallery/gallery-image-4.jpeg",
-    "images/Gallery/gallery-image-5.jpeg",
-    "images/Gallery/gallery-image-6.jpeg",
-    "images/Gallery/gallery-image-7.jpeg",
-    "images/Gallery/gallery-image-8.jpeg",
-    "images/Gallery/gallery-image-9.jpeg",
-    "images/Gallery/gallery-image-10.jpeg",
-    "images/Gallery/gallery-image-11.jpeg",
-    "images/Gallery/gallery-image-12.jpeg",
-    "images/Gallery/gallery-image-13.jpeg",
-    "images/Gallery/gallery-image-14.jpeg",
-    "images/Gallery/gallery-image-15.jpeg",
-    "images/Gallery/gallery-image-16.jpeg",
-    "images/Gallery/gallery-image-17.jpeg",
-    "images/Gallery/gallery-image-18.jpeg",
-    "images/Gallery/gallery-image-19.jpeg",
-    "images/Gallery/gallery-image-20.jpeg",
-    "images/Gallery/gallery-image-21.jpeg",
-    "images/Gallery/gallery-image-22.jpeg",
-    "images/Gallery/gallery-image-23.jpeg"
-];
-
 const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "webm", "ogg", "ogv", "m4v"]);
+const GALLERY_META_URL = "data/gallery-media.json";
 
 function getFileExtension(path = "") {
     const cleanPath = path.split("?")[0].split("#")[0];
@@ -61,7 +54,33 @@ function getFileExtension(path = "") {
     return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : "";
 }
 
+function getGalleryStemInfo(path = "") {
+    const cleanPath = path.split("?")[0].split("#")[0];
+    const fileName = cleanPath.split("/").pop() || "";
+    const match = fileName.match(/^(gallery-(image|video)-(\d+))\..+$/i);
+    if (!match) return null;
+    return {
+        stem: match[1].toLowerCase(),
+        type: match[2].toLowerCase(),
+        index: Number(match[3]),
+        fileName
+    };
+}
+
+function getGalleryAssetKindFromPath(path = "") {
+    const info = getGalleryStemInfo(path);
+    return info ? info.type : "";
+}
+
+function getGalleryTitle(item) {
+    const info = getGalleryStemInfo(item.src || "");
+    if (!info) return item.alt || "Gallery item";
+    return item.title || `${info.type === "video" ? "Video" : "Artwork"} ${info.index}`;
+}
+
 function inferMediaType(item) {
+    const namedType = getGalleryAssetKindFromPath(item.src || "");
+    if (namedType) return namedType;
     if (item.type === "video" || item.type === "image") return item.type;
     return VIDEO_EXTENSIONS.has(getFileExtension(item.src || "")) ? "video" : "image";
 }
@@ -84,135 +103,299 @@ function normalizeVideoSources(item) {
 
 function buildGalleryItem(item) {
     const type = inferMediaType(item);
+    const titledItem = {
+        ...item,
+        alt: getGalleryTitle(item),
+        title: getGalleryTitle(item),
+        category: item.category || (type === "video" ? "Video" : "Artwork")
+    };
     if (type === "video") {
         return {
-            ...item,
+            ...titledItem,
             type,
-            sources: normalizeVideoSources(item)
+            sources: normalizeVideoSources(titledItem)
         };
     }
-    return { ...item, type };
+    return { ...titledItem, type };
 }
 
-function normalizeGalleryEntry(entry, index) {
-    if (typeof entry === "string") {
-        return { src: entry, alt: `Gallery item ${index + 1}` };
-    }
-    if (entry && typeof entry === "object") {
-        return entry;
-    }
-    return { src: "", alt: `Gallery item ${index + 1}` };
+async function probeImageSource(src) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = src;
+    });
 }
 
-const galleryItems = galleryMedia
-    .map((entry, index) => normalizeGalleryEntry(entry, index))
-    .filter((entry) => entry.src)
-    .map((entry) => buildGalleryItem(entry));
+async function probeVideoSource(src) {
+    return new Promise((resolve) => {
+        const video = document.createElement("video");
+        let settled = false;
 
-const track = document.getElementById("art-gallery-images");
-const prevBtn = document.getElementById("gallery-prev");
-const nextBtn = document.getElementById("gallery-next");
-const galleryViewport = track ? track.parentElement : null;
+        const cleanup = (result) => {
+            if (settled) return;
+            settled = true;
+            video.removeAttribute("src");
+            video.load();
+            resolve(result);
+        };
 
-if (track && prevBtn && nextBtn) {
-    let currentIndex = 0;
-    let visibleSlides = 3;
-    let wheelDeltaX = 0;
-    let wheelCooldown = false;
-    let touchStartX = 0;
-    let touchStartY = 0;
+        const timeoutId = window.setTimeout(() => cleanup(false), 3200);
+
+        video.preload = "metadata";
+        video.muted = true;
+        video.playsInline = true;
+        video.onloadedmetadata = () => {
+            window.clearTimeout(timeoutId);
+            cleanup(true);
+        };
+        video.onerror = () => {
+            window.clearTimeout(timeoutId);
+            cleanup(false);
+        };
+        video.src = src;
+    });
+}
+
+async function loadGalleryConfig() {
+    try {
+        const response = await fetch(GALLERY_META_URL, { method: "GET", cache: "no-store" });
+        if (!response.ok) throw new Error("Gallery metadata fetch failed");
+        const data = await response.json();
+        return {
+            homepagePreview: data?.homepage_preview && typeof data.homepage_preview === "object"
+                ? data.homepage_preview
+                : null,
+            items: Array.isArray(data?.items) ? data.items : []
+        };
+    } catch (_) {
+        return {
+            homepagePreview: null,
+            items: []
+        };
+    }
+}
+
+async function loadGalleryItems() {
+    const config = await loadGalleryConfig();
+    const validEntries = config.items.filter((item) => item && typeof item.path === "string");
+
+    const checks = validEntries.map(async (item) => {
+        const src = String(item.path || "").trim().replace(/\\/g, "/");
+        const type = String(item.type || "").trim().toLowerCase();
+        const title = String(item.title || "").trim();
+        const category = String(item.category || "").trim();
+
+        if (!src) return null;
+        if (type !== "image" && type !== "video") return null;
+
+        const exists = type === "video"
+            ? await probeVideoSource(src)
+            : await probeImageSource(src);
+
+        if (!exists) return null;
+
+        return buildGalleryItem({
+            src,
+            type,
+            title,
+            category
+        });
+    });
+
+    const items = (await Promise.all(checks)).filter(Boolean);
+
+    let homepagePreview = null;
+    if (config.homepagePreview) {
+        const previewSrc = String(config.homepagePreview.path || "").trim().replace(/\\/g, "/");
+        const previewType = String(config.homepagePreview.type || "").trim().toLowerCase();
+        const previewTitle = String(config.homepagePreview.title || "").trim();
+        const previewCategory = String(config.homepagePreview.category || "").trim();
+
+        if (previewSrc && (previewType === "image" || previewType === "video")) {
+            const exists = previewType === "video"
+                ? await probeVideoSource(previewSrc)
+                : await probeImageSource(previewSrc);
+
+            if (exists) {
+                homepagePreview = buildGalleryItem({
+                    src: previewSrc,
+                    type: previewType,
+                    title: previewTitle,
+                    category: previewCategory
+                });
+            }
+        }
+    }
+
+    return {
+        homepagePreview,
+        items: items.sort((a, b) => {
+        const infoA = getGalleryStemInfo(a.src || "");
+        const infoB = getGalleryStemInfo(b.src || "");
+        const indexA = infoA ? infoA.index : Number.MAX_SAFE_INTEGER;
+        const indexB = infoB ? infoB.index : Number.MAX_SAFE_INTEGER;
+
+        if (indexA !== indexB) return indexA - indexB;
+        return 0;
+        })
+    };
+}
+
+function renderGalleryPreviewMedia(item) {
+    const mediaEl = item.type === "video" ? document.createElement("video") : document.createElement("img");
+    mediaEl.className = "gallery-preview-media";
+
+    if (item.type === "video") {
+        setVideoSources(mediaEl, item.sources, () => {});
+        mediaEl.muted = true;
+        mediaEl.defaultMuted = true;
+        mediaEl.loop = true;
+        mediaEl.autoplay = true;
+        mediaEl.playsInline = true;
+        mediaEl.preload = "auto";
+        mediaEl.setAttribute("muted", "");
+        mediaEl.setAttribute("autoplay", "");
+        mediaEl.setAttribute("playsinline", "");
+        mediaEl.setAttribute("aria-hidden", "true");
+        mediaEl.addEventListener("canplay", () => {
+            mediaEl.play().catch(() => {});
+        });
+        mediaEl.addEventListener("loadeddata", () => {
+            mediaEl.play().catch(() => {});
+        });
+    } else {
+        mediaEl.src = item.src;
+        mediaEl.alt = item.title || "Gallery preview";
+        mediaEl.loading = "lazy";
+    }
+
+    return mediaEl;
+}
+
+function createGalleryBrowserModal() {
+    const existing = document.getElementById("gallery-browser-modal");
+    if (existing) {
+        return {
+            root: existing,
+            box: existing.querySelector(".gallery-browser-box"),
+            grid: existing.querySelector(".gallery-browser-grid"),
+            closeBtn: existing.querySelector(".gallery-browser-close"),
+            fullscreenBtn: existing.querySelector(".gallery-browser-fullscreen"),
+            counter: existing.querySelector(".gallery-browser-count")
+        };
+    }
+
+    const root = document.createElement("div");
+    root.id = "gallery-browser-modal";
+    root.className = "gallery-browser-modal";
+    root.setAttribute("aria-hidden", "true");
+
+    const box = document.createElement("div");
+    box.className = "gallery-browser-box";
+
+    const header = document.createElement("div");
+    header.className = "gallery-browser-header";
+
+    const titleWrap = document.createElement("div");
+    titleWrap.className = "gallery-browser-title-wrap";
+
+    const title = document.createElement("h3");
+    title.className = "gallery-browser-title";
+    title.textContent = "CrossdaleArts Gallery";
+
+    const counter = document.createElement("p");
+    counter.className = "gallery-browser-count";
+    counter.textContent = "0 works";
+
+    titleWrap.appendChild(title);
+    titleWrap.appendChild(counter);
+
+    const actions = document.createElement("div");
+    actions.className = "gallery-browser-actions";
+
+    const fullscreenBtn = document.createElement("button");
+    fullscreenBtn.type = "button";
+    fullscreenBtn.className = "gallery-browser-fullscreen";
+    fullscreenBtn.textContent = "Full Screen";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "gallery-browser-close";
+    closeBtn.textContent = "Close";
+
+    actions.appendChild(fullscreenBtn);
+    actions.appendChild(closeBtn);
+    header.appendChild(titleWrap);
+    header.appendChild(actions);
+
+    const grid = document.createElement("div");
+    grid.className = "gallery-browser-grid";
+
+    box.appendChild(header);
+    box.appendChild(grid);
+    root.appendChild(box);
+    document.body.appendChild(root);
+
+    return { root, box, grid, closeBtn, fullscreenBtn, counter };
+}
+
+async function initGalleryExperience() {
+    const showcase = document.getElementById("gallery-showcase");
+    const preview = document.getElementById("gallery-showcase-preview");
+    const countEl = document.getElementById("gallery-showcase-count");
+    if (!showcase || !preview || !countEl) return;
+
+    const galleryConfig = await loadGalleryItems();
+    const galleryItems = galleryConfig.items;
+    const browser = createGalleryBrowserModal();
     const lightbox = createGalleryLightbox();
 
-    function getVisibleSlides() {
-        if (window.innerWidth <= 600) return 1;
-        if (window.innerWidth <= 900) return 2;
-        return 3;
-    }
+    const syncOverlayScrollLock = () => {
+        const hasOpenOverlay =
+            browser.root.classList.contains("is-open") ||
+            lightbox.root.classList.contains("is-open");
+        document.body.classList.toggle("gallery-lightbox-open", hasOpenOverlay);
+    };
 
-    function renderSlides() {
-        track.innerHTML = "";
+    const syncBrowserFullscreenButton = () => {
+        const isFullscreen = document.fullscreenElement === browser.box;
+        browser.fullscreenBtn.textContent = isFullscreen ? "Exit Full Screen" : "Full Screen";
+    };
 
-        galleryItems.forEach((item, index) => {
-            const slide = document.createElement("div");
-            slide.className = "slide";
-            slide.setAttribute("role", "button");
-            slide.setAttribute("tabindex", "0");
-            slide.setAttribute("aria-label", `Open ${item.alt || "gallery item"} in full view`);
+    const syncLightboxFullscreenButton = () => {
+        const isFullscreen = document.fullscreenElement === lightbox.box;
+        lightbox.fullscreenBtn.textContent = isFullscreen ? "Exit Full Screen" : "Full Screen";
+    };
 
-            const mediaEl = item.type === "video" ? document.createElement("video") : document.createElement("img");
-            mediaEl.className = "gallery-media";
-
-            if (item.type === "video") {
-                const hasVideoSource = setVideoSources(mediaEl, item.sources, () => {
-                    slide.classList.add("media-error");
-                });
-                mediaEl.muted = true;
-                mediaEl.defaultMuted = true;
-                mediaEl.loop = true;
-                mediaEl.autoplay = true;
-                mediaEl.playsInline = true;
-                mediaEl.preload = "metadata";
-                mediaEl.setAttribute("aria-label", item.alt || "Gallery video");
-                mediaEl.addEventListener("canplay", () => {
-                    mediaEl.play().catch(() => {});
-                });
-                if (!hasVideoSource) {
-                    slide.classList.add("media-error");
-                }
-            } else {
-                mediaEl.src = item.src;
-                mediaEl.alt = item.alt || "Gallery image";
-                mediaEl.loading = "lazy";
-            }
-
-            slide.addEventListener("click", () => openLightbox(index));
-            slide.addEventListener("keydown", (event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    openLightbox(index);
-                }
-            });
-
-            slide.appendChild(mediaEl);
-            track.appendChild(slide);
-        });
-    }
-
-    function updateSlider() {
-        visibleSlides = getVisibleSlides();
-        const maxIndex = Math.max(galleryItems.length - visibleSlides, 0);
-
-        if (currentIndex > maxIndex) {
-            currentIndex = maxIndex;
+    const closeBrowser = () => {
+        if (document.fullscreenElement === browser.box && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
         }
+        browser.root.classList.remove("is-open");
+        browser.root.setAttribute("aria-hidden", "true");
+        syncOverlayScrollLock();
+        syncBrowserFullscreenButton();
+    };
 
-        const offset = (100 / visibleSlides) * currentIndex;
-        track.style.transform = `translateX(-${offset}%)`;
-
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex === maxIndex;
-    }
-
-    function slidePrev() {
-        if (currentIndex > 0) {
-            currentIndex -= 1;
-            updateSlider();
+    const closeLightbox = () => {
+        if (document.fullscreenElement === lightbox.box && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
         }
-    }
+        lightbox.root.classList.remove("is-open");
+        lightbox.root.setAttribute("aria-hidden", "true");
+        lightbox.content.innerHTML = "";
+        syncOverlayScrollLock();
+        syncLightboxFullscreenButton();
+    };
 
-    function slideNext() {
-        const maxIndex = Math.max(galleryItems.length - visibleSlides, 0);
-        if (currentIndex < maxIndex) {
-            currentIndex += 1;
-            updateSlider();
-        }
-    }
-
-    function openLightbox(index) {
+    const openLightbox = (index) => {
         const item = galleryItems[index];
         if (!item) return;
 
         lightbox.content.innerHTML = "";
+        lightbox.title.textContent = item.title || item.alt || "Gallery item";
 
         if (item.type === "video") {
             const video = document.createElement("video");
@@ -234,107 +417,138 @@ if (track && prevBtn && nextBtn) {
         } else {
             const img = document.createElement("img");
             img.src = item.src;
-            img.alt = item.alt || "Gallery image";
+            img.alt = item.title || item.alt || "Gallery image";
             img.className = "gallery-lightbox-media";
             lightbox.content.appendChild(img);
         }
 
         lightbox.root.classList.add("is-open");
         lightbox.root.setAttribute("aria-hidden", "false");
-        document.body.classList.add("gallery-lightbox-open");
-    }
+        syncOverlayScrollLock();
+        syncLightboxFullscreenButton();
+    };
 
-    function closeLightbox() {
-        lightbox.root.classList.remove("is-open");
-        lightbox.root.setAttribute("aria-hidden", "true");
-        lightbox.content.innerHTML = "";
-        document.body.classList.remove("gallery-lightbox-open");
-    }
+    const renderBrowserGrid = () => {
+        browser.grid.innerHTML = "";
+        browser.counter.textContent = `${galleryItems.length} works`;
+
+        galleryItems.forEach((item, index) => {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "gallery-browser-card";
+            card.setAttribute("aria-label", `Open ${item.title || item.alt || "gallery item"}`);
+
+            const mediaWrap = document.createElement("div");
+            mediaWrap.className = "gallery-browser-media-wrap";
+            mediaWrap.appendChild(renderGalleryPreviewMedia(item));
+
+            const meta = document.createElement("div");
+            meta.className = "gallery-browser-meta";
+
+            const title = document.createElement("p");
+            title.className = "gallery-browser-item-title";
+            title.textContent = item.title || item.alt || "Untitled";
+
+            const type = document.createElement("span");
+            type.className = "gallery-browser-item-type";
+            type.textContent = item.category || (item.type === "video" ? "Video" : "Artwork");
+
+            meta.appendChild(title);
+            meta.appendChild(type);
+            card.appendChild(mediaWrap);
+            card.appendChild(meta);
+
+            card.addEventListener("click", () => openLightbox(index));
+            browser.grid.appendChild(card);
+        });
+    };
+
+    const renderShowcase = () => {
+        preview.innerHTML = "";
+
+        if (!galleryItems.length) {
+            countEl.textContent = "Gallery coming soon";
+            showcase.disabled = true;
+            return;
+        }
+
+        countEl.textContent = `${galleryItems.length} works in the archive`;
+
+        const heroItem = galleryConfig.homepagePreview || galleryItems[0];
+        if (!heroItem) return;
+
+        const tile = document.createElement("div");
+        tile.className = "gallery-showcase-tile gallery-showcase-tile-hero";
+        tile.appendChild(renderGalleryPreviewMedia(heroItem));
+        preview.appendChild(tile);
+    };
+
+    const openBrowser = () => {
+        if (!galleryItems.length) return;
+        browser.root.classList.add("is-open");
+        browser.root.setAttribute("aria-hidden", "false");
+        syncOverlayScrollLock();
+        syncBrowserFullscreenButton();
+    };
+
+    renderShowcase();
+    renderBrowserGrid();
+
+    showcase.addEventListener("click", openBrowser);
+    browser.closeBtn.addEventListener("click", closeBrowser);
+    browser.root.addEventListener("click", (event) => {
+        if (event.target === browser.root) closeBrowser();
+    });
+    browser.fullscreenBtn.addEventListener("click", async () => {
+        try {
+            if (document.fullscreenElement === browser.box) {
+                if (document.exitFullscreen) await document.exitFullscreen();
+            } else if (browser.box.requestFullscreen) {
+                await browser.box.requestFullscreen();
+            }
+        } catch (_) {
+            // no-op fallback
+        } finally {
+            syncBrowserFullscreenButton();
+        }
+    });
 
     lightbox.closeBtn.addEventListener("click", closeLightbox);
     lightbox.root.addEventListener("click", (event) => {
         if (event.target === lightbox.root) closeLightbox();
     });
-
-    window.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && lightbox.root.classList.contains("is-open")) {
-            closeLightbox();
+    lightbox.fullscreenBtn.addEventListener("click", async () => {
+        try {
+            if (document.fullscreenElement === lightbox.box) {
+                if (document.exitFullscreen) await document.exitFullscreen();
+            } else if (lightbox.box.requestFullscreen) {
+                await lightbox.box.requestFullscreen();
+            }
+        } catch (_) {
+            // no-op fallback
+        } finally {
+            syncLightboxFullscreenButton();
         }
     });
 
-    prevBtn.addEventListener("click", slidePrev);
-    nextBtn.addEventListener("click", slideNext);
+    document.addEventListener("fullscreenchange", () => {
+        syncBrowserFullscreenButton();
+        syncLightboxFullscreenButton();
+    });
 
-    if (galleryViewport) {
-        galleryViewport.addEventListener(
-            "wheel",
-            (event) => {
-                const isHorizontalIntent = Math.abs(event.deltaX) > Math.abs(event.deltaY) || event.shiftKey;
-                if (!isHorizontalIntent) return;
-
-                event.preventDefault();
-                if (wheelCooldown) return;
-
-                wheelDeltaX += event.deltaX !== 0 ? event.deltaX : event.deltaY;
-                if (Math.abs(wheelDeltaX) < 36) return;
-
-                if (wheelDeltaX > 0) slideNext();
-                else slidePrev();
-
-                wheelDeltaX = 0;
-                wheelCooldown = true;
-                window.setTimeout(() => {
-                    wheelCooldown = false;
-                }, 180);
-            },
-            { passive: false }
-        );
-
-        galleryViewport.addEventListener(
-            "touchstart",
-            (event) => {
-                const touch = event.changedTouches[0];
-                touchStartX = touch.clientX;
-                touchStartY = touch.clientY;
-            },
-            { passive: true }
-        );
-
-        galleryViewport.addEventListener(
-            "touchmove",
-            (event) => {
-                const touch = event.changedTouches[0];
-                const deltaX = touch.clientX - touchStartX;
-                const deltaY = touch.clientY - touchStartY;
-
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    event.preventDefault();
-                }
-            },
-            { passive: false }
-        );
-
-        galleryViewport.addEventListener(
-            "touchend",
-            (event) => {
-                const touch = event.changedTouches[0];
-                const deltaX = touch.clientX - touchStartX;
-                const deltaY = touch.clientY - touchStartY;
-
-                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 48) {
-                    if (deltaX < 0) slideNext();
-                    else slidePrev();
-                }
-            },
-            { passive: true }
-        );
-    }
-
-    window.addEventListener("resize", updateSlider);
-
-    renderSlides();
-    updateSlider();
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (lightbox.root.classList.contains("is-open")) {
+            closeLightbox();
+            return;
+        }
+        if (browser.root.classList.contains("is-open")) {
+            closeBrowser();
+        }
+    });
 }
+
+initGalleryExperience();
 
 function createGalleryLightbox() {
     const existing = document.getElementById("gallery-lightbox");
@@ -342,7 +556,10 @@ function createGalleryLightbox() {
         return {
             root: existing,
             closeBtn: existing.querySelector(".gallery-lightbox-close"),
-            content: existing.querySelector(".gallery-lightbox-content")
+            content: existing.querySelector(".gallery-lightbox-content"),
+            title: existing.querySelector(".gallery-lightbox-title"),
+            fullscreenBtn: existing.querySelector(".gallery-lightbox-fullscreen"),
+            box: existing.querySelector(".gallery-lightbox-box")
         };
     }
 
@@ -354,6 +571,22 @@ function createGalleryLightbox() {
     const box = document.createElement("div");
     box.className = "gallery-lightbox-box";
 
+    const header = document.createElement("div");
+    header.className = "gallery-lightbox-header";
+
+    const title = document.createElement("h3");
+    title.className = "gallery-lightbox-title";
+    title.textContent = "Gallery Item";
+
+    const actions = document.createElement("div");
+    actions.className = "gallery-lightbox-actions";
+
+    const fullscreenBtn = document.createElement("button");
+    fullscreenBtn.type = "button";
+    fullscreenBtn.className = "gallery-lightbox-fullscreen";
+    fullscreenBtn.setAttribute("aria-label", "Toggle gallery item full screen");
+    fullscreenBtn.textContent = "Full Screen";
+
     const closeBtn = document.createElement("button");
     closeBtn.type = "button";
     closeBtn.className = "gallery-lightbox-close";
@@ -363,12 +596,186 @@ function createGalleryLightbox() {
     const content = document.createElement("div");
     content.className = "gallery-lightbox-content";
 
-    box.appendChild(closeBtn);
+    actions.appendChild(fullscreenBtn);
+    actions.appendChild(closeBtn);
+    header.appendChild(title);
+    header.appendChild(actions);
+    box.appendChild(header);
     box.appendChild(content);
     root.appendChild(box);
     document.body.appendChild(root);
 
-    return { root, closeBtn, content };
+    return { root, closeBtn, content, title, fullscreenBtn, box };
+}
+
+function createPdfViewerModal() {
+    const existing = document.getElementById("pdf-viewer-modal");
+    if (existing) {
+        return {
+            root: existing,
+            closeBtn: existing.querySelector(".pdf-viewer-close"),
+            frame: existing.querySelector(".pdf-viewer-frame"),
+            title: existing.querySelector(".pdf-viewer-title"),
+            externalLink: existing.querySelector(".pdf-viewer-open-link"),
+            fullscreenBtn: existing.querySelector(".pdf-viewer-fullscreen"),
+            box: existing.querySelector(".pdf-viewer-box")
+        };
+    }
+
+    const root = document.createElement("div");
+    root.id = "pdf-viewer-modal";
+    root.className = "pdf-viewer-modal";
+    root.setAttribute("aria-hidden", "true");
+
+    const box = document.createElement("div");
+    box.className = "pdf-viewer-box";
+
+    const header = document.createElement("div");
+    header.className = "pdf-viewer-header";
+
+    const title = document.createElement("h3");
+    title.className = "pdf-viewer-title";
+    title.textContent = "Course PDF";
+
+    const actions = document.createElement("div");
+    actions.className = "pdf-viewer-actions";
+
+    const externalLink = document.createElement("a");
+    externalLink.className = "pdf-viewer-open-link";
+    externalLink.target = "_blank";
+    externalLink.rel = "noopener noreferrer";
+    externalLink.textContent = "Open in Drive";
+
+    const fullscreenBtn = document.createElement("button");
+    fullscreenBtn.type = "button";
+    fullscreenBtn.className = "pdf-viewer-fullscreen";
+    fullscreenBtn.setAttribute("aria-label", "Open PDF viewer in full screen");
+    fullscreenBtn.textContent = "Full Screen";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "pdf-viewer-close";
+    closeBtn.setAttribute("aria-label", "Close PDF viewer");
+    closeBtn.textContent = "Close";
+
+    const frame = document.createElement("iframe");
+    frame.className = "pdf-viewer-frame";
+    frame.loading = "lazy";
+    frame.setAttribute("title", "Course PDF Viewer");
+    frame.setAttribute("allow", "autoplay");
+
+    actions.appendChild(externalLink);
+    actions.appendChild(fullscreenBtn);
+    actions.appendChild(closeBtn);
+    header.appendChild(title);
+    header.appendChild(actions);
+    box.appendChild(header);
+    box.appendChild(frame);
+    root.appendChild(box);
+    document.body.appendChild(root);
+
+    return { root, closeBtn, frame, title, externalLink, fullscreenBtn, box };
+}
+
+function extractGoogleDriveFileId(url = "") {
+    const directMatch = url.match(/\/file\/d\/([^/]+)/i);
+    if (directMatch && directMatch[1]) return directMatch[1];
+
+    try {
+        const parsed = new URL(url, window.location.href);
+        return parsed.searchParams.get("id") || "";
+    } catch (_) {
+        return "";
+    }
+}
+
+function buildGoogleDrivePreviewUrl(url = "") {
+    const fileId = extractGoogleDriveFileId(url);
+    if (!fileId) return "";
+    return `https://drive.google.com/file/d/${fileId}/preview`;
+}
+
+function initEmbeddedPdfViewer() {
+    const pdfLinks = [...document.querySelectorAll('a[href*="drive.google.com/file/d/"]')]
+        .filter((link) => link.querySelector(".download-course-details-button"));
+
+    if (!pdfLinks.length) return;
+
+    const viewer = createPdfViewerModal();
+    const fullscreenTarget = viewer.box;
+
+    const syncFullscreenButton = () => {
+        const isFullscreen = document.fullscreenElement === fullscreenTarget;
+        viewer.fullscreenBtn.textContent = isFullscreen ? "Exit Full Screen" : "Full Screen";
+        viewer.fullscreenBtn.setAttribute(
+            "aria-label",
+            isFullscreen ? "Exit full screen PDF viewer" : "Open PDF viewer in full screen"
+        );
+    };
+
+    const closeViewer = () => {
+        if (document.fullscreenElement === fullscreenTarget && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+        }
+        viewer.root.classList.remove("is-open");
+        viewer.root.setAttribute("aria-hidden", "true");
+        viewer.frame.src = "about:blank";
+        document.body.classList.remove("gallery-lightbox-open");
+        syncFullscreenButton();
+    };
+
+    const openViewer = (link) => {
+        const previewUrl = buildGoogleDrivePreviewUrl(link.href);
+        if (!previewUrl) {
+            window.open(link.href, "_blank", "noopener,noreferrer");
+            return;
+        }
+
+        const buttonText = link.textContent.trim();
+        const courseTitle = document.getElementById("course-title");
+        const heading = courseTitle ? courseTitle.textContent.trim() : "Course PDF";
+
+        viewer.title.textContent = buttonText ? `${heading} - ${buttonText}` : heading;
+        viewer.externalLink.href = link.href;
+        viewer.frame.src = previewUrl;
+        viewer.root.classList.add("is-open");
+        viewer.root.setAttribute("aria-hidden", "false");
+        document.body.classList.add("gallery-lightbox-open");
+        syncFullscreenButton();
+    };
+
+    pdfLinks.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            openViewer(link);
+        });
+    });
+
+    viewer.closeBtn.addEventListener("click", closeViewer);
+    viewer.fullscreenBtn.addEventListener("click", async () => {
+        try {
+            if (document.fullscreenElement === fullscreenTarget) {
+                if (document.exitFullscreen) await document.exitFullscreen();
+            } else if (fullscreenTarget.requestFullscreen) {
+                await fullscreenTarget.requestFullscreen();
+            }
+        } catch (_) {
+            window.open(viewer.externalLink.href, "_blank", "noopener,noreferrer");
+        } finally {
+            syncFullscreenButton();
+        }
+    });
+    viewer.root.addEventListener("click", (event) => {
+        if (event.target === viewer.root) closeViewer();
+    });
+
+    document.addEventListener("fullscreenchange", syncFullscreenButton);
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && viewer.root.classList.contains("is-open")) {
+            closeViewer();
+        }
+    });
 }
 
 setupCourseImagePreview();
@@ -428,6 +835,12 @@ function setupCourseImagePreview() {
 
     const lightbox = createGalleryLightbox();
     let openedFromCourse = false;
+    const fullscreenTarget = lightbox.box;
+
+    const syncFullscreenButton = () => {
+        const isFullscreen = document.fullscreenElement === fullscreenTarget;
+        lightbox.fullscreenBtn.textContent = isFullscreen ? "Exit Full Screen" : "Full Screen";
+    };
 
     const openCourseImage = (imgEl) => {
         lightbox.content.innerHTML = "";
@@ -437,20 +850,26 @@ function setupCourseImagePreview() {
         img.alt = imgEl.alt || "Course image";
         img.className = "gallery-lightbox-media";
         lightbox.content.appendChild(img);
+        lightbox.title.textContent = imgEl.alt || "Course image";
 
         lightbox.root.classList.add("is-open");
         lightbox.root.setAttribute("aria-hidden", "false");
         document.body.classList.add("gallery-lightbox-open");
         openedFromCourse = true;
+        syncFullscreenButton();
     };
 
     const closeCourseImage = () => {
         if (!openedFromCourse) return;
+        if (document.fullscreenElement === fullscreenTarget && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+        }
         lightbox.root.classList.remove("is-open");
         lightbox.root.setAttribute("aria-hidden", "true");
         lightbox.content.innerHTML = "";
         document.body.classList.remove("gallery-lightbox-open");
         openedFromCourse = false;
+        syncFullscreenButton();
     };
 
     courseImages.forEach((imgEl) => {
@@ -468,9 +887,24 @@ function setupCourseImagePreview() {
     });
 
     lightbox.closeBtn.addEventListener("click", closeCourseImage);
+    lightbox.fullscreenBtn.addEventListener("click", async () => {
+        if (!openedFromCourse) return;
+        try {
+            if (document.fullscreenElement === fullscreenTarget) {
+                if (document.exitFullscreen) await document.exitFullscreen();
+            } else if (fullscreenTarget.requestFullscreen) {
+                await fullscreenTarget.requestFullscreen();
+            }
+        } catch (_) {
+            // no-op fallback
+        } finally {
+            syncFullscreenButton();
+        }
+    });
     lightbox.root.addEventListener("click", (event) => {
         if (event.target === lightbox.root) closeCourseImage();
     });
+    document.addEventListener("fullscreenchange", syncFullscreenButton);
     window.addEventListener("keydown", (event) => {
         if (event.key === "Escape") closeCourseImage();
     });
@@ -507,6 +941,29 @@ function prioritizeSources(sources) {
 const FEEDBACK_ROTATION_MS = 2000;
 const FEEDBACK_DATA_URL = "/data/feedbacks.json";
 const FEEDBACK_STORAGE_KEY = "crossdale_feedbacks";
+const FEEDBACK_SOCIAL_LINKS = [
+    {
+        href: "https://www.instagram.com/crossdale_arts/",
+        label: "Instagram",
+        target: "_blank",
+        rel: "noopener noreferrer",
+        iconClass: "is-instagram"
+    },
+    {
+        href: "https://wa.me/8858762510",
+        label: "WhatsApp",
+        target: "_blank",
+        rel: "noopener noreferrer",
+        iconClass: "is-whatsapp"
+    },
+    {
+        href: "mailto:contact@crossdalearts.com",
+        label: "Email",
+        target: "_self",
+        rel: "",
+        iconClass: "is-email"
+    }
+];
 
 async function initFeedbackWidget() {
     const anchor = document.getElementById("feedback-widget-anchor");
@@ -569,6 +1026,32 @@ async function initFeedbackWidget() {
     widget.appendChild(card);
     widget.appendChild(actions);
     anchor.appendChild(widget);
+
+    const socialLinks = document.createElement("div");
+    socialLinks.className = "feedback-social-links";
+
+    const socialLabel = document.createElement("span");
+    socialLabel.className = "feedback-social-label";
+    socialLabel.textContent = "Chat with us:";
+    socialLinks.appendChild(socialLabel);
+
+    FEEDBACK_SOCIAL_LINKS.forEach((item) => {
+        const link = document.createElement("a");
+        link.className = "feedback-social-link";
+        link.href = item.href;
+        link.setAttribute("aria-label", item.label);
+        if (item.target) link.target = item.target;
+        if (item.rel) link.rel = item.rel;
+
+        const icon = document.createElement("span");
+        icon.className = `feedback-social-icon ${item.iconClass}`;
+        icon.setAttribute("aria-hidden", "true");
+        link.appendChild(icon);
+
+        socialLinks.appendChild(link);
+    });
+
+    anchor.appendChild(socialLinks);
 
     const detailModal = createFeedbackModal();
 
@@ -962,3 +1445,4 @@ function initScrollReveal() {
 
 initScrollReveal();
 initFeedbackWidget();
+initEmbeddedPdfViewer();
