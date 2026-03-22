@@ -905,4 +905,60 @@ function escapeHTML(text) {
         .replaceAll("'", "&#39;");
 }
 
+function initScrollReveal() {
+    const selectors = [
+        "#alert-banner",
+        "#artist-statement",
+        "#enrollment",
+        "#about-me",
+        "#art-expertise",
+        "#art-gallery",
+        "#exhibitions",
+        "#recognitions",
+        "#courses-page > *",
+        ".course-card",
+        "#story-page > *",
+        ".story-card",
+        ".story-section",
+        ".story-quote",
+        "#course-content > *"
+    ];
+
+    const elements = [...new Set(
+        selectors.flatMap((selector) => [...document.querySelectorAll(selector)])
+    )].filter((element) => element && !element.closest("nav"));
+
+    if (!elements.length) return;
+
+    document.body.classList.add("reveal-ready");
+
+    elements.forEach((element, index) => {
+        element.classList.add("scroll-reveal");
+        element.style.setProperty("--reveal-delay", `${Math.min(index * 45, 180)}ms`);
+    });
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+        elements.forEach((element) => element.classList.add("is-visible"));
+        return;
+    }
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+            });
+        },
+        {
+            threshold: 0.06,
+            rootMargin: "0px 0px 14% 0px"
+        }
+    );
+
+    elements.forEach((element) => observer.observe(element));
+}
+
+initScrollReveal();
 initFeedbackWidget();

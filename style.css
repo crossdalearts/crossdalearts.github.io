@@ -30,6 +30,19 @@ body{
     display: flex;
     flex-direction: column;
 }
+body.reveal-ready .scroll-reveal{
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition:
+        opacity 0.56s ease,
+        transform 0.56s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+}
+body.reveal-ready .scroll-reveal.is-visible{
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
 
 /* Global interactive glow for links and buttons */
 a,
@@ -655,6 +668,11 @@ footer p{
     background: #fff;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
 }
+.course-card-anchor{
+    display: block;
+    height: 100%;
+    color: inherit;
+}
 .course-card img{
     width: 100%;
     height: clamp(220px, 26vw, 320px);
@@ -680,6 +698,54 @@ footer p{
     color: #fff;
     border-radius: 10px;
     font-size: 15px;
+}
+.course-card-actions,
+.course-cta-group{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.course-card-actions{
+    width: 100%;
+    justify-content: space-between;
+}
+.best-seller-badge{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-right: 16px;
+    background: transparent;
+    color: rgb(255, 66, 66);
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    animation: best-seller-glow 1s ease-in-out infinite;
+}
+@keyframes best-seller-glow{
+    0%,
+    100%{
+        opacity: 0.78;
+        text-shadow: 0 0 0 rgba(255, 66, 66, 0);
+    }
+    50%{
+        opacity: 1;
+        text-shadow: 0 0 8px rgba(255, 66, 66, 0.168);
+    }
+}
+
+@media (prefers-reduced-motion: reduce){
+    body.reveal-ready .scroll-reveal{
+        opacity: 1;
+        transform: none;
+        transition: none;
+        will-change: auto;
+    }
+    .best-seller-badge{
+        animation: none;
+    }
 }
 
 #story-page{
@@ -988,6 +1054,16 @@ footer p{
     #whole-course-title-tagline-container{
         flex-direction: column;
         align-items: flex-start;
+    }
+    .course-card-actions,
+    .course-cta-group{
+        gap: 10px;
+    }
+    .course-card-actions{
+        justify-content: flex-start;
+    }
+    .best-seller-badge{
+        margin-right: 0;
     }
     #enrollment-button{
         width: auto;
