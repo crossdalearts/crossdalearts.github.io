@@ -232,6 +232,11 @@ async function loadGalleryItems() {
     return {
         homepagePreview,
         items: items.sort((a, b) => {
+        const typeOrder = { video: 0, image: 1 };
+        const orderA = typeOrder[a.type] ?? Number.MAX_SAFE_INTEGER;
+        const orderB = typeOrder[b.type] ?? Number.MAX_SAFE_INTEGER;
+        if (orderA !== orderB) return orderA - orderB;
+
         const infoA = getGalleryStemInfo(a.src || "");
         const infoB = getGalleryStemInfo(b.src || "");
         const indexA = infoA ? infoA.index : Number.MAX_SAFE_INTEGER;
