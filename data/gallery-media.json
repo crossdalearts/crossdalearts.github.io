@@ -1,9 +1,9 @@
 {
   "homepage_preview": {
-    "path": "Videos/gallery-video-2.mov.mp4",
-    "title": "Studio Video 2",
-    "category": "Studio Process",
-    "type": "video"
+    "path": "images/Gallery/gallery-image-23.JPEG",
+    "title": "Painting Image",
+    "category": "Records",
+    "type": "image"
   },
   "items": [
     { "path": "Videos/gallery-video-2.mov.mp4", "title": "Studio Video 2", "category": "Studio Process", "type": "video" },

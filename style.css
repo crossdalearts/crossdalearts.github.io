@@ -33,6 +33,10 @@ a{
     --glass-hover-edge-dark: rgba(255, 255, 255, 0.18);
     --glass-hover-glow: linear-gradient(120deg, rgba(255, 255, 255, 0) 18%, rgba(255, 255, 255, 0.3) 42%, rgba(255, 255, 255, 0.12) 58%, rgba(255, 255, 255, 0) 82%);
     --hover-bump-distance: -3px;
+    --panel-open-duration: 0.4s;
+    --panel-open-ease: cubic-bezier(0.2, 0.9, 0.24, 1);
+    --panel-offset-y: 18px;
+    --panel-scale: 0.978;
 }
 body{
     padding-top: 112px;
@@ -831,15 +835,26 @@ nav{
 .feedback-overlay{
     position: fixed;
     inset: 0;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(10, 10, 10, 0.6);
     z-index: 2100;
     padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity var(--panel-open-duration) ease,
+        visibility 0s linear var(--panel-open-duration);
 }
 .feedback-overlay.is-open{
-    display: flex;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+        opacity var(--panel-open-duration) ease,
+        visibility 0s linear 0s;
 }
 .feedback-modal{
     width: min(680px, 94vw);
@@ -850,6 +865,15 @@ nav{
     box-shadow: var(--surface-lift-shadow-strong);
     padding: 16px;
     overflow: auto;
+    opacity: 0;
+    transform: translateY(var(--panel-offset-y)) scale(var(--panel-scale));
+    transition:
+        opacity var(--panel-open-duration) var(--panel-open-ease),
+        transform var(--panel-open-duration) var(--panel-open-ease);
+}
+.feedback-overlay.is-open .feedback-modal{
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 .feedback-modal-top{
     display: flex;
@@ -1003,6 +1027,17 @@ nav{
     align-items: center;
     text-align: left;
     cursor: pointer;
+    color: #161616;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.gallery-showcase:focus-visible{
+    outline: 2px solid #161616;
+    outline-offset: 4px;
+}
+.gallery-showcase.is-disabled{
+    cursor: default;
+    opacity: 0.7;
 }
 .gallery-showcase-copy{
     display: flex;
@@ -1021,7 +1056,7 @@ nav{
     color: #161616;
 }
 .gallery-showcase-text{
-    font-size: 17px;
+    font-size: clamp(15px, 1.45vw, 17px);
     line-height: 1.65;
     color: #363636;
     max-width: 52ch;
@@ -1084,11 +1119,17 @@ nav{
 .gallery-lightbox{
     position: fixed;
     inset: 0;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(10, 10, 10, 0.72);
     padding: 4vh 4vw;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity var(--panel-open-duration) ease,
+        visibility 0s linear var(--panel-open-duration);
 }
 .gallery-browser-modal{
     z-index: 1990;
@@ -1098,7 +1139,12 @@ nav{
 }
 .gallery-browser-modal.is-open,
 .gallery-lightbox.is-open{
-    display: flex;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+        opacity var(--panel-open-duration) ease,
+        visibility 0s linear 0s;
 }
 .gallery-browser-box,
 .gallery-lightbox-box{
@@ -1107,6 +1153,16 @@ nav{
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    opacity: 0;
+    transform: translateY(var(--panel-offset-y)) scale(var(--panel-scale));
+    transition:
+        opacity var(--panel-open-duration) var(--panel-open-ease),
+        transform var(--panel-open-duration) var(--panel-open-ease);
+}
+.gallery-browser-modal.is-open .gallery-browser-box,
+.gallery-lightbox.is-open .gallery-lightbox-box{
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 .gallery-browser-box{
     width: min(1240px, 95vw);
@@ -1248,15 +1304,26 @@ body.gallery-lightbox-open{
 .pdf-viewer-modal{
     position: fixed;
     inset: 0;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(10, 10, 10, 0.68);
     padding: 3vh 3vw;
     z-index: 2050;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity var(--panel-open-duration) ease,
+        visibility 0s linear var(--panel-open-duration);
 }
 .pdf-viewer-modal.is-open{
-    display: flex;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+        opacity var(--panel-open-duration) ease,
+        visibility 0s linear 0s;
 }
 .pdf-viewer-box{
     width: min(1180px, 95vw);
@@ -1268,6 +1335,28 @@ body.gallery-lightbox-open{
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    opacity: 0;
+    transform: translateY(var(--panel-offset-y)) scale(var(--panel-scale));
+    transition:
+        opacity var(--panel-open-duration) var(--panel-open-ease),
+        transform var(--panel-open-duration) var(--panel-open-ease);
+}
+.pdf-viewer-modal.is-open .pdf-viewer-box{
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce){
+    .feedback-overlay,
+    .feedback-modal,
+    .gallery-browser-modal,
+    .gallery-lightbox,
+    .gallery-browser-box,
+    .gallery-lightbox-box,
+    .pdf-viewer-modal,
+    .pdf-viewer-box{
+        transition: none;
+    }
 }
 .pdf-viewer-header{
     display: flex;
@@ -1333,12 +1422,18 @@ body.gallery-lightbox-open{
     .gallery-showcase{
         padding: 18px;
         border-radius: 22px;
+        gap: 14px;
     }
     .gallery-showcase h4{
         font-size: 28px;
     }
+    .gallery-showcase-eyebrow{
+        color: rgb(255, 66, 66);
+    }
     .gallery-showcase-text{
         font-size: 15px;
+        line-height: 1.6;
+        color: #363636;
     }
     .gallery-showcase-preview{
         aspect-ratio: 5 / 4;
@@ -1360,8 +1455,27 @@ body.gallery-lightbox-open{
         align-items: flex-start;
     }
     .gallery-browser-grid{
-        grid-template-columns: 1fr;
-        padding: 14px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        padding: 12px;
+    }
+    .gallery-browser-card{
+        padding: 8px;
+        gap: 8px;
+        border-radius: 16px;
+    }
+    .gallery-browser-meta{
+        flex-direction: column;
+        gap: 4px;
+    }
+    .gallery-browser-item-title{
+        font-size: 12px;
+        line-height: 1.35;
+    }
+    .gallery-browser-item-type{
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        white-space: normal;
     }
     .pdf-viewer-modal{
         padding: 2vh 2vw;

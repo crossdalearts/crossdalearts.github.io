@@ -468,7 +468,8 @@ async function initGalleryExperience() {
 
         if (!galleryItems.length) {
             countEl.textContent = "Gallery coming soon";
-            showcase.disabled = true;
+            showcase.setAttribute("aria-disabled", "true");
+            showcase.classList.add("is-disabled");
             return;
         }
 
@@ -495,6 +496,11 @@ async function initGalleryExperience() {
     renderBrowserGrid();
 
     showcase.addEventListener("click", openBrowser);
+    showcase.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        openBrowser();
+    });
     browser.closeBtn.addEventListener("click", closeBrowser);
     browser.root.addEventListener("click", (event) => {
         if (event.target === browser.root) closeBrowser();
