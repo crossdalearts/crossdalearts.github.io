@@ -25,6 +25,83 @@ a{
     color: inherit;
 }
 :root{
+    --font-size-body: 18px;
+    --line-height-body: 1.6;
+    --font-size-nav: 18px;
+    --font-size-nav-tablet: 16px;
+    --font-size-site-title: 20px;
+    --font-size-site-title-mobile: 18px;
+    --font-size-site-title-small: 17px;
+    --font-size-navbar-tagline: 14px;
+    --font-size-navbar-tagline-mobile: 13px;
+    --font-size-alert-banner: 14px;
+    --font-size-artist-statement: 18px;
+    --font-size-enrollment-button: 16px;
+    --font-size-enrollment-button-mobile: 15px;
+    --font-size-feedback-widget-title: 16px;
+    --font-size-feedback-count: 12px;
+    --font-size-feedback-stars: 14px;
+    --font-size-feedback-name: 14px;
+    --font-size-feedback-message: 14px;
+    --font-size-feedback-leave-button: 13px;
+    --font-size-feedback-social-label: 16px;
+    --font-size-feedback-modal-close: 12px;
+    --font-size-feedback-modal-stars: 16px;
+    --font-size-feedback-modal-name: 15px;
+    --font-size-feedback-modal-message: 15px;
+    --font-size-feedback-form-label: 13px;
+    --font-size-feedback-form-input: 14px;
+    --font-size-feedback-form-submit: 14px;
+    --font-size-feedback-form-note: 12px;
+    --font-size-about: 18px;
+    --font-size-art-expertise: 18px;
+    --font-size-qualification-note: 18px;
+    --font-size-gallery-eyebrow: 12px;
+    --font-size-gallery-title: clamp(28px, 3.8vw, 42px);
+    --font-size-gallery-title-mobile: 28px;
+    --font-size-gallery-text: clamp(15px, 1.45vw, 17px);
+    --font-size-gallery-text-mobile: 15px;
+    --font-size-gallery-count: 14px;
+    --font-size-gallery-action: 14px;
+    --font-size-gallery-browser-title: 22px;
+    --font-size-gallery-browser-count: 13px;
+    --font-size-gallery-lightbox-title: 18px;
+    --font-size-gallery-browser-button: 13px;
+    --font-size-gallery-browser-item-title: 15px;
+    --font-size-gallery-browser-item-title-mobile: 12px;
+    --font-size-gallery-browser-item-type: 11px;
+    --font-size-gallery-browser-item-type-mobile: 9px;
+    --font-size-pdf-title: 18px;
+    --font-size-pdf-title-mobile: 16px;
+    --font-size-pdf-button: 13px;
+    --font-size-exhibitions: 18px;
+    --font-size-recognitions: 18px;
+    --font-size-footer: 14px;
+    --font-size-footer-small: 12px;
+    --font-size-courses-page-title: 34px;
+    --font-size-courses-page-title-mobile: 30px;
+    --font-size-courses-page-subtitle: 18px;
+    --font-size-courses-page-subtitle-mobile: 16px;
+    --font-size-course-card-title: 24px;
+    --font-size-course-card-text: 16px;
+    --font-size-course-card-link: 15px;
+    --font-size-best-seller: 13px;
+    --font-size-story-eyebrow: 14px;
+    --font-size-story-hero-title: clamp(34px, 5vw, 56px);
+    --font-size-story-intro: 18px;
+    --font-size-story-body: 17px;
+    --font-size-story-body-mobile: 16px;
+    --font-size-story-section-title: 24px;
+    --font-size-story-section-title-mobile: 22px;
+    --font-size-story-quote: 22px;
+    --font-size-story-quote-mobile: 19px;
+    --font-size-story-button: 15px;
+    --font-size-course-content: 18px;
+    --font-size-course-enroll-button: 16px;
+    --font-size-course-enroll-button-mobile: 15px;
+    --font-size-download-button: 16px;
+    --font-size-download-button-mobile: 15px;
+    --font-size-bonus-button: 16px;
     --surface-lift-shadow: 0 2px 6px rgba(0, 0, 0, 0.04), 0 10px 22px rgba(0, 0, 0, 0.035);
     --surface-lift-shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.1);
     --glass-hover-light: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.06) 38%, rgba(255, 255, 255, 0.2) 100%);
@@ -37,6 +114,8 @@ a{
     --panel-open-ease: cubic-bezier(0.2, 0.9, 0.24, 1);
     --panel-offset-y: 18px;
     --panel-scale: 0.978;
+    --feedback-swap-duration: 400ms;
+    --feedback-swap-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 body{
     padding-top: 112px;
@@ -467,7 +546,7 @@ button:active{
 }
 nav{
     background-color: rgb(250, 250, 250);
-    font-size: 18px;
+    font-size: var(--font-size-nav);
     position: fixed;
     top: 0;
     left: 0;
@@ -496,10 +575,10 @@ nav{
     margin: 0 15px;
 }
 #site-title{
-    font-size: 20px;
+    font-size: var(--font-size-site-title);
 }
 #navbar p{
-    font-size: 14px;
+    font-size: var(--font-size-navbar-tagline);
 }
 .site-tagline{
     display: inline;
@@ -531,7 +610,7 @@ nav{
     text-align: center;
     padding: 12px;
     margin-top: -25px;
-    font-size: 14px;
+    font-size: var(--font-size-alert-banner);
 }
 
 
@@ -543,7 +622,7 @@ nav{
     margin-top: 50px;
 }
 #artist-statement-paragraph{
-    font-size: 18px;
+    font-size: var(--font-size-artist-statement);
     line-height: 1.5;
     font-style: italic;
 }
@@ -551,7 +630,7 @@ nav{
     /* font-style: italic; */
 }
 #popular-quote{
-    font-size: 18px;
+    font-size: var(--font-size-artist-statement);
     line-height: 1.5;
     font-style: italic;
 }
@@ -581,7 +660,7 @@ nav{
     color: white;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: var(--font-size-enrollment-button);
 
     width: 200px;
 }
@@ -607,10 +686,10 @@ nav{
     gap: 10px;
 }
 .feedback-widget-header h4{
-    font-size: 16px;
+    font-size: var(--font-size-feedback-widget-title);
 }
 .feedback-count{
-    font-size: 12px;
+    font-size: var(--font-size-feedback-count);
     color: #585858;
 }
 .feedback-card{
@@ -621,11 +700,44 @@ nav{
     padding: 12px;
     min-height: 98px;
     cursor: pointer;
-    transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+    transition:
+        transform var(--feedback-swap-duration) var(--feedback-swap-ease),
+        box-shadow 0.22s ease,
+        opacity var(--feedback-swap-duration) var(--feedback-swap-ease),
+        filter var(--feedback-swap-duration) var(--feedback-swap-ease);
 }
-.feedback-card.is-flipping{
-    opacity: 0.25;
-    transform: rotateX(12deg) scale(0.985);
+.feedback-card.is-transitioning{
+    will-change: transform, opacity, filter;
+}
+.feedback-card.is-transitioning.is-exit{
+    animation: feedback-card-exit var(--feedback-swap-duration) var(--feedback-swap-ease) forwards;
+}
+.feedback-card.is-transitioning.is-enter{
+    animation: feedback-card-enter var(--feedback-swap-duration) var(--feedback-swap-ease) forwards;
+}
+@keyframes feedback-card-exit{
+    0%{
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0) scale(1);
+    }
+    100%{
+        opacity: 0.12;
+        filter: blur(0.9px);
+        transform: translateY(6px) scale(0.985);
+    }
+}
+@keyframes feedback-card-enter{
+    0%{
+        opacity: 0.12;
+        filter: blur(0.9px);
+        transform: translateY(6px) scale(0.985);
+    }
+    100%{
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0) scale(1);
+    }
 }
 .feedback-card:hover,
 .feedback-card:focus-visible{
@@ -633,7 +745,7 @@ nav{
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 .feedback-stars{
-    font-size: 14px;
+    font-size: var(--font-size-feedback-stars);
     letter-spacing: 1px;
     color: #d09a00;
 
@@ -641,14 +753,14 @@ nav{
     display: none;
 }
 .feedback-name{
-    font-size: 14px;
+    font-size: var(--font-size-feedback-name);
     font-weight: 700;
     margin-top: 6px;
     color: #151515;
 }
 .feedback-message{
     margin-top: 6px;
-    font-size: 14px;
+    font-size: var(--font-size-feedback-message);
     color: #333;
     line-height: 1.45;
 }
@@ -662,7 +774,7 @@ nav{
     color: #fff;
     border-radius: 999px;
     padding: 10px 14px;
-    font-size: 13px;
+    font-size: var(--font-size-feedback-leave-button);
     cursor: pointer;
 }
 .feedback-social-links{
@@ -674,7 +786,7 @@ nav{
     margin-top: 12px;
 }
 .feedback-social-label{
-    font-size: 16px;
+    font-size: var(--font-size-feedback-social-label);
     color: #2a2a2a;
     margin-right: 2px;
 }
@@ -904,23 +1016,23 @@ nav{
     color: #151515;
     border-radius: 999px;
     padding: 7px 12px;
-    font-size: 12px;
+    font-size: var(--font-size-feedback-modal-close);
     cursor: pointer;
 }
 .feedback-modal-stars{
-    font-size: 16px;
+    font-size: var(--font-size-feedback-modal-stars);
     color: #d09a00;
     margin-top: 12px;
 }
 .feedback-modal-name{
-    font-size: 15px;
+    font-size: var(--font-size-feedback-modal-name);
     font-weight: 700;
     margin-top: 8px;
 }
 .feedback-modal-message{
     margin-top: 10px;
     line-height: 1.6;
-    font-size: 15px;
+    font-size: var(--font-size-feedback-modal-message);
     color: #2d2d2d;
 }
 .feedback-form{
@@ -932,7 +1044,7 @@ nav{
     gap: 10px;
 }
 .feedback-form label{
-    font-size: 13px;
+    font-size: var(--font-size-feedback-form-label);
     color: #232323;
 }
 .feedback-form input,
@@ -943,7 +1055,7 @@ nav{
     border: 1px solid #d7d7d7;
     border-radius: 8px;
     padding: 10px;
-    font-size: 14px;
+    font-size: var(--font-size-feedback-form-input);
     font-family: inherit;
 }
 .feedback-form textarea{
@@ -956,12 +1068,12 @@ nav{
     color: #fff;
     border-radius: 10px;
     padding: 10px 14px;
-    font-size: 14px;
+    font-size: var(--font-size-feedback-form-submit);
     cursor: pointer;
     align-self: flex-end;
 }
 .feedback-form-note{
-    font-size: 12px;
+    font-size: var(--font-size-feedback-form-note);
     color: #595959;
 }
 
@@ -972,7 +1084,7 @@ nav{
     margin-top: 50px;
 }
 #about-me p{
-    font-size: 18px;
+    font-size: var(--font-size-about);
     line-height: 1.5;
 }
 
@@ -989,7 +1101,7 @@ nav{
     flex: 1 1 320px;
 }
 #qualification-note{
-    flex: 1 1 320px;
+    flex: 1 1 1000px;
 }
 #qualification-note{
     background: #f6f6f6;
@@ -1001,14 +1113,14 @@ nav{
 #art-expertise ul{
     list-style-type: disc;
     margin-left: 40px;
-    font-size: 18px;
+    font-size: var(--font-size-art-expertise);
 }
 #art-expertise ul li{
-    margin-bottom: 10px;
-    font-size: 18px;
+    margin-bottom: 8px;
+    font-size: var(--font-size-art-expertise);
 }
 #qualification-note p{
-    font-size: 18px;
+    font-size: var(--font-size-qualification-note);
     line-height: 1.6;
 }
 #artist-network-note{
@@ -1021,7 +1133,7 @@ nav{
     padding: 28px;
 }
 #artist-network-note p{
-    font-size: 18px;
+    font-size: var(--font-size-art-expertise);
     line-height: 1.6;
 }
 
@@ -1062,18 +1174,18 @@ nav{
     gap: 12px;
 }
 .gallery-showcase-eyebrow{
-    font-size: 12px;
+    font-size: var(--font-size-gallery-eyebrow);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: rgb(255, 66, 66);
 }
 .gallery-showcase h4{
-    font-size: clamp(28px, 3.8vw, 42px);
+    font-size: var(--font-size-gallery-title);
     line-height: 1.02;
     color: #161616;
 }
 .gallery-showcase-text{
-    font-size: clamp(15px, 1.45vw, 17px);
+    font-size: var(--font-size-gallery-text);
     line-height: 1.65;
     color: #363636;
     max-width: 52ch;
@@ -1086,7 +1198,7 @@ nav{
     margin-top: 6px;
 }
 #gallery-showcase-count{
-    font-size: 14px;
+    font-size: var(--font-size-gallery-count);
     color: #585858;
 }
 .gallery-showcase-action{
@@ -1097,7 +1209,7 @@ nav{
     background: #111;
     color: #fff;
     padding: 10px 16px;
-    font-size: 14px;
+    font-size: var(--font-size-gallery-action);
 }
 .gallery-showcase-preview{
     width: 100%;
@@ -1204,16 +1316,16 @@ nav{
     background: #fafafa;
 }
 .gallery-browser-title{
-    font-size: 22px;
+    font-size: var(--font-size-gallery-browser-title);
     color: #161616;
 }
 .gallery-browser-count{
     margin-top: 4px;
-    font-size: 13px;
+    font-size: var(--font-size-gallery-browser-count);
     color: #626262;
 }
 .gallery-lightbox-title{
-    font-size: 18px;
+    font-size: var(--font-size-gallery-lightbox-title);
     color: #171717;
 }
 .gallery-browser-actions,
@@ -1223,6 +1335,7 @@ nav{
     gap: 10px;
     flex-wrap: wrap;
 }
+.gallery-browser-back,
 .gallery-browser-fullscreen,
 .gallery-browser-close,
 .gallery-lightbox-fullscreen,
@@ -1232,7 +1345,7 @@ nav{
     color: #151515;
     border-radius: 999px;
     padding: 8px 14px;
-    font-size: 13px;
+    font-size: var(--font-size-gallery-browser-button);
     line-height: 1;
     cursor: pointer;
 }
@@ -1243,6 +1356,7 @@ nav{
     padding: 18px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    align-items: start;
     gap: 16px;
     background: linear-gradient(180deg, #fcfcfc 0%, #f5f5f5 100%);
 }
@@ -1255,7 +1369,25 @@ nav{
     cursor: pointer;
     display: flex;
     flex-direction: column;
+    align-self: start;
     gap: 12px;
+}
+.gallery-browser-card.is-category{
+    background:
+        linear-gradient(180deg, #ffffff 0%, #f6f6f6 100%);
+}
+.gallery-browser-card.is-category .gallery-browser-meta{
+    gap: 6px;
+}
+.gallery-browser-card.is-category .gallery-browser-item-title{
+    font-weight: 700;
+    line-height: 1.3;
+}
+.gallery-browser-card.is-category .gallery-browser-item-type{
+    letter-spacing: normal;
+    text-transform: none;
+    line-height: 1.3;
+    white-space: normal;
 }
 .gallery-browser-media-wrap{
     aspect-ratio: 4 / 5;
@@ -1270,15 +1402,16 @@ nav{
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    align-self: start;
     gap: 10px;
 }
 .gallery-browser-item-title{
-    font-size: 15px;
+    font-size: var(--font-size-gallery-browser-item-title);
     line-height: 1.45;
     color: #202020;
 }
 .gallery-browser-item-type{
-    font-size: 11px;
+    font-size: var(--font-size-gallery-browser-item-type);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: #6a6a6a;
@@ -1385,7 +1518,7 @@ body.gallery-lightbox-open{
     background: #fafafa;
 }
 .pdf-viewer-title{
-    font-size: 18px;
+    font-size: var(--font-size-pdf-title);
     color: #181818;
 }
 .pdf-viewer-actions{
@@ -1402,7 +1535,7 @@ body.gallery-lightbox-open{
     color: #111;
     border-radius: 999px;
     padding: 9px 14px;
-    font-size: 13px;
+    font-size: var(--font-size-pdf-button);
     cursor: pointer;
 }
 .pdf-viewer-frame{
@@ -1442,13 +1575,13 @@ body.gallery-lightbox-open{
         gap: 14px;
     }
     .gallery-showcase h4{
-        font-size: 28px;
+        font-size: var(--font-size-gallery-title-mobile);
     }
     .gallery-showcase-eyebrow{
         color: rgb(255, 66, 66);
     }
     .gallery-showcase-text{
-        font-size: 15px;
+        font-size: var(--font-size-gallery-text-mobile);
         line-height: 1.6;
         color: #363636;
     }
@@ -1486,11 +1619,11 @@ body.gallery-lightbox-open{
         gap: 4px;
     }
     .gallery-browser-item-title{
-        font-size: 12px;
+        font-size: var(--font-size-gallery-browser-item-title-mobile);
         line-height: 1.35;
     }
     .gallery-browser-item-type{
-        font-size: 9px;
+        font-size: var(--font-size-gallery-browser-item-type-mobile);
         letter-spacing: 0.08em;
         white-space: normal;
     }
@@ -1507,7 +1640,7 @@ body.gallery-lightbox-open{
         flex-direction: column;
     }
     .pdf-viewer-title{
-        font-size: 16px;
+        font-size: var(--font-size-pdf-title-mobile);
     }
 }
 
@@ -1521,10 +1654,10 @@ body.gallery-lightbox-open{
 }
 #exhibitions .exhibitions-names{
     margin-bottom: 10px;
-    font-size: 18px;
+    font-size: var(--font-size-exhibitions);
 }
 #exhibition-note{
-    font-size: 18px;
+    font-size: var(--font-size-exhibitions);
     /* font-style: italic; */
 }
 
@@ -1536,10 +1669,10 @@ body.gallery-lightbox-open{
 }
 #recognitions .recognition-names{
     margin-bottom: 10px;
-    font-size: 18px;
+    font-size: var(--font-size-recognitions);
 }
 #recognition-note{
-    font-size: 18px;
+    font-size: var(--font-size-recognitions);
     /* font-style: italic; */
 }
 
@@ -1552,7 +1685,7 @@ footer{
     border-top: 1px solid #ececec;
 }
 footer p{
-    font-size: 14px;
+    font-size: var(--font-size-footer);
     color: #555;
 }               
 
@@ -1568,11 +1701,11 @@ footer p{
     margin: 30px auto 40px;
 }
 #courses-page h1{
-    font-size: 34px;
+    font-size: var(--font-size-courses-page-title);
     margin-bottom: 10px;
 }
 #courses-page-subtitle{
-    font-size: 18px;
+    font-size: var(--font-size-courses-page-subtitle);
     line-height: 1.5;
     margin-bottom: 24px;
 }
@@ -1603,11 +1736,11 @@ footer p{
     padding: 16px;
 }
 .course-card-content h2{
-    font-size: 24px;
+    font-size: var(--font-size-course-card-title);
     margin-bottom: 8px;
 }
 .course-card-content p{
-    font-size: 16px;
+    font-size: var(--font-size-course-card-text);
     line-height: 1.6;
     margin-bottom: 16px;
 }
@@ -1617,7 +1750,7 @@ footer p{
     background: #111;
     color: #fff;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: var(--font-size-course-card-link);
 }
 .course-card-actions,
 .course-cta-group{
@@ -1639,7 +1772,7 @@ footer p{
     background: transparent;
     color: rgb(255, 66, 66);
     border: none;
-    font-size: 13px;
+    font-size: var(--font-size-best-seller);
     font-weight: 700;
     white-space: nowrap;
     animation: best-seller-glow 1s ease-in-out infinite;
@@ -1677,20 +1810,20 @@ footer p{
     width: 100%;
 }
 .story-eyebrow{
-    font-size: 14px;
+    font-size: var(--font-size-story-eyebrow);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: #555;
     margin-bottom: 10px;
 }
 .story-hero h1{
-    font-size: clamp(34px, 5vw, 56px);
+    font-size: var(--font-size-story-hero-title);
     line-height: 1.08;
     max-width: 900px;
 }
 .story-intro{
     margin-top: 18px;
-    font-size: 18px;
+    font-size: var(--font-size-story-intro);
     line-height: 1.7;
     width: 100%;
     color: #2d2d2d;
@@ -1728,13 +1861,13 @@ footer p{
 }
 .story-card h2,
 .story-section h2{
-    font-size: 24px;
+    font-size: var(--font-size-story-section-title);
     margin-bottom: 12px;
 }
 .story-card p,
 .story-section p,
 .story-quote p b{
-    font-size: 17px;
+    font-size: var(--font-size-story-body);
     line-height: 1.7;
     color: #292929;
 }
@@ -1752,7 +1885,7 @@ footer p{
 }
 .story-quote p{
     font-style: italic;
-    font-size: 22px;
+    font-size: var(--font-size-story-quote);
     line-height: 1.6;
 }
 #my-story-button{
@@ -1761,7 +1894,7 @@ footer p{
     background: black;
     color: white;
     margin-left: 20px;
-    font-size: 15px;
+    font-size: var(--font-size-story-button);
 }
 
 #whole-course-title-tagline-container{
@@ -1776,7 +1909,7 @@ footer p{
     margin: 50px auto;
 }
 #course-content p{
-    font-size: 18px;
+    font-size: var(--font-size-course-content);
     line-height: 1.5;
 }
 #course-content img{
@@ -1791,7 +1924,7 @@ footer p{
     color: white;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: var(--font-size-course-enroll-button);
     margin-left: 0;
     white-space: nowrap;
 }
@@ -1819,7 +1952,7 @@ footer p{
     color: white;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: var(--font-size-download-button);
     width: 200px;
 }
 
@@ -1831,14 +1964,14 @@ footer p{
     color: black;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: var(--font-size-bonus-button);
     width: 100%;
 }
 
 /* Responsive layout */
 @media (max-width: 992px){
     nav{
-        font-size: 16px;
+        font-size: var(--font-size-nav-tablet);
     }
     #whole-container-course{
         flex-direction: column;
@@ -1870,10 +2003,10 @@ footer p{
         flex-wrap: wrap;
     }
     #site-title{
-        font-size: 18px;
+        font-size: var(--font-size-site-title-mobile);
     }
     #navbar p{
-        font-size: 13px;
+        font-size: var(--font-size-navbar-tagline-mobile);
         line-height: 1.4;
         max-width: calc(100% - 58px);
     }
@@ -1947,10 +2080,10 @@ footer p{
         grid-template-columns: 1fr;
     }
     #courses-page h1{
-        font-size: 30px;
+        font-size: var(--font-size-courses-page-title-mobile);
     }
     #courses-page-subtitle{
-        font-size: 16px;
+        font-size: var(--font-size-courses-page-subtitle-mobile);
     }
 
     #artist-statement-paragraph,
@@ -1964,7 +2097,7 @@ footer p{
     #recognitions .recognition-names,
     #exhibition-note,
     #recognition-note{
-        font-size: 16px;
+        font-size: var(--font-size-body);
         line-height: 1.6;
     }
     #expertise-note-row{
@@ -1987,7 +2120,7 @@ footer p{
         width: auto;
         min-width: 180px;
         padding: 14px;
-        font-size: 15px;
+        font-size: var(--font-size-enrollment-button-mobile);
     }
     #enrollment-layout{
         grid-template-columns: 1fr;
@@ -2015,7 +2148,7 @@ footer p{
         width: auto;
         min-width: 170px;
         padding: 14px;
-        font-size: 15px;
+        font-size: var(--font-size-course-enroll-button-mobile);
     }
     .download-course-details-button{
         width: auto;
@@ -2045,15 +2178,15 @@ footer p{
     .story-intro,
     .story-card p,
     .story-section p{
-        font-size: 16px;
+        font-size: var(--font-size-story-body-mobile);
         line-height: 1.6;
     }
     .story-card h2,
     .story-section h2{
-        font-size: 22px;
+        font-size: var(--font-size-story-section-title-mobile);
     }
     .story-quote p{
-        font-size: 19px;
+        font-size: var(--font-size-story-quote-mobile);
     }
     .story-intro-image{
         width: min(45%, 220px);
@@ -2068,7 +2201,7 @@ footer p{
 
 @media (max-width: 576px){
     #site-title{
-        font-size: 17px;
+        font-size: var(--font-size-site-title-small);
     }
     #artist-statement,
     #enrollment,
@@ -2115,6 +2248,6 @@ footer p{
         padding: 16px;
     }
     footer p{
-        font-size: 12px;
+        font-size: var(--font-size-footer-small);
     }
 }

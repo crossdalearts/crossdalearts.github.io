@@ -163,88 +163,151 @@ async function loadGalleryConfig() {
         const response = await fetch(GALLERY_META_URL, { method: "GET", cache: "no-store" });
         if (!response.ok) throw new Error("Gallery metadata fetch failed");
         const data = await response.json();
+
+        const normalizedCategories = Array.isArray(data?.categories)
+            ? data.categories
+                .filter((category) => category && typeof category === "object")
+                .map((category) => ({
+                    name: String(category.name || category.category || "").trim() || "Uncategorized",
+                    preview: category.preview && typeof category.preview === "object"
+                        ? category.preview
+                        : null,
+                    items: Array.isArray(category.items) ? category.items : []
+                }))
+            : [];
+
+        // Backward compatibility for the old flat structure.
+        if (!normalizedCategories.length && Array.isArray(data?.items)) {
+            const legacyMap = new Map();
+
+            data.items.forEach((item) => {
+                if (!item || typeof item !== "object") return;
+                const categoryName = String(item.category || "").trim() || "Uncategorized";
+                if (!legacyMap.has(categoryName)) {
+                    legacyMap.set(categoryName, {
+                        name: categoryName,
+                        preview: null,
+                        items: []
+                    });
+                }
+                legacyMap.get(categoryName).items.push(item);
+            });
+
+            normalizedCategories.push(...legacyMap.values());
+        }
+
         return {
             homepagePreview: data?.homepage_preview && typeof data.homepage_preview === "object"
                 ? data.homepage_preview
                 : null,
-            items: Array.isArray(data?.items) ? data.items : []
+            categories: normalizedCategories
         };
     } catch (_) {
         return {
             homepagePreview: null,
-            items: []
+            categories: []
         };
     }
 }
 
 async function loadGalleryItems() {
     const config = await loadGalleryConfig();
-    const validEntries = config.items.filter((item) => item && typeof item.path === "string");
+    const categories = [];
+    const items = [];
 
-    const checks = validEntries.map(async (item) => {
-        const src = String(item.path || "").trim().replace(/\\/g, "/");
-        const type = String(item.type || "").trim().toLowerCase();
-        const title = String(item.title || "").trim();
-        const category = String(item.category || "").trim();
+    for (const category of config.categories) {
+        const validEntries = category.items.filter((item) => item && typeof item.path === "string");
+        const checks = validEntries.map(async (item) => {
+            const src = String(item.path || "").trim().replace(/\\/g, "/");
+            const type = String(item.type || "").trim().toLowerCase();
+            const title = String(item.title || "").trim();
 
-        if (!src) return null;
-        if (type !== "image" && type !== "video") return null;
+            if (!src) return null;
+            if (type !== "image" && type !== "video") return null;
 
-        const exists = type === "video"
-            ? await probeVideoSource(src)
-            : await probeImageSource(src);
+            const exists = type === "video"
+                ? await probeVideoSource(src)
+                : await probeImageSource(src);
 
-        if (!exists) return null;
+            if (!exists) return null;
 
-        return buildGalleryItem({
-            src,
-            type,
-            title,
-            category
+            return buildGalleryItem({
+                src,
+                type,
+                title,
+                category: category.name
+            });
         });
-    });
 
-    const items = (await Promise.all(checks)).filter(Boolean);
+        const resolvedItems = (await Promise.all(checks)).filter(Boolean);
+        if (!resolvedItems.length) continue;
+
+        let previewItem = null;
+        if (category.preview) {
+            const previewSrc = String(category.preview.path || "").trim().replace(/\\/g, "/");
+            const previewType = String(category.preview.type || "").trim().toLowerCase();
+            const previewTitle = String(category.preview.title || "").trim();
+
+            if (previewSrc && (previewType === "image" || previewType === "video")) {
+                const exists = previewType === "video"
+                    ? await probeVideoSource(previewSrc)
+                    : await probeImageSource(previewSrc);
+
+                if (exists) {
+                    previewItem = buildGalleryItem({
+                        src: previewSrc,
+                        type: previewType,
+                        title: previewTitle,
+                        category: category.name
+                    });
+                }
+            }
+        }
+
+        categories.push({
+            name: category.name,
+            thumbnailItem: previewItem || resolvedItems[0],
+            items: resolvedItems
+        });
+        items.push(...resolvedItems);
+    }
 
     let homepagePreview = null;
     if (config.homepagePreview) {
-        const previewSrc = String(config.homepagePreview.path || "").trim().replace(/\\/g, "/");
-        const previewType = String(config.homepagePreview.type || "").trim().toLowerCase();
-        const previewTitle = String(config.homepagePreview.title || "").trim();
-        const previewCategory = String(config.homepagePreview.category || "").trim();
+        const directPreview = config.homepagePreview.preview;
+        if (directPreview && typeof directPreview === "object") {
+            const previewSrc = String(directPreview.path || "").trim().replace(/\\/g, "/");
+            const previewType = String(directPreview.type || "").trim().toLowerCase();
+            const previewTitle = String(directPreview.title || "").trim();
 
-        if (previewSrc && (previewType === "image" || previewType === "video")) {
-            const exists = previewType === "video"
-                ? await probeVideoSource(previewSrc)
-                : await probeImageSource(previewSrc);
+            if (previewSrc && (previewType === "image" || previewType === "video")) {
+                const exists = previewType === "video"
+                    ? await probeVideoSource(previewSrc)
+                    : await probeImageSource(previewSrc);
 
-            if (exists) {
-                homepagePreview = buildGalleryItem({
-                    src: previewSrc,
-                    type: previewType,
-                    title: previewTitle,
-                    category: previewCategory
-                });
+                if (exists) {
+                    homepagePreview = buildGalleryItem({
+                        src: previewSrc,
+                        type: previewType,
+                        title: previewTitle
+                    });
+                }
+            }
+        }
+
+        if (!homepagePreview) {
+            const previewCategoryName = String(config.homepagePreview.category || "").trim();
+            const matchedCategory = categories.find((category) => category.name === previewCategoryName);
+            if (matchedCategory && matchedCategory.items[0]) {
+                homepagePreview = matchedCategory.items[0];
             }
         }
     }
 
     return {
         homepagePreview,
-        items: items.sort((a, b) => {
-        const typeOrder = { video: 0, image: 1 };
-        const orderA = typeOrder[a.type] ?? Number.MAX_SAFE_INTEGER;
-        const orderB = typeOrder[b.type] ?? Number.MAX_SAFE_INTEGER;
-        if (orderA !== orderB) return orderA - orderB;
-
-        const infoA = getGalleryStemInfo(a.src || "");
-        const infoB = getGalleryStemInfo(b.src || "");
-        const indexA = infoA ? infoA.index : Number.MAX_SAFE_INTEGER;
-        const indexB = infoB ? infoB.index : Number.MAX_SAFE_INTEGER;
-
-        if (indexA !== indexB) return indexA - indexB;
-        return 0;
-        })
+        categories,
+        items
     };
 }
 
@@ -286,7 +349,9 @@ function createGalleryBrowserModal() {
             root: existing,
             box: existing.querySelector(".gallery-browser-box"),
             grid: existing.querySelector(".gallery-browser-grid"),
+            title: existing.querySelector(".gallery-browser-title"),
             closeBtn: existing.querySelector(".gallery-browser-close"),
+            backBtn: existing.querySelector(".gallery-browser-back"),
             fullscreenBtn: existing.querySelector(".gallery-browser-fullscreen"),
             counter: existing.querySelector(".gallery-browser-count")
         };
@@ -320,6 +385,12 @@ function createGalleryBrowserModal() {
     const actions = document.createElement("div");
     actions.className = "gallery-browser-actions";
 
+    const backBtn = document.createElement("button");
+    backBtn.type = "button";
+    backBtn.className = "gallery-browser-back";
+    backBtn.textContent = "Back";
+    backBtn.hidden = true;
+
     const fullscreenBtn = document.createElement("button");
     fullscreenBtn.type = "button";
     fullscreenBtn.className = "gallery-browser-fullscreen";
@@ -330,6 +401,7 @@ function createGalleryBrowserModal() {
     closeBtn.className = "gallery-browser-close";
     closeBtn.textContent = "Close";
 
+    actions.appendChild(backBtn);
     actions.appendChild(fullscreenBtn);
     actions.appendChild(closeBtn);
     header.appendChild(titleWrap);
@@ -343,7 +415,7 @@ function createGalleryBrowserModal() {
     root.appendChild(box);
     document.body.appendChild(root);
 
-    return { root, box, grid, closeBtn, fullscreenBtn, counter };
+    return { root, box, grid, title, closeBtn, backBtn, fullscreenBtn, counter };
 }
 
 async function initGalleryExperience() {
@@ -354,6 +426,7 @@ async function initGalleryExperience() {
 
     const galleryConfig = await loadGalleryItems();
     const galleryItems = galleryConfig.items;
+    const galleryCategories = galleryConfig.categories;
     const browser = createGalleryBrowserModal();
     const lightbox = createGalleryLightbox();
 
@@ -395,8 +468,7 @@ async function initGalleryExperience() {
         syncLightboxFullscreenButton();
     };
 
-    const openLightbox = (index) => {
-        const item = galleryItems[index];
+    const openLightbox = (item) => {
         if (!item) return;
 
         lightbox.content.innerHTML = "";
@@ -433,11 +505,52 @@ async function initGalleryExperience() {
         syncLightboxFullscreenButton();
     };
 
-    const renderBrowserGrid = () => {
+    const renderCategoryFolders = () => {
         browser.grid.innerHTML = "";
-        browser.counter.textContent = `${galleryItems.length} works`;
+        browser.title.textContent = "CrossdaleArts Gallery";
+        browser.counter.textContent = `${galleryCategories.length} categories • ${galleryItems.length} works`;
+        browser.backBtn.hidden = true;
 
-        galleryItems.forEach((item, index) => {
+        galleryCategories.forEach((category) => {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "gallery-browser-card is-category";
+            card.setAttribute("aria-label", `Open ${category.name} category`);
+
+            const mediaWrap = document.createElement("div");
+            mediaWrap.className = "gallery-browser-media-wrap";
+            if (category.thumbnailItem) {
+                mediaWrap.appendChild(renderGalleryPreviewMedia(category.thumbnailItem));
+            }
+
+            const meta = document.createElement("div");
+            meta.className = "gallery-browser-meta";
+
+            const title = document.createElement("p");
+            title.className = "gallery-browser-item-title";
+            title.textContent = category.name;
+
+            const type = document.createElement("span");
+            type.className = "gallery-browser-item-type";
+            type.textContent = `${category.items.length} item${category.items.length === 1 ? "" : "s"}`;
+
+            meta.appendChild(title);
+            meta.appendChild(type);
+            card.appendChild(mediaWrap);
+            card.appendChild(meta);
+
+            card.addEventListener("click", () => renderCategoryItems(category));
+            browser.grid.appendChild(card);
+        });
+    };
+
+    const renderCategoryItems = (category) => {
+        browser.grid.innerHTML = "";
+        browser.title.textContent = category.name;
+        browser.counter.textContent = `${category.items.length} works`;
+        browser.backBtn.hidden = false;
+
+        category.items.forEach((item) => {
             const card = document.createElement("button");
             card.type = "button";
             card.className = "gallery-browser-card";
@@ -456,14 +569,14 @@ async function initGalleryExperience() {
 
             const type = document.createElement("span");
             type.className = "gallery-browser-item-type";
-            type.textContent = item.category || (item.type === "video" ? "Video" : "Artwork");
+            type.textContent = item.type === "video" ? "Video" : "Image";
 
             meta.appendChild(title);
             meta.appendChild(type);
             card.appendChild(mediaWrap);
             card.appendChild(meta);
 
-            card.addEventListener("click", () => openLightbox(index));
+            card.addEventListener("click", () => openLightbox(item));
             browser.grid.appendChild(card);
         });
     };
@@ -478,7 +591,7 @@ async function initGalleryExperience() {
             return;
         }
 
-        countEl.textContent = `${galleryItems.length} works in the archive`;
+        countEl.textContent = `${galleryCategories.length} categories • ${galleryItems.length} works`;
 
         const heroItem = galleryConfig.homepagePreview || galleryItems[0];
         if (!heroItem) return;
@@ -491,6 +604,7 @@ async function initGalleryExperience() {
 
     const openBrowser = () => {
         if (!galleryItems.length) return;
+        renderCategoryFolders();
         browser.root.classList.add("is-open");
         browser.root.setAttribute("aria-hidden", "false");
         syncOverlayScrollLock();
@@ -498,7 +612,7 @@ async function initGalleryExperience() {
     };
 
     renderShowcase();
-    renderBrowserGrid();
+    renderCategoryFolders();
 
     showcase.addEventListener("click", openBrowser);
     showcase.addEventListener("keydown", (event) => {
@@ -507,6 +621,7 @@ async function initGalleryExperience() {
         openBrowser();
     });
     browser.closeBtn.addEventListener("click", closeBrowser);
+    browser.backBtn.addEventListener("click", renderCategoryFolders);
     browser.root.addEventListener("click", (event) => {
         if (event.target === browser.root) closeBrowser();
     });
@@ -949,7 +1064,8 @@ function prioritizeSources(sources) {
     });
 }
 
-const FEEDBACK_ROTATION_MS = 2000;
+const FEEDBACK_ROTATION_MS = 400;
+const FEEDBACK_TRANSITION_MS = 400;
 const FEEDBACK_DATA_URL = "/data/feedbacks.json";
 const FEEDBACK_STORAGE_KEY = "crossdale_feedbacks";
 const FEEDBACK_SOCIAL_LINKS = [
@@ -988,6 +1104,7 @@ async function initFeedbackWidget() {
     let pointerStartX = 0;
     let pointerStartY = 0;
     let suppressNextClick = false;
+    let isAnimating = false;
 
     const widget = document.createElement("section");
     widget.className = "feedback-widget";
@@ -1081,24 +1198,44 @@ async function initFeedbackWidget() {
         count.textContent = `${feedbacks.length} reviews`;
     }
 
-    function goNext() {
-        if (feedbacks.length <= 1) return;
-        card.classList.add("is-flipping");
-        window.setTimeout(() => {
-            currentIndex = (currentIndex + 1) % feedbacks.length;
+    function animateTo(nextIndex) {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        card.classList.remove("is-exit", "is-enter");
+        card.classList.add("is-transitioning", "is-exit");
+
+        const handleExitEnd = (event) => {
+            if (event.animationName !== "feedback-card-exit") return;
+            card.removeEventListener("animationend", handleExitEnd);
+
+            currentIndex = nextIndex;
             renderCurrent();
-            card.classList.remove("is-flipping");
-        }, 220);
+
+            card.classList.remove("is-exit");
+            card.classList.add("is-enter");
+
+            const handleEnterEnd = (enterEvent) => {
+                if (enterEvent.animationName !== "feedback-card-enter") return;
+                card.removeEventListener("animationend", handleEnterEnd);
+                card.classList.remove("is-transitioning", "is-exit", "is-enter");
+                isAnimating = false;
+            };
+
+            card.addEventListener("animationend", handleEnterEnd);
+        };
+
+        card.addEventListener("animationend", handleExitEnd);
+    }
+
+    function goNext() {
+        if (feedbacks.length <= 1 || isAnimating) return;
+        animateTo((currentIndex + 1) % feedbacks.length);
     }
 
     function goPrev() {
-        if (feedbacks.length <= 1) return;
-        card.classList.add("is-flipping");
-        window.setTimeout(() => {
-            currentIndex = (currentIndex - 1 + feedbacks.length) % feedbacks.length;
-            renderCurrent();
-            card.classList.remove("is-flipping");
-        }, 220);
+        if (feedbacks.length <= 1 || isAnimating) return;
+        animateTo((currentIndex - 1 + feedbacks.length) % feedbacks.length);
     }
 
     function startRotation() {

@@ -1,40 +1,92 @@
 {
   "homepage_preview": {
-    "path": "images/Gallery/gallery-image-23.JPEG",
-    "title": "Painting Image",
-    "category": "Records",
-    "type": "image"
+    "preview": {
+      "path": "images/Gallery/gallery-image-23.JPEG",
+      "title": "Painting",
+      "type": "image"
+    },
+    "category": "Records"
   },
-  "items": [
-    { "path": "Videos/gallery-video-2.mov.mp4", "title": "The True Value of Art", "category": "Must Watch", "type": "video" },
-    { "path": "images/Gallery/gallery-image-1.jpeg", "title": "National Spokesperson", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-3.jpeg", "title": "Renowned Artists", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-4.jpeg", "title": "From Ministry of Textiles / Culture", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-5.jpeg", "title": "National Spokesperson", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-6.jpeg", "title": "Art Directors and Curators", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-7.jpeg", "title": "Certificate of Appreciation", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-8.jpeg", "title": "Certificate of Appreciation", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-9.jpeg", "title": "Live Class", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-10.jpeg", "title": "Explanation - Live Class", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-11.jpeg", "title": "Live Class", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-12.jpeg", "title": "About the Artist", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-13.jpeg", "title": "Exhibition Participation", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-14.jpeg", "title": "Worked in a Book", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-15.jpeg", "title": "Painting for Explaining Students", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-16.jpeg", "title": "Class 11th Chemistry Question Paper", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-17.jpeg", "title": "Live Class", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-18.jpeg", "title": "Live Masterclass", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-19.jpeg", "title": "Self designed character", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-20.jpeg", "title": "Meeting", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-21.jpeg", "title": "Explanation", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-22.jpeg", "title": "Exhibition", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-23.JPEG", "title": "Painting", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-24.jpg", "title": "Arabic Calligraphy", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-25.jpeg", "title": "Arabic Calligraphy", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-26.jpeg", "title": "Arabic Calligraphy", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-27.PNG", "title": "Live Masterclass", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-28.PNG", "title": "Hindi Calligraphy Digital Art", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-29.jpeg", "title": "Worked as a Digital Artist in some shows", "category": "Records", "type": "image" },
-    { "path": "images/Gallery/gallery-image-30.jpeg", "title": "Worked as a Digital Artist in some shows", "category": "Records", "type": "image" }
+  "categories": [
+    {
+      "name": "Must Watch",
+      "preview": {
+        "path": "Videos/gallery-video-2.mov.mp4",
+        "title": "The True Value of Art",
+        "type": "video"
+      },
+      "items": [
+        { "path": "Videos/gallery-video-2.mov.mp4", "title": "The True Value of Art", "type": "video" }
+      ]
+    },
+    {
+      "name": "Archives",
+      "preview": {
+        "path": "images/Gallery/gallery-image-1.JPEG",
+        "title": "Painting",
+        "type": "image"
+      },
+      "items": [
+        { "path": "images/Gallery/gallery-image-1.jpeg", "title": "National Spokesperson", "type": "image" },
+        { "path": "images/Gallery/gallery-image-3.jpeg", "title": "Renowned Artists", "type": "image" },
+        { "path": "images/Gallery/gallery-image-4.jpeg", "title": "From Ministry of Textiles / Culture", "type": "image" },
+        { "path": "images/Gallery/gallery-image-5.jpeg", "title": "National Spokesperson", "type": "image" },
+        { "path": "images/Gallery/gallery-image-6.jpeg", "title": "Art Directors and Curators", "type": "image" },
+        { "path": "images/Gallery/gallery-image-7.jpeg", "title": "Certificate of Appreciation", "type": "image" },
+        { "path": "images/Gallery/gallery-image-8.jpeg", "title": "Certificate of Appreciation", "type": "image" },
+        { "path": "images/Gallery/gallery-image-12.jpeg", "title": "About the Artist", "type": "image" },
+        { "path": "images/Gallery/gallery-image-13.jpeg", "title": "Exhibition Participation", "type": "image" },
+        { "path": "images/Gallery/gallery-image-14.jpeg", "title": "Worked in a Book", "type": "image" },
+        { "path": "images/Gallery/gallery-image-20.jpeg", "title": "Meeting", "type": "image" },
+        { "path": "images/Gallery/gallery-image-22.jpeg", "title": "Exhibition", "type": "image" }
+      ]
+    },
+    {
+      "name": "Calligraphy",
+      "preview": {
+        "path": "images/Gallery/gallery-image-24.JPEG",
+        "title": "Painting",
+        "type": "image"
+      },
+      "items": [
+        { "path": "images/Gallery/gallery-image-28.PNG", "title": "Hindi Calligraphy Digital Art", "type": "image" },
+        { "path": "images/Gallery/gallery-image-24.jpg", "title": "Arabic Calligraphy", "type": "image" },
+        { "path": "images/Gallery/gallery-image-25.jpeg", "title": "Arabic Calligraphy", "type": "image" },
+        { "path": "images/Gallery/gallery-image-26.jpeg", "title": "Arabic Calligraphy", "type": "image" }
+      ]
+    },
+    {
+      "name": "Paintings",
+      "preview": {
+        "path": "images/Gallery/gallery-image-23.JPEG",
+        "title": "Painting",
+        "type": "image"
+      },
+      "items": [
+          { "path": "images/Gallery/gallery-image-23.JPEG", "title": "Painting", "type": "image" },
+          { "path": "images/Gallery/gallery-image-15.jpeg", "title": "Painting for Explaining Students", "type": "image" },
+          { "path": "images/Gallery/gallery-image-16.jpeg", "title": "Class 11th Chemistry Question Paper", "type": "image" },
+          { "path": "images/Gallery/gallery-image-19.jpeg", "title": "Self designed character", "type": "image" },
+          { "path": "images/Gallery/gallery-image-29.jpeg", "title": "Worked as a Digital Artist in some shows", "type": "image" },
+          { "path": "images/Gallery/gallery-image-30.jpeg", "title": "Worked as a Digital Artist in some shows", "type": "image" }
+      ]
+    },
+    {
+      "name": "Live Classes",
+      "preview": {
+        "path": "images/Gallery/gallery-image-27.PNG",
+        "title": "Painting",
+        "type": "image"
+      },
+      "items": [
+        { "path": "images/Gallery/gallery-image-27.PNG", "title": "Live Masterclass", "type": "image" },
+        { "path": "images/Gallery/gallery-image-17.jpeg", "title": "Live Class", "type": "image" },
+        { "path": "images/Gallery/gallery-image-18.jpeg", "title": "Live Masterclass", "type": "image" },
+        { "path": "images/Gallery/gallery-image-9.jpeg", "title": "Live Class", "type": "image" },
+        { "path": "images/Gallery/gallery-image-10.jpeg", "title": "Explanation - Live Class", "type": "image" },
+        { "path": "images/Gallery/gallery-image-11.jpeg", "title": "Live Class", "type": "image" },
+        { "path": "images/Gallery/gallery-image-21.jpeg", "title": "Explanation", "type": "image" }
+      ]
+    }
   ]
 }
