@@ -26,6 +26,7 @@ a{
 }
 :root{
     --font-size-body: 18px;
+    --font-size-body-mobile: 16px;
     --line-height-body: 1.6;
     --font-size-nav: 18px;
     --font-size-nav-tablet: 16px;
@@ -35,15 +36,22 @@ a{
     --font-size-navbar-tagline: 14px;
     --font-size-navbar-tagline-mobile: 13px;
     --font-size-alert-banner: 14px;
+    --font-size-alert-banner-mobile: 13px;
     --font-size-artist-statement: 18px;
+    --font-size-artist-statement-mobile: 16px;
     --font-size-enrollment-button: 16px;
     --font-size-enrollment-button-mobile: 15px;
     --font-size-feedback-widget-title: 16px;
+    --font-size-feedback-widget-title-mobile: 15px;
     --font-size-feedback-count: 12px;
+    --font-size-feedback-count-mobile: 11px;
     --font-size-feedback-stars: 14px;
     --font-size-feedback-name: 14px;
+    --font-size-feedback-name-mobile: 13px;
     --font-size-feedback-message: 14px;
+    --font-size-feedback-message-mobile: 13px;
     --font-size-feedback-leave-button: 13px;
+    --font-size-feedback-leave-button-mobile: 12px;
     --font-size-feedback-social-label: 16px;
     --font-size-feedback-modal-close: 12px;
     --font-size-feedback-modal-stars: 16px;
@@ -54,8 +62,11 @@ a{
     --font-size-feedback-form-submit: 14px;
     --font-size-feedback-form-note: 12px;
     --font-size-about: 18px;
+    --font-size-about-mobile: 16px;
     --font-size-art-expertise: 18px;
+    --font-size-art-expertise-mobile: 16px;
     --font-size-qualification-note: 18px;
+    --font-size-qualification-note-mobile: 16px;
     --font-size-gallery-eyebrow: 12px;
     --font-size-gallery-title: clamp(28px, 3.8vw, 42px);
     --font-size-gallery-title-mobile: 28px;
@@ -75,20 +86,27 @@ a{
     --font-size-pdf-title-mobile: 16px;
     --font-size-pdf-button: 13px;
     --font-size-exhibitions: 18px;
+    --font-size-exhibitions-mobile: 16px;
     --font-size-recognitions: 18px;
+    --font-size-recognitions-mobile: 16px;
     --font-size-footer: 14px;
+    --font-size-footer-mobile: 13px;
     --font-size-footer-small: 12px;
     --font-size-courses-page-title: 34px;
     --font-size-courses-page-title-mobile: 30px;
     --font-size-courses-page-subtitle: 18px;
     --font-size-courses-page-subtitle-mobile: 16px;
     --font-size-course-card-title: 24px;
+    --font-size-course-card-title-mobile: 22px;
     --font-size-course-card-text: 16px;
+    --font-size-course-card-text-mobile: 15px;
     --font-size-course-card-link: 15px;
+    --font-size-course-card-link-mobile: 14px;
     --font-size-best-seller: 13px;
     --font-size-story-eyebrow: 14px;
     --font-size-story-hero-title: clamp(34px, 5vw, 56px);
     --font-size-story-intro: 18px;
+    --font-size-story-intro-mobile: 16px;
     --font-size-story-body: 17px;
     --font-size-story-body-mobile: 16px;
     --font-size-story-section-title: 24px;
@@ -97,6 +115,7 @@ a{
     --font-size-story-quote-mobile: 19px;
     --font-size-story-button: 15px;
     --font-size-course-content: 18px;
+    --font-size-course-content-mobile: 16px;
     --font-size-course-enroll-button: 16px;
     --font-size-course-enroll-button-mobile: 15px;
     --font-size-download-button: 16px;
@@ -1123,6 +1142,34 @@ nav{
     font-size: var(--font-size-qualification-note);
     line-height: 1.6;
 }
+.note-toggle{
+    display: none;
+    margin-top: 14px;
+    border: 1px solid #d7d7d7;
+    background: #ffffff;
+    color: #222222;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+.note-toggle:hover{
+    background: #f0f0f0;
+    border-color: #c8c8c8;
+}
+.note-toggle:focus-visible{
+    outline: 2px solid #222222;
+    outline-offset: 2px;
+}
+.note-toggle:active{
+    transform: translateY(1px);
+}
 #artist-network-note{
     width: 90%;
     margin: 24px auto 0;
@@ -1400,15 +1447,16 @@ nav{
 }
 .gallery-browser-meta{
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: flex-start;
     align-self: start;
-    gap: 10px;
+    gap: 4px;
 }
 .gallery-browser-item-title{
     font-size: var(--font-size-gallery-browser-item-title);
     line-height: 1.45;
     color: #202020;
+    margin: 0;
 }
 .gallery-browser-item-type{
     font-size: var(--font-size-gallery-browser-item-type);
@@ -1416,6 +1464,7 @@ nav{
     text-transform: uppercase;
     color: #6a6a6a;
     white-space: nowrap;
+    margin: 0;
 }
 .gallery-lightbox-content{
     flex: 1;
@@ -1997,6 +2046,9 @@ footer p{
     body{
         padding-top: 92px;
     }
+    #alert-banner{
+        font-size: var(--font-size-alert-banner-mobile);
+    }
     #navbar{
         padding: 18px 0 14px;
         gap: 14px;
@@ -2085,19 +2137,61 @@ footer p{
     #courses-page-subtitle{
         font-size: var(--font-size-courses-page-subtitle-mobile);
     }
+    .course-card-content h2{
+        font-size: var(--font-size-course-card-title-mobile);
+    }
+    .course-card-content p{
+        font-size: var(--font-size-course-card-text-mobile);
+    }
+    .course-card-link{
+        font-size: var(--font-size-course-card-link-mobile);
+    }
+    .feedback-widget-header h4{
+        font-size: var(--font-size-feedback-widget-title-mobile);
+    }
+    .feedback-count{
+        font-size: var(--font-size-feedback-count-mobile);
+    }
+    .feedback-name{
+        font-size: var(--font-size-feedback-name-mobile);
+    }
+    .feedback-message{
+        font-size: var(--font-size-feedback-message-mobile);
+    }
+    .feedback-leave-btn{
+        font-size: var(--font-size-feedback-leave-button-mobile);
+    }
 
     #artist-statement-paragraph,
-    #popular-quote,
-    #about-me p,
-    #art-expertise ul,
+    #popular-quote{
+        font-size: var(--font-size-artist-statement-mobile);
+        line-height: 1.6;
+    }
+    #about-me p{
+        font-size: var(--font-size-about-mobile);
+        line-height: 1.6;
+    }
+    #art-expertise ul{
+        font-size: var(--font-size-art-expertise-mobile);
+        line-height: 1.6;
+    }
     #qualification-note p,
-    #artist-network-note p,
-    #course-content p,
+    #artist-network-note p{
+        font-size: var(--font-size-qualification-note-mobile);
+        line-height: 1.6;
+    }
+    #course-content p{
+        font-size: var(--font-size-course-content-mobile);
+        line-height: 1.6;
+    }
     #exhibitions .exhibitions-names,
+    #exhibition-note{
+        font-size: var(--font-size-exhibitions-mobile);
+        line-height: 1.6;
+    }
     #recognitions .recognition-names,
-    #exhibition-note,
     #recognition-note{
-        font-size: var(--font-size-body);
+        font-size: var(--font-size-recognitions-mobile);
         line-height: 1.6;
     }
     #expertise-note-row{
@@ -2175,7 +2269,10 @@ footer p{
     .story-hero{
         padding-top: 0;
     }
-    .story-intro,
+    .story-intro{
+        font-size: var(--font-size-story-intro-mobile);
+        line-height: 1.6;
+    }
     .story-card p,
     .story-section p{
         font-size: var(--font-size-story-body-mobile);
@@ -2221,6 +2318,23 @@ footer p{
         flex-basis: 100%;
         padding: 20px;
     }
+    #qualification-note .note-content{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    #qualification-note:not(.is-expanded) #qualification-note-text{
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+    }
+    #qualification-note .note-toggle{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
     #artist-network-note{
         padding: 20px;
     }
@@ -2247,6 +2361,12 @@ footer p{
         margin-top: 36px;
         padding: 16px;
     }
+    footer p{
+        font-size: var(--font-size-footer-mobile);
+    }
+}
+
+@media (max-width: 430px){
     footer p{
         font-size: var(--font-size-footer-small);
     }

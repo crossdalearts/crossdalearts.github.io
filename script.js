@@ -73,9 +73,12 @@ function getGalleryAssetKindFromPath(path = "") {
 }
 
 function getGalleryTitle(item) {
+    const explicitTitle = String(item.title || "").trim();
+    if (explicitTitle) return explicitTitle;
+
     const info = getGalleryStemInfo(item.src || "");
     if (!info) return item.alt || "Gallery item";
-    return item.title || `${info.type === "video" ? "Video" : "Artwork"} ${info.index}`;
+    return `${info.type === "video" ? "Video" : "Artwork"} ${info.index}`;
 }
 
 function inferMediaType(item) {
@@ -904,6 +907,8 @@ function initEmbeddedPdfViewer() {
     });
 }
 
+
+
 setupCourseImagePreview();
 
 function setVideoSources(videoEl, sources, onAllFailed) {
@@ -1393,13 +1398,12 @@ function createFeedbackModal() {
 function openFeedbackDetailModal(detailModal, feedback) {
     const safe = sanitizeFeedback(feedback);
     if (!safe) return;
-
+// <div class="feedback-modal-stars">${renderStars(safe.rating)}</div>
     detailModal.modal.innerHTML = `
         <div class="feedback-modal-top">
-            <h4>Student Feedback</h4>
+            <h4>Learners Feedback</h4>
             <button type="button" class="feedback-modal-close">Close</button>
         </div>
-        <div class="feedback-modal-stars">${renderStars(safe.rating)}</div>
         <div class="feedback-modal-name">${escapeHTML(safe.name)}</div>
         <p class="feedback-modal-message">${escapeHTML(safe.message)}</p>
     `;
@@ -1536,6 +1540,42 @@ function escapeHTML(text) {
         .replaceAll("'", "&#39;");
 }
 
+function initQualificationNoteCollapse() {
+    const note = document.getElementById("qualification-note");
+    const toggle = document.getElementById("qualification-note-toggle");
+    if (!note || !toggle) return;
+
+    const mobileBreakpoint = window.matchMedia("(max-width: 576px)");
+
+    const syncState = () => {
+        if (!mobileBreakpoint.matches) {
+            note.classList.remove("is-expanded");
+            toggle.hidden = true;
+            toggle.setAttribute("aria-expanded", "false");
+            toggle.textContent = "Read more";
+            return;
+        }
+
+        toggle.hidden = false;
+    };
+
+    toggle.addEventListener("click", () => {
+        if (!mobileBreakpoint.matches) return;
+
+        const isExpanded = note.classList.toggle("is-expanded");
+        toggle.setAttribute("aria-expanded", String(isExpanded));
+        toggle.textContent = isExpanded ? "Read less" : "Read more";
+    });
+
+    if (typeof mobileBreakpoint.addEventListener === "function") {
+        mobileBreakpoint.addEventListener("change", syncState);
+    } else if (typeof mobileBreakpoint.addListener === "function") {
+        mobileBreakpoint.addListener(syncState);
+    }
+
+    syncState();
+}
+
 function initScrollReveal() {
     const selectors = [
         "#alert-banner",
@@ -1591,6 +1631,7 @@ function initScrollReveal() {
     elements.forEach((element) => observer.observe(element));
 }
 
+initQualificationNoteCollapse();
 initScrollReveal();
 initFeedbackWidget();
 initEmbeddedPdfViewer();

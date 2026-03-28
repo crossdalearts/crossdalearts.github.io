@@ -27,6 +27,7 @@
         "type": "image"
       },
       "items": [
+        { "path": "Videos/gallery-video-3.mp4", "title": "With Curator", "type": "video" },
         { "path": "images/Gallery/gallery-image-1.jpeg", "title": "National Spokesperson", "type": "image" },
         { "path": "images/Gallery/gallery-image-3.jpeg", "title": "Renowned Artists", "type": "image" },
         { "path": "images/Gallery/gallery-image-4.jpeg", "title": "From Ministry of Textiles / Culture", "type": "image" },
@@ -38,13 +39,99 @@
         { "path": "images/Gallery/gallery-image-13.jpeg", "title": "Exhibition Participation", "type": "image" },
         { "path": "images/Gallery/gallery-image-14.jpeg", "title": "Worked in a Book", "type": "image" },
         { "path": "images/Gallery/gallery-image-20.jpeg", "title": "Meeting", "type": "image" },
-        { "path": "images/Gallery/gallery-image-22.jpeg", "title": "Exhibition", "type": "image" }
+        { "path": "images/Gallery/gallery-image-22.jpeg", "title": "Exhibition", "type": "image" },
+        { "path": "images/Gallery/gallery-image-2.jpeg", "title": "Exhibition", "type": "image" },
+        { "path": "images/Gallery/gallery-image-31.jpeg", "title": "Other Artists", "type": "image" }
+      ]
+    },
+    {
+      "name": "Artworks",
+      "preview": {
+        "path": "images/Gallery/gallery-image-23.JPEG",
+        "title": "Painting",
+        "type": "image"
+      },
+      "items": [
+          { "path": "images/Gallery/gallery-image-23.JPEG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/gallery-image-15.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/gallery-image-16.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/gallery-image-19.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/gallery-image-29.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/gallery-image-30.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting1.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting2.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting3.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting4.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting5.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting6.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting7.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting8.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting9.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting10.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting11.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting12.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting13.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting14.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting15.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting16.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting17.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting18.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting19.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting20.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting21.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting22.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting23.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting24.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting25.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting26.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting27.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting28.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting29.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting30.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting31.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting32.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting33.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting34.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting35.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting36.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting37.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting38.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting39.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting40.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting41.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting42.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting43.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting44.PNG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting45.JPEG", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting46.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting47.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting48.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting49.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting50.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting51.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting52.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting53.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting54.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting55.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting56.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting57.jpg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting58.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting59.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting60.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting61.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting62.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting63.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting64.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting65.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting66.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting67.jpeg", "title": "Artwork", "type": "image" },
+          { "path": "images/Gallery/painting68.jpeg", "title": "Artwork", "type": "image" }
       ]
     },
     {
       "name": "Calligraphy",
       "preview": {
-        "path": "images/Gallery/gallery-image-24.JPEG",
+        "path": "images/Gallery/gallery-image-24.jpg",
         "title": "Painting",
         "type": "image"
       },
@@ -53,22 +140,6 @@
         { "path": "images/Gallery/gallery-image-24.jpg", "title": "Arabic Calligraphy", "type": "image" },
         { "path": "images/Gallery/gallery-image-25.jpeg", "title": "Arabic Calligraphy", "type": "image" },
         { "path": "images/Gallery/gallery-image-26.jpeg", "title": "Arabic Calligraphy", "type": "image" }
-      ]
-    },
-    {
-      "name": "Paintings",
-      "preview": {
-        "path": "images/Gallery/gallery-image-23.JPEG",
-        "title": "Painting",
-        "type": "image"
-      },
-      "items": [
-          { "path": "images/Gallery/gallery-image-23.JPEG", "title": "Painting", "type": "image" },
-          { "path": "images/Gallery/gallery-image-15.jpeg", "title": "Painting for Explaining Students", "type": "image" },
-          { "path": "images/Gallery/gallery-image-16.jpeg", "title": "Class 11th Chemistry Question Paper", "type": "image" },
-          { "path": "images/Gallery/gallery-image-19.jpeg", "title": "Self designed character", "type": "image" },
-          { "path": "images/Gallery/gallery-image-29.jpeg", "title": "Worked as a Digital Artist in some shows", "type": "image" },
-          { "path": "images/Gallery/gallery-image-30.jpeg", "title": "Worked as a Digital Artist in some shows", "type": "image" }
       ]
     },
     {
@@ -86,6 +157,72 @@
         { "path": "images/Gallery/gallery-image-10.jpeg", "title": "Explanation - Live Class", "type": "image" },
         { "path": "images/Gallery/gallery-image-11.jpeg", "title": "Live Class", "type": "image" },
         { "path": "images/Gallery/gallery-image-21.jpeg", "title": "Explanation", "type": "image" }
+      ]
+    },
+    {
+      "name": "Wrong Approach",
+      "preview": {
+        "path": "images/Gallery/wrong2.jpg",
+        "title": "Painting",
+        "type": "image"
+      },
+      "items": [
+        { "path": "images/Gallery/wrong1.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong2.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong3.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong4.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong5.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong6.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong7.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong8.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong9.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong10.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong11.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong12.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/wrong13.jpg", "title": "Work", "type": "image" }
+      ]
+    },
+    {
+      "name": "Right Approach",
+      "preview": {
+        "path": "images/Gallery/right23.jpeg",
+        "title": "Painting",
+        "type": "image"
+      },
+      "items": [
+        { "path": "images/Gallery/right1.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right2.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right3.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right4.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right5.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right6.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right7.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right8.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right9.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right10.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right11.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right12.png", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right13.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right14.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right15.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right16.png", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right17.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right18.png", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right19.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right20.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right21.jpg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right22.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right23.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right24.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right25.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right26.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right27.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right28.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right29.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right30.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right31.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right32.jpeg", "title": "Work", "type": "image" },
+        { "path": "images/Gallery/right33.jpeg", "title": "Work", "type": "image" }
       ]
     }
   ]
