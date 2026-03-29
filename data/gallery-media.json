@@ -136,8 +136,8 @@
         "type": "image"
       },
       "items": [
-        { "path": "images/Gallery/gallery-image-28.PNG", "title": "Hindi Calligraphy Digital Art", "type": "image" },
-        { "path": "images/Gallery/gallery-image-24.jpg", "title": "Arabic Calligraphy", "type": "image" },
+        { "path": "images/Gallery/gallery-image-28.PNG", "title": "Hindi Calligraphy (Digital)", "type": "image" },
+        { "path": "images/Gallery/gallery-image-24.jpg", "title": "Arabic Calligraphy (Digital)", "type": "image" },
         { "path": "images/Gallery/gallery-image-25.jpeg", "title": "Arabic Calligraphy", "type": "image" },
         { "path": "images/Gallery/gallery-image-26.jpeg", "title": "Arabic Calligraphy", "type": "image" }
       ]
