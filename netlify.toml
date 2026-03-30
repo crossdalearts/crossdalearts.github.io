@@ -1,0 +1,4 @@
+[images]
+  remote_images = [
+    "https:\\/\\/cdn\\.jsdelivr\\.net\\/gh\\/abhinav25232354\\/CrossdaleArts@main\\/.*"
+  ]

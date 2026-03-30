@@ -314,7 +314,7 @@ async function loadGalleryItems() {
     };
 }
 
-function renderGalleryPreviewMedia(item) {
+function renderGalleryPreviewMedia(item, imageLoading = "lazy") {
     const mediaEl = item.type === "video" ? document.createElement("video") : document.createElement("img");
     mediaEl.className = "gallery-preview-media";
 
@@ -339,7 +339,8 @@ function renderGalleryPreviewMedia(item) {
     } else {
         mediaEl.src = item.src;
         mediaEl.alt = item.title || "Gallery preview";
-        mediaEl.loading = "lazy";
+        mediaEl.loading = imageLoading;
+        mediaEl.decoding = "async";
     }
 
     return mediaEl;
@@ -601,7 +602,7 @@ async function initGalleryExperience() {
 
         const tile = document.createElement("div");
         tile.className = "gallery-showcase-tile gallery-showcase-tile-hero";
-        tile.appendChild(renderGalleryPreviewMedia(heroItem));
+        tile.appendChild(renderGalleryPreviewMedia(heroItem, "eager"));
         preview.appendChild(tile);
     };
 
@@ -1073,6 +1074,23 @@ const FEEDBACK_ROTATION_MS = 400;
 const FEEDBACK_TRANSITION_MS = 400;
 const FEEDBACK_DATA_URL = "/data/feedbacks.json";
 const FEEDBACK_STORAGE_KEY = "crossdale_feedbacks";
+const SECTION_LOTTIE_ICONS = [
+    {
+        selector: "#enrollment > h3",
+        src: "https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5dc235fb73f230cec5ce04c3_cta.json",
+        label: "Animated enroll icon"
+    },
+    {
+        selector: "#art-gallery > h3",
+        src: "https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5dc23c9c9dcd8e4752a18118_play.json",
+        label: "Animated gallery icon"
+    },
+    {
+        selector: "#recognitions > h3",
+        src: "https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5db4616113810cd66044b014_success.json",
+        label: "Animated recognition icon"
+    }
+];
 const FEEDBACK_SOCIAL_LINKS = [
     {
         href: "https://www.instagram.com/crossdale_arts/",
@@ -1531,6 +1549,41 @@ function truncateFeedback(text, maxLen) {
     return `${safe.slice(0, maxLen - 1).trimEnd()}...`;
 }
 
+let lottieLibraryPromise = null;
+
+function loadLottieLibrary() {
+    if (window.lottie && typeof window.lottie.loadAnimation === "function") {
+        return Promise.resolve(window.lottie);
+    }
+
+    if (lottieLibraryPromise) return lottieLibraryPromise;
+
+    lottieLibraryPromise = new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[data-lottie-web="true"]');
+        if (existing) {
+            existing.addEventListener("load", () => resolve(window.lottie), { once: true });
+            existing.addEventListener("error", () => reject(new Error("Failed to load Lottie library")), { once: true });
+            return;
+        }
+
+        const script = document.createElement("script");
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js";
+        script.async = true;
+        script.dataset.lottieWeb = "true";
+        script.addEventListener("load", () => {
+            if (window.lottie && typeof window.lottie.loadAnimation === "function") {
+                resolve(window.lottie);
+                return;
+            }
+            reject(new Error("Lottie library loaded without window.lottie"));
+        }, { once: true });
+        script.addEventListener("error", () => reject(new Error("Failed to load Lottie library")), { once: true });
+        document.head.appendChild(script);
+    });
+
+    return lottieLibraryPromise;
+}
+
 function escapeHTML(text) {
     return String(text || "")
         .replaceAll("&", "&amp;")
@@ -1538,6 +1591,43 @@ function escapeHTML(text) {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#39;");
+}
+
+async function initSectionLottieIcons() {
+    const iconTargets = SECTION_LOTTIE_ICONS
+        .map((item) => ({ ...item, heading: document.querySelector(item.selector) }))
+        .filter((item) => item.heading);
+
+    if (!iconTargets.length) return;
+
+    try {
+        const lottie = await loadLottieLibrary();
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        iconTargets.forEach((item) => {
+            if (item.heading.querySelector(".section-lottie-icon")) return;
+
+            const icon = document.createElement("span");
+            icon.className = "section-lottie-icon";
+            icon.setAttribute("aria-hidden", "true");
+            icon.dataset.label = item.label;
+            item.heading.classList.add("has-lottie-icon");
+            item.heading.prepend(icon);
+
+            lottie.loadAnimation({
+                container: icon,
+                renderer: "svg",
+                loop: !prefersReducedMotion,
+                autoplay: !prefersReducedMotion,
+                path: item.src,
+                rendererSettings: {
+                    preserveAspectRatio: "xMidYMid meet"
+                }
+            });
+        });
+    } catch (error) {
+        console.warn("Section Lottie icons could not be initialized.", error);
+    }
 }
 
 function initQualificationNoteCollapse() {
@@ -1635,3 +1725,4 @@ initQualificationNoteCollapse();
 initScrollReveal();
 initFeedbackWidget();
 initEmbeddedPdfViewer();
+initSectionLottieIcons();
