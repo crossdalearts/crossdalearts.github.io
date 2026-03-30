@@ -1085,11 +1085,11 @@ const SECTION_LOTTIE_ICONS = [
         src: "https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5dc23c9c9dcd8e4752a18118_play.json",
         label: "Animated gallery icon"
     },
-    {
-        selector: "#recognitions > h3",
-        src: "https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5db4616113810cd66044b014_success.json",
-        label: "Animated recognition icon"
-    }
+    // {
+    //     selector: "#recognitions > h3",
+    //     src: "https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5db4616113810cd66044b014_success.json",
+    //     label: "Animated recognition icon"
+    // }
 ];
 const FEEDBACK_SOCIAL_LINKS = [
     {
