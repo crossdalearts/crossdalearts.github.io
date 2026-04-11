@@ -19,7 +19,7 @@ if (navbar && navToggle) {
     });
 
     document.addEventListener("click", (event) => {
-        if (window.innerWidth > 768) return;
+        if (window.innerWidth > 980) return;
         if (!navbar.classList.contains("nav-open")) return;
         if (navbar.contains(event.target)) return;
         closeNavMenu();
@@ -31,7 +31,7 @@ if (navbar && navToggle) {
     });
 
     window.addEventListener("resize", () => {
-        if (window.innerWidth > 768) {
+        if (window.innerWidth > 980) {
             closeNavMenu();
         }
     });
@@ -39,7 +39,7 @@ if (navbar && navToggle) {
 
 document.querySelectorAll("#navbar a").forEach((link) => {
     link.addEventListener("click", () => {
-        if (!navbar || !navToggle || window.innerWidth > 768) return;
+        if (!navbar || !navToggle || window.innerWidth > 980) return;
         navbar.classList.remove("nav-open");
         navToggle.setAttribute("aria-expanded", "false");
     });
@@ -1147,6 +1147,9 @@ async function initFeedbackWidget() {
     card.setAttribute("tabindex", "0");
     card.setAttribute("aria-label", "Open full feedback");
 
+    const cardBody = document.createElement("div");
+    cardBody.className = "feedback-card-body";
+
     const starsEl = document.createElement("div");
     starsEl.className = "feedback-stars";
 
@@ -1156,26 +1159,16 @@ async function initFeedbackWidget() {
     const messageEl = document.createElement("p");
     messageEl.className = "feedback-message";
 
-    card.appendChild(starsEl);
-    card.appendChild(nameEl);
-    card.appendChild(messageEl);
+    cardBody.appendChild(starsEl);
+    cardBody.appendChild(nameEl);
+    cardBody.appendChild(messageEl);
+    card.appendChild(cardBody);
 
     header.appendChild(title);
     header.appendChild(count);
 
-    const actions = document.createElement("div");
-    actions.className = "feedback-widget-actions";
-
-    const leaveBtn = document.createElement("button");
-    leaveBtn.type = "button";
-    leaveBtn.className = "feedback-leave-btn";
-    leaveBtn.textContent = "Leave Feedback";
-
-    actions.appendChild(leaveBtn);
-
     widget.appendChild(header);
     widget.appendChild(card);
-    widget.appendChild(actions);
     anchor.appendChild(widget);
 
     const socialLinks = document.createElement("div");
@@ -1217,7 +1210,7 @@ async function initFeedbackWidget() {
         const item = feedbacks[currentIndex];
         starsEl.textContent = renderStars(item.rating);
         nameEl.textContent = item.name;
-        messageEl.textContent = truncateFeedback(item.message, 120);
+        messageEl.textContent = item.message;
         count.textContent = `${feedbacks.length} reviews`;
     }
 
@@ -1225,30 +1218,30 @@ async function initFeedbackWidget() {
         if (isAnimating) return;
         isAnimating = true;
 
-        card.classList.remove("is-exit", "is-enter");
-        card.classList.add("is-transitioning", "is-exit");
+        cardBody.classList.remove("is-exit", "is-enter");
+        cardBody.classList.add("is-transitioning", "is-exit");
 
         const handleExitEnd = (event) => {
             if (event.animationName !== "feedback-card-exit") return;
-            card.removeEventListener("animationend", handleExitEnd);
+            cardBody.removeEventListener("animationend", handleExitEnd);
 
             currentIndex = nextIndex;
             renderCurrent();
 
-            card.classList.remove("is-exit");
-            card.classList.add("is-enter");
+            cardBody.classList.remove("is-exit");
+            cardBody.classList.add("is-enter");
 
             const handleEnterEnd = (enterEvent) => {
                 if (enterEvent.animationName !== "feedback-card-enter") return;
-                card.removeEventListener("animationend", handleEnterEnd);
-                card.classList.remove("is-transitioning", "is-exit", "is-enter");
+                cardBody.removeEventListener("animationend", handleEnterEnd);
+                cardBody.classList.remove("is-transitioning", "is-exit", "is-enter");
                 isAnimating = false;
             };
 
-            card.addEventListener("animationend", handleEnterEnd);
+            cardBody.addEventListener("animationend", handleEnterEnd);
         };
 
-        card.addEventListener("animationend", handleExitEnd);
+        cardBody.addEventListener("animationend", handleExitEnd);
     }
 
     function goNext() {
@@ -1291,10 +1284,6 @@ async function initFeedbackWidget() {
         startRotation();
         return { ok: true, warning: saveResult.warning || "" };
     }
-
-    leaveBtn.addEventListener("click", () => {
-        openFeedbackFormModal(detailModal, onSubmitFeedback);
-    });
 
     card.addEventListener("click", () => {
         if (suppressNextClick) {
@@ -1419,7 +1408,7 @@ function openFeedbackDetailModal(detailModal, feedback) {
 // <div class="feedback-modal-stars">${renderStars(safe.rating)}</div>
     detailModal.modal.innerHTML = `
         <div class="feedback-modal-top">
-            <h4>Learners Feedback</h4>
+            <h2>Learners Feedback</h2>
             <button type="button" class="feedback-modal-close">Close</button>
         </div>
         <div class="feedback-modal-name">${escapeHTML(safe.name)}</div>
@@ -1593,6 +1582,230 @@ function escapeHTML(text) {
         .replaceAll("'", "&#39;");
 }
 
+const COURSE_REGION_STORAGE_KEY = "crossdaleArtsCourseRegion";
+const INR_PER_USD = 92.96;
+const COURSE_ENTRY_PATH_PATTERN = /(?:^|\/)pages\/courses\.html$|(?:^|\/)courses\.html$/i;
+const COURSE_CURRENCY_TEXT_PATTERN = /(?:₹|â‚¹|INR|Rs\.?)\s*([0-9,]+)|\b([0-9][0-9,]*)\s*\/-/gi;
+let courseCurrencyObserver = null;
+
+function clearCourseRegionOnReload() {
+    const navigationEntry = performance.getEntriesByType("navigation")[0];
+    if (navigationEntry && navigationEntry.type === "reload") {
+        sessionStorage.removeItem(COURSE_REGION_STORAGE_KEY);
+    }
+}
+
+function getSelectedCourseRegion() {
+    return sessionStorage.getItem(COURSE_REGION_STORAGE_KEY) || "";
+}
+
+function setSelectedCourseRegion(region) {
+    if (region !== "indian" && region !== "international") return;
+    sessionStorage.setItem(COURSE_REGION_STORAGE_KEY, region);
+}
+
+function formatUsdFromInr(amountInInr) {
+    const converted = amountInInr / INR_PER_USD;
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: converted >= 100 ? 0 : 2,
+        maximumFractionDigits: 2
+    }).format(converted);
+}
+
+function convertCoursePriceText(text) {
+    COURSE_CURRENCY_TEXT_PATTERN.lastIndex = 0;
+    return text.replace(COURSE_CURRENCY_TEXT_PATTERN, (_, rupeeAmount, slashAmount) => {
+        const rawAmount = rupeeAmount || slashAmount;
+        if (!rawAmount) return _;
+        const numericValue = Number(String(rawAmount).replace(/,/g, ""));
+        if (!Number.isFinite(numericValue)) return _;
+        return formatUsdFromInr(numericValue);
+    });
+}
+
+function shouldConvertCourseTextNode(node) {
+    if (!node || !node.nodeValue) return false;
+
+    COURSE_CURRENCY_TEXT_PATTERN.lastIndex = 0;
+    if (!COURSE_CURRENCY_TEXT_PATTERN.test(node.nodeValue)) {
+        return false;
+    }
+    COURSE_CURRENCY_TEXT_PATTERN.lastIndex = 0;
+
+    const parent = node.parentElement;
+    if (!parent) return false;
+    if (parent.closest("script, style, noscript, iframe")) return false;
+    return true;
+}
+
+function collectConvertibleCourseTextNodes(root) {
+    const scope = root && root.nodeType === Node.TEXT_NODE ? root.parentNode : root;
+    if (!scope) return [];
+
+    if (root && root.nodeType === Node.TEXT_NODE) {
+        return shouldConvertCourseTextNode(root) ? [root] : [];
+    }
+
+    const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+            return shouldConvertCourseTextNode(node)
+                ? NodeFilter.FILTER_ACCEPT
+                : NodeFilter.FILTER_REJECT;
+        }
+    });
+
+    const textNodes = [];
+    let currentNode = walker.nextNode();
+    while (currentNode) {
+        textNodes.push(currentNode);
+        currentNode = walker.nextNode();
+    }
+
+    return textNodes;
+}
+
+function applyInternationalPricing(root = document.body) {
+    if (getSelectedCourseRegion() !== "international") return;
+
+    const textNodes = collectConvertibleCourseTextNodes(root);
+    textNodes.forEach((node) => {
+        const nextValue = convertCoursePriceText(node.nodeValue);
+        if (nextValue !== node.nodeValue) {
+            node.nodeValue = nextValue;
+        }
+    });
+}
+
+function startInternationalPricingObserver() {
+    if (courseCurrencyObserver || getSelectedCourseRegion() !== "international") return;
+
+    courseCurrencyObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === "characterData") {
+                applyInternationalPricing(mutation.target);
+                return;
+            }
+
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType !== Node.ELEMENT_NODE && node.nodeType !== Node.TEXT_NODE) return;
+                applyInternationalPricing(node);
+            });
+        });
+    });
+
+    courseCurrencyObserver.observe(document.body, {
+        childList: true,
+        characterData: true,
+        subtree: true
+    });
+}
+
+function createCourseRegionModal() {
+    const existing = document.getElementById("course-region-modal");
+    if (existing) return existing;
+
+    const modal = document.createElement("div");
+    modal.id = "course-region-modal";
+    modal.className = "course-region-modal";
+    modal.setAttribute("aria-hidden", "true");
+
+    modal.innerHTML = `
+        <div class="course-region-dialog" role="dialog" aria-modal="true" aria-labelledby="course-region-title">
+            <p class="course-region-eyebrow">Course Pricing</p>
+            <h2 id="course-region-title">Select your region</h2>
+            <p class="course-region-copy">Choose how you want course prices to be shown for this visit.</p>
+            <div class="course-region-actions">
+                <button type="button" class="course-region-choice" data-region="indian">Indian</button>
+                <button type="button" class="course-region-choice is-secondary" data-region="international">International</button>
+            </div>
+            <p class="course-region-note">International pricing is shown in USD using an approximate conversion rate.</p>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (event) => {
+        if (event.target !== modal) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("course-region-modal-open");
+    });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!modal.classList.contains("is-open")) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("course-region-modal-open");
+    });
+
+    return modal;
+}
+
+function openCourseRegionModal(targetUrl) {
+    const modal = createCourseRegionModal();
+    const choiceButtons = modal.querySelectorAll("[data-region]");
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+
+    const closeAndNavigate = (region) => {
+        setSelectedCourseRegion(region);
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("course-region-modal-open");
+
+        if (region === "international") {
+            applyInternationalPricing();
+            startInternationalPricingObserver();
+        }
+
+        if (targetUrl) {
+            window.location.href = targetUrl;
+        }
+    };
+
+    choiceButtons.forEach((button) => {
+        button.onclick = () => {
+            closeAndNavigate(button.dataset.region || "indian");
+        };
+    });
+}
+
+function initCourseRegionSelection() {
+    clearCourseRegionOnReload();
+    applyInternationalPricing();
+    startInternationalPricingObserver();
+
+    const courseLinks = document.querySelectorAll("a[href]");
+    courseLinks.forEach((link) => {
+        const rawHref = link.getAttribute("href");
+        if (!rawHref || rawHref.startsWith("#")) return;
+
+        let resolvedUrl;
+        try {
+            resolvedUrl = new URL(rawHref, window.location.href);
+        } catch (_) {
+            return;
+        }
+
+        if (!COURSE_ENTRY_PATH_PATTERN.test(resolvedUrl.pathname)) return;
+
+        link.addEventListener("click", (event) => {
+            if (event.defaultPrevented) return;
+            if (event.button !== 0) return;
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            if (getSelectedCourseRegion()) return;
+
+            event.preventDefault();
+            openCourseRegionModal(resolvedUrl.href);
+        });
+    });
+}
+
 async function initSectionLottieIcons() {
     const iconTargets = SECTION_LOTTIE_ICONS
         .map((item) => ({ ...item, heading: document.querySelector(item.selector) }))
@@ -1726,3 +1939,4 @@ initScrollReveal();
 initFeedbackWidget();
 initEmbeddedPdfViewer();
 initSectionLottieIcons();
+initCourseRegionSelection();
