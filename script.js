@@ -1584,7 +1584,7 @@ function escapeHTML(text) {
 
 const COURSE_REGION_STORAGE_KEY = "crossdaleArtsCourseRegion";
 const INR_PER_USD = 92.96;
-const COURSE_ENTRY_PATH_PATTERN = /(?:^|\/)pages\/courses\.html$|(?:^|\/)courses\.html$/i;
+const COURSE_ENTRY_PATH_PATTERN = /(?:^|\/)(?:pages\/(?:courses|[^\/]+-payment)\.html|(?:courses|[^\/]+-payment)\.html)$/i;
 const COURSE_CURRENCY_TEXT_PATTERN = /(?:₹|â‚¹|INR|Rs\.?)\s*([0-9,]+)|\b([0-9][0-9,]*)\s*\/-/gi;
 let courseCurrencyObserver = null;
 
