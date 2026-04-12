@@ -8,15 +8,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap" rel="stylesheet">
 <link rel="shortcut icon" href="../images/logo.ico" type="image/x-icon">
-    <title>Fundamentals of Art Payment - CrossdaleArts</title>
-    <meta name="description" content="Open the payment page for the Fundamentals of Art workshop by CrossdaleArts." />
-    <meta property="og:title" content="Fundamentals of Art Payment - CrossdaleArts" />
-    <meta property="og:description" content="Complete your registration for the Fundamentals of Art workshop by CrossdaleArts." />
-    <meta property="og:image" content="https://crossdalearts.com/images/fundamentals-of-art.jpeg" />
-    <meta property="og:url" content="https://crossdalearts.com/pages/fundamental-of-arts-payment.html" />
+    <title>The Art of Meaning Core - Ex Student Payment</title>
+    <meta name="description" content="Ex-student payment page for The Art of Meaning (Basic to Advance) course." />
+    <meta property="og:title" content="The Art of Meaning Core - Ex Student Payment" />
+    <meta property="og:description" content="Complete your ex-student registration for The Art of Meaning (Basic to Advance) workshop." />
+    <meta property="og:image" content="https://crossdalearts.com/images/basictoadvance.png" />
+    <meta property="og:url" content="https://crossdalearts.com/pages/the-art-of-meaning-core-payment-ex.html" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="CrossdaleArts" />
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-B2MFTX4NMZ"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -47,12 +46,19 @@
       </div>
     </nav>
 
-    <!-- Example iframe to embed the payment page -->
-    <iframe class="payment-page-iframe" src="https://rzp.io/rzp/fsBSNR0s" width="100%" height="700px" frameborder="0"></iframe>
-<footer>
+    <div class="payment-page-wrapper">
+        <div class="payment-page-container">
+            <div id="ex-student-payment-status" class="payment-page-status">Preparing your ex-student payment page...</div>
+            <iframe id="ex-student-payment-iframe" class="payment-page-iframe" src="about:blank" title="Ex-student payment gateway"></iframe>
+        </div>
+    </div>
+    <div id="ex-student-payment-loader" aria-hidden="true">
+        <div class="loader-ring" role="status" aria-label="Loading payment page"></div>
+    </div>
+
+    <footer>
         <p>&copy; 2026-2027 CrossdaleArts. All rights reserved.</p>
     </footer>
 </body>
 <script src="../script.js"></script>
 </html>
-

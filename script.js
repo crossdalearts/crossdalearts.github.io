@@ -1072,7 +1072,7 @@ function prioritizeSources(sources) {
 
 const FEEDBACK_ROTATION_MS = 400;
 const FEEDBACK_TRANSITION_MS = 400;
-const FEEDBACK_DATA_URL = "/data/feedbacks.json";
+const FEEDBACK_DATA_URL = getAssetUrl("data/feedbacks.json");
 const FEEDBACK_STORAGE_KEY = "crossdale_feedbacks";
 const SECTION_LOTTIE_ICONS = [
     {
@@ -1582,11 +1582,181 @@ function escapeHTML(text) {
         .replaceAll("'", "&#39;");
 }
 
+function getAssetUrl(relativePath) {
+    const currentScript = document.currentScript || document.querySelector('script[src$="script.js"]');
+    if (currentScript && currentScript.src) {
+        return new URL(relativePath, currentScript.src).href;
+    }
+    return new URL(relativePath, window.location.href).href;
+}
+
 const COURSE_REGION_STORAGE_KEY = "crossdaleArtsCourseRegion";
 const INR_PER_USD = 92.96;
-const COURSE_ENTRY_PATH_PATTERN = /(?:^|\/)(?:pages\/(?:courses|[^\/]+-payment)\.html|(?:courses|[^\/]+-payment)\.html)$/i;
+const EX_STUDENT_DATA_BASE_PATH = "data/ex-students";
+const COURSE_FLOW_MANIFEST = {
+    "the-art-of-meaning-payment.html": "data/course-flows/the-art-of-meaning.json",
+    "the-art-of-meaning-payment-ex.html": "data/course-flows/the-art-of-meaning.json",
+    "the-art-of-meaning-core-payment.html": "data/course-flows/the-art-of-meaning-core.json",
+    "the-art-of-meaning-core-payment-ex.html": "data/course-flows/the-art-of-meaning-core.json",
+    "fundamental-of-arts-payment.html": "data/course-flows/fundamental-of-arts.json",
+    "fundamental-of-arts-payment-ex.html": "data/course-flows/fundamental-of-arts.json"
+};
+const COURSE_FLOW_CACHE = new Map();
+const EX_STUDENT_DATA_CACHE = new Map();
+let courseRegionModalState = null;
+let enrollmentTypeModalState = null;
+const COURSE_ENTRY_PATH_PATTERN = /(?:^|\/)(?:pages\/(?:courses|fundamental-of-arts(?:-payment)?|the-art-of-meaning(?:-payment)?|the-art-of-meaning-core(?:-payment)?)\.html|(?:courses|fundamental-of-arts(?:-payment)?|the-art-of-meaning(?:-payment)?|the-art-of-meaning-core(?:-payment)?)\.html)$/i;
 const COURSE_CURRENCY_TEXT_PATTERN = /(?:₹|â‚¹|INR|Rs\.?)\s*([0-9,]+)|\b([0-9][0-9,]*)\s*\/-/gi;
+
+function getCourseFlowConfigPath(pageName) {
+    return COURSE_FLOW_MANIFEST[pageName] || null;
+}
+
+async function loadCourseFlowConfig(pageName) {
+    const configPath = getCourseFlowConfigPath(pageName);
+    if (!configPath) return null;
+
+    if (COURSE_FLOW_CACHE.has(configPath)) {
+        return COURSE_FLOW_CACHE.get(configPath);
+    }
+
+    const response = await fetch(getAssetUrl(configPath), { cache: "no-store" });
+    if (!response.ok) {
+        throw new Error(`Unable to load course flow config for ${pageName}`);
+    }
+
+    const config = await response.json();
+    COURSE_FLOW_CACHE.set(configPath, config);
+    return config;
+}
+
+function getExStudentDataUrl(region, courseSlug) {
+    if (!courseSlug) return null;
+    const normalizedRegion = region === "international" ? "international" : "indian";
+    return getAssetUrl(`${EX_STUDENT_DATA_BASE_PATH}/${normalizedRegion}/${courseSlug}.json`);
+}
+
+async function getExStudentData(region, courseSlug) {
+    const dataUrl = getExStudentDataUrl(region, courseSlug);
+    if (!dataUrl) {
+        throw new Error("Unable to determine ex-student data URL.");
+    }
+
+    if (EX_STUDENT_DATA_CACHE.has(dataUrl)) {
+        return EX_STUDENT_DATA_CACHE.get(dataUrl);
+    }
+
+    const response = await fetch(dataUrl, { cache: "no-store" });
+    if (!response.ok) {
+        throw new Error("Unable to load ex-student data.");
+    }
+
+    const data = await response.json();
+    EX_STUDENT_DATA_CACHE.set(dataUrl, data);
+    return data;
+}
+
+function getPaymentPageInfo(pageName) {
+    if (!pageName) return null;
+    const match = pageName.match(/^(.*?)\-payment(?:-ex)?\.html$/);
+    if (!match) return null;
+
+    return {
+        courseSlug: match[1],
+        pageType: pageName.endsWith("-payment-ex.html") ? "ex" : "new"
+    };
+}
+
+function getCourseRegionConfig(courseConfig, region) {
+    if (!courseConfig || !courseConfig.enrollment) return null;
+    return courseConfig.enrollment[region] || courseConfig.enrollment.indian || null;
+}
+
+function getCourseDestination(route) {
+    if (!route || !route.url) return null;
+    return {
+        type: route.type || "page",
+        url: route.url
+    };
+}
+
+function isWisePaymentUrl(url) {
+    return typeof url === "string" && /wise\.com\/pay\//i.test(url);
+}
+
+function preparePaymentIframe(iframeEl, paymentUrl) {
+    if (!iframeEl || !paymentUrl) return;
+    iframeEl.allow = "payment; clipboard-write; fullscreen";
+    iframeEl.setAttribute("title", isWisePaymentUrl(paymentUrl) ? "Wise payment gateway" : "Payment gateway");
+}
+
+function navigateToCourseDestination(destination) {
+    if (!destination || !destination.url) return;
+    if (destination.type === "external") {
+        window.location.href = destination.url;
+        return;
+    }
+
+    window.location.href = new URL(destination.url, window.location.href).href;
+}
+
+function createWiseFallback(iframeEl, paymentUrl) {
+    if (!iframeEl || !paymentUrl) return document.createElement("div");
+
+    const existing = document.getElementById("wise-embed-fallback");
+    if (existing) {
+        existing.querySelector(".wise-fallback-link").href = paymentUrl;
+        existing.querySelector(".wise-fallback-url").textContent = paymentUrl;
+        existing.hidden = true;
+        return existing;
+    }
+
+    const fallback = document.createElement("div");
+    fallback.id = "wise-embed-fallback";
+    fallback.className = "wise-fallback-panel";
+    fallback.hidden = true;
+
+    fallback.innerHTML = `
+        <p class="wise-fallback-heading">Click the button below to complete your payment securely</p>
+        <p class="wise-fallback-copy">Choose Bank Transfer if you don't have a Wise account</p>
+        <a class="wise-fallback-link" href="${paymentUrl}" target="_blank" rel="noreferrer noopener">Continue to payment</a>
+        <p class="wise-fallback-url">${paymentUrl}</p>
+    `;
+
+    iframeEl.parentNode.insertBefore(fallback, iframeEl.nextSibling);
+    return fallback;
+}
+
+function closeCourseModals() {
+    document.querySelectorAll(".course-region-modal.is-open").forEach((modal) => {
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+    });
+    document.body.classList.remove("course-region-modal-open");
+    courseRegionModalState = null;
+    enrollmentTypeModalState = null;
+}
+
+async function findExStudentRecord(paymentId, courseSlug, region) {
+    const normalizedPaymentId = normalizePaymentId(paymentId);
+    const selectedRegion = region === "international" ? "international" : "indian";
+    const data = await getExStudentData(selectedRegion);
+    const coursePayments = data?.courses?.[courseSlug];
+    if (!Array.isArray(coursePayments)) return null;
+
+    return coursePayments.find((student) => normalizePaymentId(student.paymentId) === normalizedPaymentId) || null;
+}
+
+async function verifyExStudentPaymentId(paymentId, courseSlug, region) {
+    const record = await findExStudentRecord(paymentId, courseSlug, region);
+    return record !== null;
+}
+
 let courseCurrencyObserver = null;
+
+function isCourseEntryPath(pathname) {
+    return COURSE_ENTRY_PATH_PATTERN.test(pathname);
+}
 
 function clearCourseRegionOnReload() {
     const navigationEntry = performance.getEntriesByType("navigation")[0];
@@ -1726,37 +1896,15 @@ function createCourseRegionModal() {
 
     document.body.appendChild(modal);
 
-    modal.addEventListener("click", (event) => {
-        if (event.target !== modal) return;
-        modal.classList.remove("is-open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("course-region-modal-open");
-    });
+    const handleSelection = (event) => {
+        const button = event.target.closest("[data-region]");
+        if (!button) return;
+        event.preventDefault();
 
-    window.addEventListener("keydown", (event) => {
-        if (event.key !== "Escape") return;
-        if (!modal.classList.contains("is-open")) return;
-        modal.classList.remove("is-open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("course-region-modal-open");
-    });
-
-    return modal;
-}
-
-function openCourseRegionModal(targetUrl) {
-    const modal = createCourseRegionModal();
-    const choiceButtons = modal.querySelectorAll("[data-region]");
-
-    modal.classList.add("is-open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("course-region-modal-open");
-
-    const closeAndNavigate = (region) => {
+        const region = button.dataset.region || "indian";
+        const targetUrl = courseRegionModalState?.targetUrl || "";
         setSelectedCourseRegion(region);
-        modal.classList.remove("is-open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("course-region-modal-open");
+        closeCourseModals();
 
         if (region === "international") {
             applyInternationalPricing();
@@ -1765,14 +1913,47 @@ function openCourseRegionModal(targetUrl) {
 
         if (targetUrl) {
             window.location.href = targetUrl;
+            return;
+        }
+
+        if (typeof initExStudentPaymentPage === "function") {
+            initExStudentPaymentPage();
         }
     };
 
+    const choiceButtons = modal.querySelectorAll("[data-region]");
     choiceButtons.forEach((button) => {
-        button.onclick = () => {
-            closeAndNavigate(button.dataset.region || "indian");
-        };
+        button.addEventListener("click", handleSelection);
+        button.addEventListener("pointerup", handleSelection);
+        button.addEventListener("touchend", handleSelection, { passive: false });
     });
+
+    modal.addEventListener("click", (event) => {
+        if (event.target !== modal) return;
+        closeCourseModals();
+    });
+
+    modal.addEventListener("pointerdown", (event) => {
+        if (event.target !== modal) return;
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!modal.classList.contains("is-open")) return;
+        closeCourseModals();
+    });
+
+    return modal;
+}
+
+function openCourseRegionModal(targetUrl) {
+    const modal = createCourseRegionModal();
+    courseRegionModalState = { targetUrl: targetUrl || "" };
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
 }
 
 function initCourseRegionSelection() {
@@ -1792,17 +1973,443 @@ function initCourseRegionSelection() {
             return;
         }
 
-        if (!COURSE_ENTRY_PATH_PATTERN.test(resolvedUrl.pathname)) return;
+        if (!isCourseEntryPath(resolvedUrl.pathname)) return;
 
-        link.addEventListener("click", (event) => {
+        const openRegionModal = (event) => {
             if (event.defaultPrevented) return;
-            if (event.button !== 0) return;
+            if (event.type === "click" && event.button !== 0) return;
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             if (getSelectedCourseRegion()) return;
 
             event.preventDefault();
             openCourseRegionModal(resolvedUrl.href);
-        });
+        };
+
+        link.addEventListener("click", openRegionModal);
+        link.addEventListener("pointerdown", openRegionModal);
+        link.addEventListener("pointerup", openRegionModal);
+        link.addEventListener("touchstart", openRegionModal, { passive: false });
+        link.addEventListener("touchend", openRegionModal, { passive: false });
+    });
+
+    if (!getSelectedCourseRegion() && isCourseEntryPath(window.location.pathname)) {
+        openCourseRegionModal();
+    }
+
+    initEnrollmentSelection();
+}
+
+function normalizeText(value) {
+    return String(value || "").trim().toLowerCase();
+}
+
+function createEnrollmentTypeModal() {
+    const existing = document.getElementById("enrollment-type-modal");
+    if (existing) return existing;
+
+    const modal = document.createElement("div");
+    modal.id = "enrollment-type-modal";
+    modal.className = "course-region-modal";
+    modal.setAttribute("aria-hidden", "true");
+    modal.innerHTML = `
+        <div class="course-region-dialog" role="dialog" aria-modal="true" aria-labelledby="enrollment-type-title">
+            <p class="course-region-eyebrow">Enrollment Type</p>
+            <h2 id="enrollment-type-title">New student or ex student?</h2>
+            <p class="course-region-copy">Choose the correct enrollment path before continuing to payment.</p>
+            <div class="course-region-actions">
+                <button type="button" class="course-region-choice" data-choice="new">New student</button>
+                <button type="button" class="course-region-choice is-secondary" data-choice="ex">Ex student</button>
+            </div>
+            <p class="course-region-note">Ex students can verify a payment ID for the discounted payment experience.</p>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const handleSelection = (event) => {
+        const button = event.target.closest("[data-choice]");
+        if (!button) return;
+        event.preventDefault();
+
+        const state = enrollmentTypeModalState;
+        if (!state) return;
+
+        closeCourseModals();
+        if (button.dataset.choice === "new") {
+            navigateToCourseDestination(state.defaultDestination);
+            return;
+        }
+
+        openExStudentVerificationModal(state.exDestination?.url || state.defaultDestination?.url, state.courseSlug, state.region);
+    };
+
+    const choiceButtons = modal.querySelectorAll("[data-choice]");
+    choiceButtons.forEach((button) => {
+        button.addEventListener("click", handleSelection);
+        button.addEventListener("pointerup", handleSelection);
+        button.addEventListener("touchend", handleSelection, { passive: false });
+    });
+
+    modal.addEventListener("click", (event) => {
+        if (event.target !== modal) return;
+        closeCourseModals();
+    });
+
+    modal.addEventListener("pointerdown", (event) => {
+        if (event.target !== modal) return;
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!modal.classList.contains("is-open")) return;
+        closeCourseModals();
+    });
+
+    return modal;
+}
+
+function closeEnrollmentTypeModal() {
+    const modal = document.getElementById("enrollment-type-modal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("course-region-modal-open");
+    enrollmentTypeModalState = null;
+}
+
+function openEnrollmentTypeModal(defaultDestination, exDestination, courseSlug, region) {
+    const modal = createEnrollmentTypeModal();
+    enrollmentTypeModalState = {
+        defaultDestination,
+        exDestination,
+        courseSlug,
+        region
+    };
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+}
+
+function createExStudentModal() {
+    const existing = document.getElementById("ex-student-modal");
+    if (existing) return existing;
+
+    const modal = document.createElement("div");
+    modal.id = "ex-student-modal";
+    modal.className = "course-region-modal";
+    modal.setAttribute("aria-hidden", "true");
+    modal.innerHTML = `
+        <div class="course-region-dialog" role="dialog" aria-modal="true" aria-labelledby="ex-student-title">
+            <p class="course-region-eyebrow">Ex-Student Discount</p>
+            <h2 id="ex-student-title">Enter your payment ID</h2>
+            <p class="course-region-copy">We will verify your payment ID and load the ex-student Discounted Price.</p>
+            <form id="ex-student-form" novalidate>
+                <label>
+                    Payment ID &nbsp;&nbsp;<small style="color: #737373;">(Copy from your payment receipt)</small>
+                    <input type="text" name="paymentId" placeholder="Payment ID" required />
+                </label>
+                <p class="course-region-note" id="ex-student-error" aria-live="polite"></p>
+                <div class="course-region-actions">
+                    <button type="submit" class="course-region-choice">Verify and continue</button>
+                    <button type="button" class="course-region-choice is-secondary" id="ex-student-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    modal.addEventListener("click", (event) => {
+        if (event.target !== modal) return;
+        closeExStudentModal();
+    });
+
+    modal.addEventListener("pointerdown", (event) => {
+        if (event.target !== modal) return;
+        event.preventDefault();
+    }, { passive: false });
+
+    modal.addEventListener("touchstart", (event) => {
+        if (event.target !== modal) {
+            return;
+        }
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!modal.classList.contains("is-open")) return;
+        closeExStudentModal();
+    });
+
+    return modal;
+}
+
+function closeExStudentModal() {
+    const modal = document.getElementById("ex-student-modal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("course-region-modal-open");
+    courseRegionModalState = null;
+    enrollmentTypeModalState = null;
+}
+
+function setExStudentError(message) {
+    const errorEl = document.getElementById("ex-student-error");
+    if (!errorEl) return;
+    errorEl.textContent = message || "";
+}
+
+function normalizePaymentId(value) {
+    return String(value || "").trim();
+}
+
+function parseSearchParams() {
+    const params = new URLSearchParams(window.location.search);
+    let paymentId = "";
+
+    for (const [key, value] of params.entries()) {
+        if (!value) continue;
+        const normalizedKey = key.toLowerCase().replace(/[-_]/g, "");
+        if (normalizedKey === "paymentid") {
+            paymentId = String(value || "").trim();
+            break;
+        }
+    }
+
+    return {
+        paymentId: paymentId || ""
+    };
+}
+
+async function getExStudentData(region, courseSlug) {
+    const dataUrl = getExStudentDataUrl(region, courseSlug);
+    if (!dataUrl) {
+        throw new Error("Unable to determine ex-student data URL.");
+    }
+
+    if (EX_STUDENT_DATA_CACHE.has(dataUrl)) {
+        return EX_STUDENT_DATA_CACHE.get(dataUrl);
+    }
+
+    const response = await fetch(dataUrl, { cache: "no-store" });
+    if (!response.ok) {
+        throw new Error("Unable to load ex-student data.");
+    }
+
+    const data = await response.json();
+    EX_STUDENT_DATA_CACHE.set(dataUrl, data);
+    return data;
+}
+
+async function findExStudentRecord(paymentId, courseSlug, region) {
+    const normalizedPaymentId = normalizePaymentId(paymentId);
+    const data = await getExStudentData(region, courseSlug);
+    const paymentIds = data?.paymentIds;
+    if (!Array.isArray(paymentIds)) return null;
+
+    return paymentIds.find((student) => normalizePaymentId(student.paymentId) === normalizedPaymentId) || null;
+}
+
+async function verifyExStudentPaymentId(paymentId, courseSlug, region) {
+    const record = await findExStudentRecord(paymentId, courseSlug, region);
+    return record !== null;
+}
+
+async function initExStudentPaymentPage() {
+    const pageName = window.location.pathname.split("/").pop();
+    const pageInfo = getPaymentPageInfo(pageName);
+    if (!pageInfo) return;
+
+    const courseConfig = await loadCourseFlowConfig(pageName);
+    if (!courseConfig) return;
+
+    const region = getSelectedCourseRegion() || "indian";
+    const paymentUrlFromConfig = courseConfig.paymentLinks?.[region]?.[pageInfo.pageType];
+    const statusEl = document.getElementById("ex-student-payment-status");
+    const iframeEl = document.querySelector(".payment-page-iframe") || document.getElementById("ex-student-payment-iframe");
+    const loaderEl = document.getElementById("ex-student-payment-loader");
+
+    const showLoader = () => loaderEl?.classList.add("is-visible");
+    const hideLoader = () => loaderEl?.classList.remove("is-visible");
+
+    if (!iframeEl) return;
+
+    if (pageInfo.pageType === "new") {
+        if (paymentUrlFromConfig) {
+            const fallback = createWiseFallback(iframeEl, paymentUrlFromConfig);
+            if (isWisePaymentUrl(paymentUrlFromConfig)) {
+                hideLoader();
+                iframeEl.style.display = "none";
+                fallback.hidden = false;
+            } else {
+                iframeEl.style.display = "block";
+                preparePaymentIframe(iframeEl, paymentUrlFromConfig);
+                iframeEl.onload = () => {
+                    hideLoader();
+                    fallback.hidden = true;
+                };
+                iframeEl.onerror = () => {
+                    hideLoader();
+                    fallback.hidden = false;
+                };
+                iframeEl.src = paymentUrlFromConfig;
+            }
+        }
+        return;
+    }
+
+    const { paymentId } = parseSearchParams();
+    if (!paymentId) {
+        if (statusEl) {
+            statusEl.textContent = "No payment ID was provided. Please return to the course page and verify your ex-student details.";
+        } else {
+            alert("No payment ID was provided. Please return to the course page and verify your ex-student details.");
+        }
+        return;
+    }
+
+    try {
+        const record = await findExStudentRecord(paymentId, pageInfo.courseSlug, region);
+        if (!record) {
+            if (statusEl) {
+                statusEl.textContent = "Could not verify your payment ID. Please check it and try again.";
+            } else {
+                alert("Could not verify your payment ID. Please check it and try again.");
+            }
+            return;
+        }
+
+        const finalUrl = record.paymentUrl || paymentUrlFromConfig;
+        if (!finalUrl) {
+            if (statusEl) {
+                statusEl.textContent = "No payment URL is configured for this payment ID. Please contact support.";
+            } else {
+                alert("No payment URL is configured for this payment ID. Please contact support.");
+            }
+            return;
+        }
+
+        if (statusEl) {
+            statusEl.textContent = "";
+        }
+        showLoader();
+        const fallback = createWiseFallback(iframeEl, finalUrl);
+        if (isWisePaymentUrl(finalUrl)) {
+            hideLoader();
+            iframeEl.style.display = "none";
+            fallback.hidden = false;
+        } else {
+            iframeEl.style.display = "block";
+            iframeEl.onload = () => {
+                hideLoader();
+                fallback.hidden = true;
+            };
+            iframeEl.onerror = () => {
+                hideLoader();
+                fallback.hidden = false;
+            };
+            preparePaymentIframe(iframeEl, finalUrl);
+            iframeEl.src = finalUrl;
+        }
+    } catch (error) {
+        console.error(error);
+        if (statusEl) {
+            statusEl.textContent = "Unable to load your payment page right now. Please try again later.";
+        }
+    }
+}
+
+function openExStudentVerificationModal(exUrl, courseSlug, region) {
+    const modal = createExStudentModal();
+    const form = modal.querySelector("#ex-student-form");
+    const cancelBtn = modal.querySelector("#ex-student-cancel");
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+    setExStudentError("");
+
+    form.reset();
+
+    form.onsubmit = async (event) => {
+        event.preventDefault();
+        setExStudentError("");
+
+        const formData = new FormData(form);
+        const paymentId = String(formData.get("paymentId") || "").trim();
+
+        if (!paymentId) {
+            setExStudentError("Please enter your payment ID.");
+            return;
+        }
+
+        try {
+            const valid = await verifyExStudentPaymentId(paymentId, courseSlug, region);
+            if (!valid) {
+                setExStudentError("No matching payment ID found. Please check it and try again.");
+                return;
+            }
+
+            closeExStudentModal();
+            window.location.href = `${new URL(exUrl, window.location.href).href}?paymentId=${encodeURIComponent(paymentId)}`;
+        } catch (error) {
+            console.error(error);
+            setExStudentError("Unable to verify the payment ID right now. Please try again later.");
+        }
+    };
+
+    cancelBtn.onclick = () => {
+        closeExStudentModal();
+    };
+}
+
+function initEnrollmentSelection() {
+    const links = [...document.querySelectorAll("a[href]")];
+    links.forEach((link) => {
+        const rawHref = link.getAttribute("href");
+        if (!rawHref || rawHref.startsWith("#")) return;
+
+        let resolvedUrl;
+        try {
+            resolvedUrl = new URL(rawHref, window.location.href);
+        } catch (_) {
+            return;
+        }
+
+        const hrefPage = resolvedUrl.pathname.split("/").pop();
+        if (!getCourseFlowConfigPath(hrefPage)) return;
+
+        const openEnrollmentModal = async (event) => {
+            if (event.defaultPrevented) return;
+            if (event.type === "click" && event.button !== 0) return;
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+
+            const courseConfig = await loadCourseFlowConfig(hrefPage);
+            const region = getSelectedCourseRegion() || "indian";
+            const courseInfo = getPaymentPageInfo(hrefPage);
+            const regionConfig = getCourseRegionConfig(courseConfig, region);
+            if (!regionConfig || !courseInfo) {
+                window.location.href = new URL(hrefPage, window.location.href).href;
+                return;
+            }
+
+            openEnrollmentTypeModal(
+                getCourseDestination(regionConfig.new),
+                getCourseDestination(regionConfig.ex),
+                courseInfo.courseSlug,
+                region
+            );
+        };
+
+        link.addEventListener("click", openEnrollmentModal);
+        link.addEventListener("pointerdown", openEnrollmentModal);
+        link.addEventListener("pointerup", openEnrollmentModal);
+        link.addEventListener("touchstart", openEnrollmentModal, { passive: false });
+        link.addEventListener("touchend", openEnrollmentModal, { passive: false });
     });
 }
 
@@ -1940,3 +2547,4 @@ initFeedbackWidget();
 initEmbeddedPdfViewer();
 initSectionLottieIcons();
 initCourseRegionSelection();
+initExStudentPaymentPage();

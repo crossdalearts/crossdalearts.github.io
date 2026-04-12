@@ -1,0 +1,36 @@
+{
+  "slug": "the-art-of-meaning-core",
+  "name": "The Art of Meaning (Basic to Advance)",
+  "enrollment": {
+    "indian": {
+      "new": {
+        "type": "page",
+        "url": "the-art-of-meaning-core-payment.html"
+      },
+      "ex": {
+        "type": "page",
+        "url": "the-art-of-meaning-core-payment-ex.html"
+      }
+    },
+    "international": {
+      "new": {
+        "type": "page",
+        "url": "the-art-of-meaning-core-payment.html"
+      },
+      "ex": {
+        "type": "page",
+        "url": "the-art-of-meaning-core-payment-ex.html"
+      }
+    }
+  },
+  "paymentLinks": {
+    "indian": {
+      "new": "https://rzp.io/rzp/MoKp92J",
+      "ex": "https://rzp.io/rzp/hboUdLh"
+    },
+    "international": {
+      "new": "https://wise.com/pay/r/eioCMKunBsepYrI",
+      "ex": "https://wise.com/pay/r/eioCMKunBsepYrI"
+    }
+  }
+}

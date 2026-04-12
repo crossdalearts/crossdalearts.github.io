@@ -1,0 +1,36 @@
+{
+  "slug": "the-art-of-meaning",
+  "name": "The Art of Meaning",
+  "enrollment": {
+    "indian": {
+      "new": {
+        "type": "page",
+        "url": "the-art-of-meaning-payment.html"
+      },
+      "ex": {
+        "type": "page",
+        "url": "the-art-of-meaning-payment-ex.html"
+      }
+    },
+    "international": {
+      "new": {
+        "type": "page",
+        "url": "the-art-of-meaning-payment.html"
+      },
+      "ex": {
+        "type": "page",
+        "url": "the-art-of-meaning-payment-ex.html"
+      }
+    }
+  },
+  "paymentLinks": {
+    "indian": {
+      "new": "https://rzp.io/rzp/QtU6Jzi",
+      "ex": "https://rzp.io/rzp/QtU6Jzi"
+    },
+    "international": {
+      "new": "https://wise.com/pay/r/9AjePaTcmmFLyOs",
+      "ex": "https://wise.com/pay/r/9AjePaTcmmFLyOs"
+    }
+  }
+}

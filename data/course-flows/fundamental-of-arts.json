@@ -1,0 +1,36 @@
+{
+  "slug": "fundamental-of-arts",
+  "name": "Fundamentals of Art",
+  "enrollment": {
+    "indian": {
+      "new": {
+        "type": "page",
+        "url": "fundamental-of-arts-payment.html"
+      },
+      "ex": {
+        "type": "page",
+        "url": "fundamental-of-arts-payment-ex.html"
+      }
+    },
+    "international": {
+      "new": {
+        "type": "page",
+        "url": "fundamental-of-arts-payment.html"
+      },
+      "ex": {
+        "type": "page",
+        "url": "fundamental-of-arts-payment-ex.html"
+      }
+    }
+  },
+  "paymentLinks": {
+    "indian": {
+      "new": "https://rzp.io/rzp/fsBSNR0s",
+      "ex": "https://rzp.io/rzp/INDIAN_EX_FUNDAMENTALS"
+    },
+    "international": {
+      "new": "https://rzp.io/rzp/INTERNATIONAL_NEW_FUNDAMENTALS",
+      "ex": "https://rzp.io/rzp/INTERNATIONAL_EX_FUNDAMENTALS"
+    }
+  }
+}
