@@ -45,7 +45,27 @@ document.querySelectorAll("#navbar a").forEach((link) => {
     });
 });
 
+const flipCards = document.querySelectorAll(".authenticity-card");
+flipCards.forEach((card) => {
+    const toggleFlip = () => {
+        card.classList.toggle("is-flipped");
+    };
+
+    card.addEventListener("click", (event) => {
+        if (event.target.closest("a")) return;
+        toggleFlip();
+    });
+
+    card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            toggleFlip();
+        }
+    });
+});
+
 const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "webm", "ogg", "ogv", "m4v"]);
+const DOCUMENT_EXTENSIONS = new Set(["pdf"]);
 const GALLERY_META_URL = "data/gallery-media.json";
 
 function getFileExtension(path = "") {
@@ -84,22 +104,25 @@ function getGalleryTitle(item) {
 function inferMediaType(item) {
     const namedType = getGalleryAssetKindFromPath(item.src || "");
     if (namedType) return namedType;
-    if (item.type === "video" || item.type === "image") return item.type;
-    return VIDEO_EXTENSIONS.has(getFileExtension(item.src || "")) ? "video" : "image";
+    if (item.type === "video" || item.type === "image" || item.type === "pdf") return item.type;
+    const extension = getFileExtension(item.src || "");
+    if (VIDEO_EXTENSIONS.has(extension)) return "video";
+    if (DOCUMENT_EXTENSIONS.has(extension)) return "pdf";
+    return "image";
 }
 
 function normalizeVideoSources(item) {
     if (Array.isArray(item.sources) && item.sources.length > 0) {
         return item.sources
             .map((source) => {
-                if (typeof source === "string") return { src: source, type: "" };
+                if (typeof source === "string") return { src: resolveGalleryAssetPath(source), type: "" };
                 if (!source || !source.src) return null;
-                return { src: source.src, type: source.type || "" };
+                return { src: resolveGalleryAssetPath(source.src), type: source.type || "" };
             })
             .filter(Boolean);
     }
     if (item.src) {
-        return buildFallbackSources(item.src).map((src) => ({ src, type: "" }));
+        return buildFallbackSources(resolveGalleryAssetPath(item.src)).map((src) => ({ src, type: "" }));
     }
     return [];
 }
@@ -161,9 +184,18 @@ async function probeVideoSource(src) {
     });
 }
 
-async function loadGalleryConfig() {
+async function probePdfSource(src) {
     try {
-        const response = await fetch(GALLERY_META_URL, { method: "GET", cache: "no-store" });
+        const response = await fetch(src, { method: "HEAD", cache: "no-store" });
+        return response.ok;
+    } catch (_) {
+        return false;
+    }
+}
+
+async function loadGalleryConfig(url = GALLERY_META_URL) {
+    try {
+        const response = await fetch(getAssetUrl(url), { method: "GET", cache: "no-store" });
         if (!response.ok) throw new Error("Gallery metadata fetch failed");
         const data = await response.json();
 
@@ -213,24 +245,27 @@ async function loadGalleryConfig() {
     }
 }
 
-async function loadGalleryItems() {
-    const config = await loadGalleryConfig();
+async function loadGalleryItems(url = GALLERY_META_URL) {
+    const config = await loadGalleryConfig(url);
     const categories = [];
     const items = [];
 
     for (const category of config.categories) {
         const validEntries = category.items.filter((item) => item && typeof item.path === "string");
         const checks = validEntries.map(async (item) => {
-            const src = String(item.path || "").trim().replace(/\\/g, "/");
+            const rawSrc = String(item.path || "").trim().replace(/\\/g, "/");
+            const src = resolveGalleryAssetPath(rawSrc);
             const type = String(item.type || "").trim().toLowerCase();
             const title = String(item.title || "").trim();
 
             if (!src) return null;
-            if (type !== "image" && type !== "video") return null;
+            if (type !== "image" && type !== "video" && type !== "pdf") return null;
 
             const exists = type === "video"
                 ? await probeVideoSource(src)
-                : await probeImageSource(src);
+                : type === "pdf"
+                    ? await probePdfSource(src)
+                    : await probeImageSource(src);
 
             if (!exists) return null;
 
@@ -251,14 +286,17 @@ async function loadGalleryItems() {
             const previewType = String(category.preview.type || "").trim().toLowerCase();
             const previewTitle = String(category.preview.title || "").trim();
 
-            if (previewSrc && (previewType === "image" || previewType === "video")) {
+            if (previewSrc && (previewType === "image" || previewType === "video" || previewType === "pdf")) {
+                const resolvedPreviewSrc = resolveGalleryAssetPath(previewSrc);
                 const exists = previewType === "video"
-                    ? await probeVideoSource(previewSrc)
-                    : await probeImageSource(previewSrc);
+                    ? await probeVideoSource(resolvedPreviewSrc)
+                    : previewType === "pdf"
+                        ? await probePdfSource(resolvedPreviewSrc)
+                        : await probeImageSource(resolvedPreviewSrc);
 
                 if (exists) {
                     previewItem = buildGalleryItem({
-                        src: previewSrc,
+                        src: resolvedPreviewSrc,
                         type: previewType,
                         title: previewTitle,
                         category: category.name
@@ -283,14 +321,17 @@ async function loadGalleryItems() {
             const previewType = String(directPreview.type || "").trim().toLowerCase();
             const previewTitle = String(directPreview.title || "").trim();
 
-            if (previewSrc && (previewType === "image" || previewType === "video")) {
+            if (previewSrc && (previewType === "image" || previewType === "video" || previewType === "pdf")) {
+                const resolvedPreviewSrc = resolveGalleryAssetPath(previewSrc);
                 const exists = previewType === "video"
-                    ? await probeVideoSource(previewSrc)
-                    : await probeImageSource(previewSrc);
+                    ? await probeVideoSource(resolvedPreviewSrc)
+                    : previewType === "pdf"
+                        ? await probePdfSource(resolvedPreviewSrc)
+                        : await probeImageSource(resolvedPreviewSrc);
 
                 if (exists) {
                     homepagePreview = buildGalleryItem({
-                        src: previewSrc,
+                        src: resolvedPreviewSrc,
                         type: previewType,
                         title: previewTitle
                     });
@@ -314,11 +355,271 @@ async function loadGalleryItems() {
     };
 }
 
-function renderGalleryPreviewMedia(item, imageLoading = "lazy") {
-    const mediaEl = item.type === "video" ? document.createElement("video") : document.createElement("img");
-    mediaEl.className = "gallery-preview-media";
+async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
+    const galleryConfig = await loadGalleryItems(configUrl);
+    const galleryItems = galleryConfig.items;
+    const galleryCategories = galleryConfig.categories;
+    const browser = createGalleryBrowserModal("details-gallery-browser-modal", pageTitle);
+    const lightbox = createGalleryLightbox();
 
+    const syncOverlayScrollLock = () => {
+        const hasOpenOverlay = browser.root.classList.contains("is-open") || lightbox.root.classList.contains("is-open");
+        document.body.classList.toggle("gallery-lightbox-open", hasOpenOverlay);
+    };
+
+    const closeBrowser = () => {
+        if (document.fullscreenElement === browser.box && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+        }
+        browser.root.classList.remove("is-open");
+        browser.root.setAttribute("aria-hidden", "true");
+        syncOverlayScrollLock();
+        browser.fullscreenBtn.textContent = "Full Screen";
+    };
+
+    const closeLightbox = () => {
+        if (document.fullscreenElement === lightbox.box && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+        }
+        lightbox.root.classList.remove("is-open");
+        lightbox.root.setAttribute("aria-hidden", "true");
+        lightbox.content.innerHTML = "";
+        syncOverlayScrollLock();
+        lightbox.fullscreenBtn.textContent = "Full Screen";
+    };
+
+    const openLightbox = (item) => {
+        if (!item) return;
+        lightbox.content.innerHTML = "";
+        lightbox.title.textContent = item.title || item.alt || "Gallery item";
+
+        if (item.type === "video") {
+            const video = document.createElement("video");
+            video.className = "gallery-lightbox-media";
+            video.controls = true;
+            video.autoplay = true;
+            video.playsInline = true;
+            video.preload = "metadata";
+            video.muted = false;
+            const hasVideoSource = setVideoSources(video, item.sources, () => {
+                showVideoFallback(lightbox.content, item);
+            });
+            if (!hasVideoSource) {
+                showVideoFallback(lightbox.content, item);
+                return;
+            }
+            lightbox.content.appendChild(video);
+            video.play().catch(() => {});
+        } else if (item.type === "pdf") {
+            const iframe = document.createElement("iframe");
+            iframe.className = "gallery-lightbox-media";
+            iframe.src = item.src;
+            iframe.title = item.title || item.alt || "PDF document";
+            iframe.loading = "lazy";
+            iframe.setAttribute("allowfullscreen", "");
+            lightbox.content.appendChild(iframe);
+        } else {
+            const img = document.createElement("img");
+            img.src = item.src;
+            img.alt = item.title || item.alt || "Gallery image";
+            img.className = "gallery-lightbox-media";
+            lightbox.content.appendChild(img);
+        }
+
+        lightbox.root.classList.add("is-open");
+        lightbox.root.setAttribute("aria-hidden", "false");
+        syncOverlayScrollLock();
+    };
+
+    const renderCategoryFolders = () => {
+        browser.grid.innerHTML = "";
+        browser.title.textContent = pageTitle;
+        browser.counter.textContent = `${galleryCategories.length} categories • ${galleryItems.length} works`;
+        browser.backBtn.hidden = true;
+
+        if (!galleryCategories.length) {
+            browser.grid.innerHTML = `<p class="gallery-empty-message">Gallery details are not available yet.</p>`;
+            return;
+        }
+
+        galleryCategories.forEach((category) => {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "gallery-browser-card is-category";
+            card.setAttribute("aria-label", `Open ${category.name} category`);
+
+            const mediaWrap = document.createElement("div");
+            mediaWrap.className = "gallery-browser-media-wrap";
+            if (category.thumbnailItem) {
+                mediaWrap.appendChild(renderGalleryPreviewMedia(category.thumbnailItem));
+            }
+
+            const meta = document.createElement("div");
+            meta.className = "gallery-browser-meta";
+
+            const title = document.createElement("p");
+            title.className = "gallery-browser-item-title";
+            title.textContent = category.name;
+
+            const type = document.createElement("span");
+            type.className = "gallery-browser-item-type";
+            type.textContent = `${category.items.length} item${category.items.length === 1 ? "" : "s"}`;
+
+            meta.appendChild(title);
+            meta.appendChild(type);
+            card.appendChild(mediaWrap);
+            card.appendChild(meta);
+
+            card.addEventListener("click", () => renderCategoryItems(category));
+            browser.grid.appendChild(card);
+        });
+    };
+
+    const renderCategoryItems = (category) => {
+        browser.grid.innerHTML = "";
+        browser.title.textContent = category.name;
+        browser.counter.textContent = `${category.items.length} works`;
+        browser.backBtn.hidden = false;
+
+        category.items.forEach((item) => {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "gallery-browser-card";
+            card.setAttribute("aria-label", `Open ${item.title || item.alt || "gallery item"}`);
+
+            const mediaWrap = document.createElement("div");
+            mediaWrap.className = "gallery-browser-media-wrap";
+            mediaWrap.appendChild(renderGalleryPreviewMedia(item));
+
+            const meta = document.createElement("div");
+            meta.className = "gallery-browser-meta";
+
+            const title = document.createElement("p");
+            title.className = "gallery-browser-item-title";
+            title.textContent = item.title || item.alt || "Untitled";
+
+            const type = document.createElement("span");
+            type.className = "gallery-browser-item-type";
+            type.textContent = item.type === "video" ? "Video" : "Image";
+
+            meta.appendChild(title);
+            meta.appendChild(type);
+            card.appendChild(mediaWrap);
+            card.appendChild(meta);
+
+            card.addEventListener("click", () => openLightbox(item));
+            browser.grid.appendChild(card);
+        });
+    };
+
+    const syncBrowserFullscreenButton = () => {
+        const isFullscreen = document.fullscreenElement === browser.box;
+        browser.fullscreenBtn.textContent = isFullscreen ? "Exit Full Screen" : "Full Screen";
+    };
+
+    const syncLightboxFullscreenButton = () => {
+        const isFullscreen = document.fullscreenElement === lightbox.box;
+        lightbox.fullscreenBtn.textContent = isFullscreen ? "Exit Full Screen" : "Full Screen";
+    };
+
+    const openBrowser = () => {
+        if (!galleryItems.length) {
+            browser.root.classList.add("is-open");
+            browser.root.setAttribute("aria-hidden", "false");
+            syncOverlayScrollLock();
+            return;
+        }
+        renderCategoryFolders();
+        browser.root.classList.add("is-open");
+        browser.root.setAttribute("aria-hidden", "false");
+        syncOverlayScrollLock();
+        syncBrowserFullscreenButton();
+    };
+
+    if (!browser.root.dataset.detailsGalleryInitialized) {
+        browser.closeBtn.addEventListener("click", closeBrowser);
+        browser.backBtn.addEventListener("click", renderCategoryFolders);
+        browser.root.addEventListener("click", (event) => {
+            if (event.target === browser.root) closeBrowser();
+        });
+        browser.fullscreenBtn.addEventListener("click", async () => {
+            try {
+                if (document.fullscreenElement === browser.box) {
+                    if (document.exitFullscreen) await document.exitFullscreen();
+                } else if (browser.box.requestFullscreen) {
+                    await browser.box.requestFullscreen();
+                }
+            } catch (_) {
+                // no-op fallback
+            } finally {
+                syncBrowserFullscreenButton();
+            }
+        });
+
+        lightbox.closeBtn.addEventListener("click", closeLightbox);
+        lightbox.root.addEventListener("click", (event) => {
+            if (event.target === lightbox.root) closeLightbox();
+        });
+        lightbox.fullscreenBtn.addEventListener("click", async () => {
+            try {
+                if (document.fullscreenElement === lightbox.box) {
+                    if (document.exitFullscreen) await document.exitFullscreen();
+                } else if (lightbox.box.requestFullscreen) {
+                    await lightbox.box.requestFullscreen();
+                }
+            } catch (_) {
+                // no-op fallback
+            } finally {
+                syncLightboxFullscreenButton();
+            }
+        });
+
+        document.addEventListener("fullscreenchange", () => {
+            syncBrowserFullscreenButton();
+            syncLightboxFullscreenButton();
+        });
+
+        window.addEventListener("keydown", (event) => {
+            if (event.key !== "Escape") return;
+            if (lightbox.root.classList.contains("is-open")) {
+                closeLightbox();
+                return;
+            }
+            if (browser.root.classList.contains("is-open")) {
+                closeBrowser();
+            }
+        });
+
+        browser.root.dataset.detailsGalleryInitialized = "true";
+    }
+
+    openBrowser();
+}
+
+function initDetailsGalleryButtons() {
+    const detailButtons = [...document.querySelectorAll('[data-gallery-config]')];
+    if (!detailButtons.length) return;
+
+    detailButtons.forEach((button) => {
+        button.addEventListener("click", (event) => {
+            event.preventDefault();
+            const configUrl = String(button.dataset.galleryConfig || "").trim();
+            if (!configUrl) return;
+            const courseTitle = document.getElementById("course-title");
+            const courseTitleText = courseTitle ? String(courseTitle.textContent || "").trim() : "";
+            const titleText = courseTitleText
+                // ? `${courseTitleText} Market Research`
+                ? `Market Research`
+                : String(button.dataset.galleryTitle || "").trim() || "Course Market Research";
+            openGalleryBrowser(configUrl, titleText);
+        });
+    });
+}
+
+function renderGalleryPreviewMedia(item, imageLoading = "lazy") {
     if (item.type === "video") {
+        const mediaEl = document.createElement("video");
+        mediaEl.className = "gallery-preview-media";
         setVideoSources(mediaEl, item.sources, () => {});
         mediaEl.muted = true;
         mediaEl.defaultMuted = true;
@@ -336,24 +637,42 @@ function renderGalleryPreviewMedia(item, imageLoading = "lazy") {
         mediaEl.addEventListener("loadeddata", () => {
             mediaEl.play().catch(() => {});
         });
-    } else {
-        mediaEl.src = item.src;
-        mediaEl.alt = item.title || "Gallery preview";
-        mediaEl.loading = imageLoading;
-        mediaEl.decoding = "async";
+        return mediaEl;
     }
 
+    if (item.type === "pdf") {
+        const wrapper = document.createElement("div");
+        wrapper.className = "gallery-preview-media gallery-preview-pdf";
+        wrapper.setAttribute("role", "img");
+        wrapper.setAttribute("aria-label", item.title || item.alt || "PDF document");
+        wrapper.innerHTML = `
+            <span class="gallery-preview-pdf-icon" aria-hidden="true">PDF</span>
+            <span class="gallery-preview-pdf-title">${escapeHTML(item.title || item.alt || "PDF document")}</span>
+        `;
+        return wrapper;
+    }
+
+    const mediaEl = document.createElement("img");
+    mediaEl.className = "gallery-preview-media";
+    mediaEl.src = item.src;
+    mediaEl.alt = item.title || "Gallery preview";
+    mediaEl.loading = imageLoading;
+    mediaEl.decoding = "async";
     return mediaEl;
 }
 
-function createGalleryBrowserModal() {
-    const existing = document.getElementById("gallery-browser-modal");
+function createGalleryBrowserModal(modalId = "gallery-browser-modal", titleText = "CrossdaleArts Gallery") {
+    const existing = document.getElementById(modalId);
     if (existing) {
+        const titleElement = existing.querySelector(".gallery-browser-title");
+        if (titleElement) {
+            titleElement.textContent = titleText;
+        }
         return {
             root: existing,
             box: existing.querySelector(".gallery-browser-box"),
             grid: existing.querySelector(".gallery-browser-grid"),
-            title: existing.querySelector(".gallery-browser-title"),
+            title: titleElement,
             closeBtn: existing.querySelector(".gallery-browser-close"),
             backBtn: existing.querySelector(".gallery-browser-back"),
             fullscreenBtn: existing.querySelector(".gallery-browser-fullscreen"),
@@ -362,7 +681,7 @@ function createGalleryBrowserModal() {
     }
 
     const root = document.createElement("div");
-    root.id = "gallery-browser-modal";
+    root.id = modalId;
     root.className = "gallery-browser-modal";
     root.setAttribute("aria-hidden", "true");
 
@@ -377,7 +696,7 @@ function createGalleryBrowserModal() {
 
     const title = document.createElement("h3");
     title.className = "gallery-browser-title";
-    title.textContent = "CrossdaleArts Gallery";
+    title.textContent = titleText;
 
     const counter = document.createElement("p");
     counter.className = "gallery-browser-count";
@@ -495,6 +814,14 @@ async function initGalleryExperience() {
             }
             lightbox.content.appendChild(video);
             video.play().catch(() => {});
+        } else if (item.type === "pdf") {
+            const iframe = document.createElement("iframe");
+            iframe.className = "gallery-lightbox-media";
+            iframe.src = item.src;
+            iframe.title = item.title || item.alt || "PDF document";
+            iframe.loading = "lazy";
+            iframe.setAttribute("allowfullscreen", "");
+            lightbox.content.appendChild(iframe);
         } else {
             const img = document.createElement("img");
             img.src = item.src;
@@ -825,9 +1152,21 @@ function buildGoogleDrivePreviewUrl(url = "") {
     return `https://drive.google.com/file/d/${fileId}/preview`;
 }
 
+function buildPdfPreviewUrl(url = "") {
+    const cleanedUrl = String(url || "").trim();
+    if (!cleanedUrl) return "";
+    const drivePreview = buildGoogleDrivePreviewUrl(cleanedUrl);
+    if (drivePreview) return drivePreview;
+    if (cleanedUrl.toLowerCase().endsWith(".pdf")) return cleanedUrl;
+    return "";
+}
+
 function initEmbeddedPdfViewer() {
-    const pdfLinks = [...document.querySelectorAll('a[href*="drive.google.com/file/d/"]')]
-        .filter((link) => link.querySelector(".download-course-details-button"));
+    const pdfLinks = [...document.querySelectorAll('a.download-course-details-button')].filter((link) => {
+        const pdfUrl = String(link.dataset.pdfUrl || link.href || "").trim();
+        if (!pdfUrl) return false;
+        return pdfUrl.includes("drive.google.com/file/d/") || pdfUrl.toLowerCase().endsWith(".pdf");
+    });
 
     if (!pdfLinks.length) return;
 
@@ -855,9 +1194,10 @@ function initEmbeddedPdfViewer() {
     };
 
     const openViewer = (link) => {
-        const previewUrl = buildGoogleDrivePreviewUrl(link.href);
+        const pdfUrl = String(link.dataset.pdfUrl || link.href || "").trim();
+        const previewUrl = buildPdfPreviewUrl(pdfUrl);
         if (!previewUrl) {
-            window.open(link.href, "_blank", "noopener,noreferrer");
+            window.open(pdfUrl || link.href, "_blank", "noopener,noreferrer");
             return;
         }
 
@@ -866,7 +1206,7 @@ function initEmbeddedPdfViewer() {
         const heading = courseTitle ? courseTitle.textContent.trim() : "Course PDF";
 
         viewer.title.textContent = buttonText ? `${heading} - ${buttonText}` : heading;
-        viewer.externalLink.href = link.href;
+        viewer.externalLink.href = pdfUrl || link.href;
         viewer.frame.src = previewUrl;
         viewer.root.classList.add("is-open");
         viewer.root.setAttribute("aria-hidden", "false");
@@ -1590,6 +1930,12 @@ function getAssetUrl(relativePath) {
     return new URL(relativePath, window.location.href).href;
 }
 
+function resolveGalleryAssetPath(relativePath) {
+    const path = String(relativePath || "").trim().replace(/\\/g, "/");
+    if (!path) return "";
+    return getAssetUrl(path);
+}
+
 const COURSE_REGION_STORAGE_KEY = "crossdaleArtsCourseRegion";
 const INR_PER_USD = 92.96;
 const EX_STUDENT_DATA_BASE_PATH = "data/ex-students";
@@ -1603,6 +1949,8 @@ const COURSE_FLOW_MANIFEST = {
 };
 const COURSE_FLOW_CACHE = new Map();
 const EX_STUDENT_DATA_CACHE = new Map();
+const EARLY_BIRD_CONFIG_PATH = "data/early-bird-config.json";
+const EARLY_BIRD_CONFIG_CACHE = new Map();
 let courseRegionModalState = null;
 let enrollmentTypeModalState = null;
 const COURSE_ENTRY_PATH_PATTERN = /(?:^|\/)(?:pages\/(?:courses|fundamental-of-arts(?:-payment)?|the-art-of-meaning(?:-payment)?|the-art-of-meaning-core(?:-payment)?)\.html|(?:courses|fundamental-of-arts(?:-payment)?|the-art-of-meaning(?:-payment)?|the-art-of-meaning-core(?:-payment)?)\.html)$/i;
@@ -1628,6 +1976,45 @@ async function loadCourseFlowConfig(pageName) {
     const config = await response.json();
     COURSE_FLOW_CACHE.set(configPath, config);
     return config;
+}
+
+async function loadEarlyBirdConfig() {
+    if (EARLY_BIRD_CONFIG_CACHE.has(EARLY_BIRD_CONFIG_PATH)) {
+        return EARLY_BIRD_CONFIG_CACHE.get(EARLY_BIRD_CONFIG_PATH);
+    }
+
+    const response = await fetch(getAssetUrl(EARLY_BIRD_CONFIG_PATH), { cache: "no-store" });
+    if (!response.ok) {
+        throw new Error("Unable to load early bird configuration.");
+    }
+
+    const config = await response.json();
+    EARLY_BIRD_CONFIG_CACHE.set(EARLY_BIRD_CONFIG_PATH, config);
+    return config;
+}
+
+function normalizeCouponCode(value) {
+    return String(value || "").trim();
+}
+
+async function getEarlyBirdPaymentUrl(courseSlug, region, couponCode) {
+    if (!courseSlug || !couponCode) return null;
+
+    const config = await loadEarlyBirdConfig();
+    const courseConfig = config?.courses?.[courseSlug];
+    if (!courseConfig) return null;
+
+    const regionConfig = courseConfig[region] || courseConfig.indian || null;
+    if (!regionConfig || !regionConfig.couponCode || !regionConfig.couponUrl) {
+        return null;
+    }
+
+    const normalizedInput = normalizeCouponCode(couponCode);
+    if (regionConfig.couponCode !== normalizedInput) {
+        return null;
+    }
+
+    return regionConfig.couponUrl;
 }
 
 function getExStudentDataUrl(region, courseSlug) {
@@ -2020,6 +2407,7 @@ function createEnrollmentTypeModal() {
                 <button type="button" class="course-region-choice" data-choice="new">New student</button>
                 <button type="button" class="course-region-choice is-secondary" data-choice="ex">Ex student</button>
             </div>
+            <p class="course-region-note">New students can enter an Early Bird coupon code or skip to pay the base price.</p>
             <p class="course-region-note">Ex students can verify a payment ID for the discounted payment experience.</p>
         </div>
     `;
@@ -2036,7 +2424,7 @@ function createEnrollmentTypeModal() {
 
         closeCourseModals();
         if (button.dataset.choice === "new") {
-            navigateToCourseDestination(state.defaultDestination);
+            openNewStudentModal(state.defaultDestination, state.courseSlug, state.region);
             return;
         }
 
@@ -2090,6 +2478,180 @@ function openEnrollmentTypeModal(defaultDestination, exDestination, courseSlug, 
     modal.classList.add("is-open");
     modal.setAttribute("aria-hidden", "false");
     document.body.classList.add("course-region-modal-open");
+}
+
+function createNewStudentModal() {
+    const existing = document.getElementById("new-student-modal");
+    if (existing) return existing;
+
+    const modal = document.createElement("div");
+    modal.id = "new-student-modal";
+    modal.className = "course-region-modal";
+    modal.setAttribute("aria-hidden", "true");
+    modal.innerHTML = `
+        <div class="course-region-dialog" role="dialog" aria-modal="true" aria-labelledby="new-student-title">
+            <p class="course-region-eyebrow">Limited for Only Few hours..!!</p>
+            <h2 id="new-student-title">Early Bird Discount</h2>
+            <p class="course-region-copy">Apply a Unlock code to unlock a discounted payment link, or skip to continue with the standard course fee.</p>
+            <form id="new-student-form" novalidate>
+                <label>
+                    Unlock code &nbsp;&nbsp;<small style="color: #737373;">(optional)</small>
+                    <input type="text" name="couponCode" placeholder="Enter Unlock code" />
+                </label>
+                <p class="course-region-note" id="new-student-error" aria-live="polite"></p>
+                <div class="course-region-actions">
+                    <button type="submit" class="course-region-choice">Verify & Continue</button>
+                    <button type="button" class="course-region-choice is-secondary" id="new-student-skip">Pay Regular Fees</button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    modal.addEventListener("click", (event) => {
+        if (event.target !== modal) return;
+        closeNewStudentModal();
+    });
+
+    modal.addEventListener("pointerdown", (event) => {
+        if (event.target !== modal) return;
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!modal.classList.contains("is-open")) return;
+        closeNewStudentModal();
+    });
+
+    return modal;
+}
+
+function closeNewStudentModal() {
+    const modal = document.getElementById("new-student-modal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("course-region-modal-open");
+}
+
+function setNewStudentError(message) {
+    const errorEl = document.getElementById("new-student-error");
+    if (!errorEl) return;
+    errorEl.textContent = message || "";
+}
+
+function openNewStudentModal(defaultDestination, courseSlug, region) {
+    const modal = createNewStudentModal();
+    const form = modal.querySelector("#new-student-form");
+    const skipBtn = modal.querySelector("#new-student-skip");
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+    setNewStudentError("");
+    form.reset();
+
+    form.onsubmit = async (event) => {
+        event.preventDefault();
+        setNewStudentError("");
+
+        const formData = new FormData(form);
+        const couponCode = String(formData.get("couponCode") || "").trim();
+        if (!couponCode) {
+            closeNewStudentModal();
+            openCouponMismatchModal(defaultDestination, courseSlug, region);
+            return;
+        }
+
+        try {
+            const couponUrl = await getEarlyBirdPaymentUrl(courseSlug, region, couponCode);
+            closeNewStudentModal();
+            if (couponUrl) {
+                window.location.href = couponUrl;
+                return;
+            }
+
+            openCouponMismatchModal(defaultDestination, courseSlug, region);
+        } catch (error) {
+            console.error(error);
+            closeNewStudentModal();
+            navigateToCourseDestination(defaultDestination);
+        }
+    };
+
+    skipBtn.onclick = () => {
+        closeNewStudentModal();
+        navigateToCourseDestination(defaultDestination);
+    };
+}
+
+function createCouponMismatchModal() {
+    const existing = document.getElementById("coupon-mismatch-modal");
+    if (existing) return existing;
+
+    const modal = document.createElement("div");
+    modal.id = "coupon-mismatch-modal";
+    modal.className = "course-region-modal";
+    modal.setAttribute("aria-hidden", "true");
+    modal.innerHTML = `
+        <div class="course-region-dialog" role="dialog" aria-modal="true" aria-labelledby="coupon-mismatch-title">
+            <p class="course-region-eyebrow">Code Not Matched</p>
+            <h2 id="coupon-mismatch-title">Unlock code not matched</h2>
+            <p class="course-region-copy">The unlock code you entered is missing or does not match our early bird code.</p>
+            <div class="course-region-actions">
+                <button type="button" class="course-region-choice" id="coupon-mismatch-retry">Try again</button>
+                <button type="button" class="course-region-choice is-secondary" id="coupon-mismatch-continue">Pay Regular Price</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    modal.addEventListener("click", (event) => {
+        if (event.target !== modal) return;
+        closeCouponMismatchModal();
+    });
+
+    modal.addEventListener("pointerdown", (event) => {
+        if (event.target !== modal) return;
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!modal.classList.contains("is-open")) return;
+        closeCouponMismatchModal();
+    });
+
+    return modal;
+}
+
+function closeCouponMismatchModal() {
+    const modal = document.getElementById("coupon-mismatch-modal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("course-region-modal-open");
+}
+
+function openCouponMismatchModal(defaultDestination, courseSlug, region) {
+    const modal = createCouponMismatchModal();
+    const retryBtn = modal.querySelector("#coupon-mismatch-retry");
+    const continueBtn = modal.querySelector("#coupon-mismatch-continue");
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+
+    retryBtn.onclick = () => {
+        closeCouponMismatchModal();
+        openNewStudentModal(defaultDestination, courseSlug, region);
+    };
+
+    continueBtn.onclick = () => {
+        closeCouponMismatchModal();
+        navigateToCourseDestination(defaultDestination);
+    };
 }
 
 function createExStudentModal() {
@@ -2169,18 +2731,24 @@ function normalizePaymentId(value) {
 function parseSearchParams() {
     const params = new URLSearchParams(window.location.search);
     let paymentId = "";
+    let coupon = "";
 
     for (const [key, value] of params.entries()) {
         if (!value) continue;
         const normalizedKey = key.toLowerCase().replace(/[-_]/g, "");
         if (normalizedKey === "paymentid") {
             paymentId = String(value || "").trim();
-            break;
+            continue;
+        }
+        if (normalizedKey === "coupon") {
+            coupon = String(value || "").trim();
+            continue;
         }
     }
 
     return {
-        paymentId: paymentId || ""
+        paymentId: paymentId || "",
+        coupon: coupon || ""
     };
 }
 
@@ -2238,15 +2806,27 @@ async function initExStudentPaymentPage() {
     if (!iframeEl) return;
 
     if (pageInfo.pageType === "new") {
-        if (paymentUrlFromConfig) {
-            const fallback = createWiseFallback(iframeEl, paymentUrlFromConfig);
-            if (isWisePaymentUrl(paymentUrlFromConfig)) {
+        const { coupon } = parseSearchParams();
+        let paymentUrl = paymentUrlFromConfig;
+
+        if (coupon) {
+            const couponUrl = await getEarlyBirdPaymentUrl(pageInfo.courseSlug, region, coupon);
+            if (couponUrl) {
+                paymentUrl = couponUrl;
+            } else if (statusEl) {
+                statusEl.textContent = "Invalid coupon code. Loading the standard payment page.";
+            }
+        }
+
+        if (paymentUrl) {
+            const fallback = createWiseFallback(iframeEl, paymentUrl);
+            if (isWisePaymentUrl(paymentUrl)) {
                 hideLoader();
                 iframeEl.style.display = "none";
                 fallback.hidden = false;
             } else {
                 iframeEl.style.display = "block";
-                preparePaymentIframe(iframeEl, paymentUrlFromConfig);
+                preparePaymentIframe(iframeEl, paymentUrl);
                 iframeEl.onload = () => {
                     hideLoader();
                     fallback.hidden = true;
@@ -2255,7 +2835,7 @@ async function initExStudentPaymentPage() {
                     hideLoader();
                     fallback.hidden = false;
                 };
-                iframeEl.src = paymentUrlFromConfig;
+                iframeEl.src = paymentUrl;
             }
         }
         return;
@@ -2486,6 +3066,18 @@ function initQualificationNoteCollapse() {
     syncState();
 }
 
+function initAlertCloseButton() {
+    const banner = document.getElementById("alert-banner");
+    const heroBand = document.querySelector(".hero-band");
+    const closeButton = banner?.querySelector(".alert-close");
+    if (!banner || !closeButton) return;
+
+    closeButton.addEventListener("click", () => {
+        banner.classList.add("is-hidden");
+        if (heroBand) heroBand.classList.add("hero-shifted");
+    });
+}
+
 function initScrollReveal() {
     const selectors = [
         "#alert-banner",
@@ -2543,8 +3135,10 @@ function initScrollReveal() {
 
 initQualificationNoteCollapse();
 initScrollReveal();
+initAlertCloseButton();
 initFeedbackWidget();
 initEmbeddedPdfViewer();
+initDetailsGalleryButtons();
 initSectionLottieIcons();
 initCourseRegionSelection();
 initExStudentPaymentPage();

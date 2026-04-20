@@ -1,0 +1,40 @@
+{
+  "courses": {
+    "the-art-of-meaning": {
+      "indian": {
+        "couponCode": "artist101",
+        "couponUrl": "https://rzp.io/rzp/v80iwmY5"
+      },
+      "international": {
+        "couponCode": "artist101",
+        "couponUrl": "https://wise.com/pay/r/XQcnqHqENG4UsFo"
+      }
+    },
+    "the-art-of-meaning-core": {
+      "indian": {
+        "couponCode": "artist101",
+        "couponUrl": "https://rzp.io/rzp/AQIdCwy1"
+      },
+      "international": {
+        "couponCode": "artist101",
+        "couponUrl": "https://wise.com/pay/r/1hYwLaRH48KMVsE"
+      }
+    },
+
+
+
+
+
+
+    "fundamental-of-arts": {
+      "indian": {
+        "couponCode": "artist101",
+        "couponUrl": "https://rzp.io/rzp/fsBSNR0s"
+      },
+      "international": {
+        "couponCode": "artist101",
+        "couponUrl": "https://rzp.io/rzp/INTERNATIONAL_NEW_FUNDAMENTALS"
+      }
+    }
+  }
+}

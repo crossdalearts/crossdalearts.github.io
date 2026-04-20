@@ -1,0 +1,100 @@
+{
+  "homepage_preview": null,
+  "categories": [
+    {
+      "name": "Market Research",
+      "preview": {
+        "path": "images/MarketResearch/MR1.webp",
+        "title": "Market Research 1",
+        "type": "image"
+      },
+      "items": [
+        {
+          "path": "images/MarketResearch/MR1.webp",
+          "title": "1327/- (14.33$) Per Class",
+          "type": "image"
+        },
+        {
+          "path": "images/MarketResearch/MR2.webp",
+          "title": "589/- (6.36$) Per Class",
+          "type": "image"
+        },
+        {
+          "path": "images/MarketResearch/MR3.webp",
+          "title": "749/- (8.08$) Per Class",
+          "type": "image"
+        },
+        {
+          "path": "images/MarketResearch/MR4.webp",
+          "title": "589/- (6.36$) Per Class",
+          "type": "image"
+        },
+        {
+          "path": "images/MarketResearch/MR5.webp",
+          "title": "1557/- (16.82$) Per Class",
+          "type": "image"
+        },
+        {
+          "path": "images/MarketResearch/MR6.webp",
+          "title": "708/- (7.64$) Per Class",
+          "type": "image"
+        },
+        {
+          "path": "images/MarketResearch/MR7.webp",
+          "title": "2500/- (27.00$) Per Class",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "name": "Authenticity Proofs",
+      "preview": {
+        "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_usd.pdf",
+        "title": "Authenticity Proof",
+        "type": "pdf"
+      },
+      "items": [
+        {
+          "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_usd.pdf",
+          "title": "Account Details Proof - USD",
+          "type": "pdf"
+        },
+        {
+          "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_aed.pdf",
+          "title": "Account Details Proof - AED",
+          "type": "pdf"
+        },
+        {
+          "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_aud.pdf",
+          "title": "Account Details Proof - AUD",
+          "type": "pdf"
+        },
+        {
+          "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_cad.pdf",
+          "title": "Account Details Proof - CAD",
+          "type": "pdf"
+        },
+        {
+          "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_cny.pdf",
+          "title": "Account Details Proof - CNY",
+          "type": "pdf"
+        },
+        {
+          "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_eur.pdf",
+          "title": "Account Details Proof - EUR",
+          "type": "pdf"
+        },
+        {
+          "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_gbp.pdf",
+          "title": "Account Details Proof - GBP",
+          "type": "pdf"
+        },
+        {
+          "path": "images/MarketResearch/AuthenticityProofs/account_details_proof_jpy.pdf",
+          "title": "Account Details Proof - JPY",
+          "type": "pdf"
+        }
+      ]
+    }
+  ]
+}

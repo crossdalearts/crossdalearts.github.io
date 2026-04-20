@@ -1,0 +1,30 @@
+{
+  "homepage_preview": null,
+  "categories": [
+    {
+      "name": "Market Research",
+      "preview": {
+        "path": "images/MarketResearch/MR1.webp",
+        "title": "Market Research 1",
+        "type": "image"
+      },
+      "items": [
+        {
+          "path": "images/MarketResearch/MR1.webp",
+          "title": "Market Research 1",
+          "type": "image"
+        },
+        {
+          "path": "images/MarketResearch/MR2.webp",
+          "title": "Market Research 2",
+          "type": "image"
+        },
+        {
+          "path": "images/MarketResearch/MR3.webp",
+          "title": "Market Research 3",
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}

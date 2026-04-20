@@ -26,11 +26,11 @@
   "paymentLinks": {
     "indian": {
       "new": "https://rzp.io/rzp/QtU6Jzi",
-      "ex": "https://rzp.io/rzp/QtU6Jzi"
+      "ex": "https://rzp.io/rzp/EdD0BzGw"
     },
     "international": {
-      "new": "https://wise.com/pay/r/9AjePaTcmmFLyOs",
-      "ex": "https://wise.com/pay/r/9AjePaTcmmFLyOs"
+      "new": "https://wise.com/pay/r/ynaVIXG9GVGM3jE",
+      "ex": "https://wise.com/pay/r/aW6AfSyRjcSUgQo"
     }
   }
 }
