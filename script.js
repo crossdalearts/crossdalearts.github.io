@@ -1953,11 +1953,31 @@ const EARLY_BIRD_CONFIG_PATH = "data/early-bird-config.json";
 const EARLY_BIRD_CONFIG_CACHE = new Map();
 let courseRegionModalState = null;
 let enrollmentTypeModalState = null;
-const COURSE_ENTRY_PATH_PATTERN = /(?:^|\/)(?:pages\/(?:courses|fundamental-of-arts(?:-payment)?|the-art-of-meaning(?:-payment)?|the-art-of-meaning-core(?:-payment)?)\.html|(?:courses|fundamental-of-arts(?:-payment)?|the-art-of-meaning(?:-payment)?|the-art-of-meaning-core(?:-payment)?)\.html)$/i;
+const COURSE_ENTRY_PAGE_NAMES = new Set([
+    "courses.html",
+    "fundamental-of-arts.html",
+    "the-art-of-meaning.html",
+    "the-art-of-meaning-core.html",
+    "fundamental-of-arts-payment.html",
+    "fundamental-of-arts-payment-ex.html",
+    "the-art-of-meaning-payment.html",
+    "the-art-of-meaning-payment-ex.html",
+    "the-art-of-meaning-core-payment.html",
+    "the-art-of-meaning-core-payment-ex.html"
+]);
 const COURSE_CURRENCY_TEXT_PATTERN = /(?:₹|â‚¹|INR|Rs\.?)\s*([0-9,]+)|\b([0-9][0-9,]*)\s*\/-/gi;
 
+function normalizeHtmlPageName(value) {
+    const safeValue = String(value || "").trim().split("?")[0].split("#")[0].replace(/\/+$/, "");
+    if (!safeValue) return "";
+    const pageName = safeValue.split("/").pop() || "";
+    if (!pageName) return "";
+    return pageName.toLowerCase().endsWith(".html") ? pageName : `${pageName}.html`;
+}
+
 function getCourseFlowConfigPath(pageName) {
-    return COURSE_FLOW_MANIFEST[pageName] || null;
+    const normalizedPageName = normalizeHtmlPageName(pageName);
+    return COURSE_FLOW_MANIFEST[normalizedPageName] || null;
 }
 
 async function loadCourseFlowConfig(pageName) {
@@ -2044,13 +2064,14 @@ async function getExStudentData(region, courseSlug) {
 }
 
 function getPaymentPageInfo(pageName) {
-    if (!pageName) return null;
-    const match = pageName.match(/^(.*?)\-payment(?:-ex)?\.html$/);
+    const normalizedPageName = normalizeHtmlPageName(pageName);
+    if (!normalizedPageName) return null;
+    const match = normalizedPageName.match(/^(.*?)\-payment(?:-ex)?\.html$/);
     if (!match) return null;
 
     return {
         courseSlug: match[1],
-        pageType: pageName.endsWith("-payment-ex.html") ? "ex" : "new"
+        pageType: normalizedPageName.endsWith("-payment-ex.html") ? "ex" : "new"
     };
 }
 
@@ -2064,6 +2085,14 @@ function getCourseDestination(route) {
     return {
         type: route.type || "page",
         url: route.url
+    };
+}
+
+function getDefaultEnrollmentDestinations(courseSlug) {
+    if (!courseSlug) return { newDestination: null, exDestination: null };
+    return {
+        newDestination: { type: "page", url: `${courseSlug}-payment.html` },
+        exDestination: { type: "page", url: `${courseSlug}-payment-ex.html` }
     };
 }
 
@@ -2142,7 +2171,8 @@ async function verifyExStudentPaymentId(paymentId, courseSlug, region) {
 let courseCurrencyObserver = null;
 
 function isCourseEntryPath(pathname) {
-    return COURSE_ENTRY_PATH_PATTERN.test(pathname);
+    const pageName = normalizeHtmlPageName(pathname);
+    return COURSE_ENTRY_PAGE_NAMES.has(pageName);
 }
 
 function clearCourseRegionOnReload() {
@@ -2311,19 +2341,12 @@ function createCourseRegionModal() {
     const choiceButtons = modal.querySelectorAll("[data-region]");
     choiceButtons.forEach((button) => {
         button.addEventListener("click", handleSelection);
-        button.addEventListener("pointerup", handleSelection);
-        button.addEventListener("touchend", handleSelection, { passive: false });
     });
 
     modal.addEventListener("click", (event) => {
         if (event.target !== modal) return;
         closeCourseModals();
     });
-
-    modal.addEventListener("pointerdown", (event) => {
-        if (event.target !== modal) return;
-        event.preventDefault();
-    }, { passive: false });
 
     window.addEventListener("keydown", (event) => {
         if (event.key !== "Escape") return;
@@ -2373,10 +2396,6 @@ function initCourseRegionSelection() {
         };
 
         link.addEventListener("click", openRegionModal);
-        link.addEventListener("pointerdown", openRegionModal);
-        link.addEventListener("pointerup", openRegionModal);
-        link.addEventListener("touchstart", openRegionModal, { passive: false });
-        link.addEventListener("touchend", openRegionModal, { passive: false });
     });
 
     if (!getSelectedCourseRegion() && isCourseEntryPath(window.location.pathname)) {
@@ -2434,19 +2453,12 @@ function createEnrollmentTypeModal() {
     const choiceButtons = modal.querySelectorAll("[data-choice]");
     choiceButtons.forEach((button) => {
         button.addEventListener("click", handleSelection);
-        button.addEventListener("pointerup", handleSelection);
-        button.addEventListener("touchend", handleSelection, { passive: false });
     });
 
     modal.addEventListener("click", (event) => {
         if (event.target !== modal) return;
         closeCourseModals();
     });
-
-    modal.addEventListener("pointerdown", (event) => {
-        if (event.target !== modal) return;
-        event.preventDefault();
-    }, { passive: false });
 
     window.addEventListener("keydown", (event) => {
         if (event.key !== "Escape") return;
@@ -2512,11 +2524,6 @@ function createNewStudentModal() {
         if (event.target !== modal) return;
         closeNewStudentModal();
     });
-
-    modal.addEventListener("pointerdown", (event) => {
-        if (event.target !== modal) return;
-        event.preventDefault();
-    }, { passive: false });
 
     window.addEventListener("keydown", (event) => {
         if (event.key !== "Escape") return;
@@ -2612,11 +2619,6 @@ function createCouponMismatchModal() {
         closeCouponMismatchModal();
     });
 
-    modal.addEventListener("pointerdown", (event) => {
-        if (event.target !== modal) return;
-        event.preventDefault();
-    }, { passive: false });
-
     window.addEventListener("keydown", (event) => {
         if (event.key !== "Escape") return;
         if (!modal.classList.contains("is-open")) return;
@@ -2686,18 +2688,6 @@ function createExStudentModal() {
         if (event.target !== modal) return;
         closeExStudentModal();
     });
-
-    modal.addEventListener("pointerdown", (event) => {
-        if (event.target !== modal) return;
-        event.preventDefault();
-    }, { passive: false });
-
-    modal.addEventListener("touchstart", (event) => {
-        if (event.target !== modal) {
-            return;
-        }
-        event.preventDefault();
-    }, { passive: false });
 
     window.addEventListener("keydown", (event) => {
         if (event.key !== "Escape") return;
@@ -2775,9 +2765,16 @@ async function getExStudentData(region, courseSlug) {
 async function findExStudentRecord(paymentId, courseSlug, region) {
     const normalizedPaymentId = normalizePaymentId(paymentId);
     const data = await getExStudentData(region, courseSlug);
+    const coursePayments = data?.courses?.[courseSlug];
+    if (Array.isArray(coursePayments)) {
+        const matchedCourseRecord = coursePayments.find(
+            (student) => normalizePaymentId(student.paymentId) === normalizedPaymentId
+        );
+        if (matchedCourseRecord) return matchedCourseRecord;
+    }
+
     const paymentIds = data?.paymentIds;
     if (!Array.isArray(paymentIds)) return null;
-
     return paymentIds.find((student) => normalizePaymentId(student.paymentId) === normalizedPaymentId) || null;
 }
 
@@ -2787,7 +2784,7 @@ async function verifyExStudentPaymentId(paymentId, courseSlug, region) {
 }
 
 async function initExStudentPaymentPage() {
-    const pageName = window.location.pathname.split("/").pop();
+    const pageName = normalizeHtmlPageName(window.location.pathname);
     const pageInfo = getPaymentPageInfo(pageName);
     if (!pageInfo) return;
 
@@ -2959,7 +2956,7 @@ function initEnrollmentSelection() {
             return;
         }
 
-        const hrefPage = resolvedUrl.pathname.split("/").pop();
+        const hrefPage = normalizeHtmlPageName(resolvedUrl.pathname);
         if (!getCourseFlowConfigPath(hrefPage)) return;
 
         const openEnrollmentModal = async (event) => {
@@ -2967,29 +2964,37 @@ function initEnrollmentSelection() {
             if (event.type === "click" && event.button !== 0) return;
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
-
-            const courseConfig = await loadCourseFlowConfig(hrefPage);
             const region = getSelectedCourseRegion() || "indian";
             const courseInfo = getPaymentPageInfo(hrefPage);
-            const regionConfig = getCourseRegionConfig(courseConfig, region);
-            if (!regionConfig || !courseInfo) {
+            if (!courseInfo) {
                 window.location.href = new URL(hrefPage, window.location.href).href;
                 return;
             }
 
+            const fallbackDestinations = getDefaultEnrollmentDestinations(courseInfo.courseSlug);
+            let newDestination = fallbackDestinations.newDestination;
+            let exDestination = fallbackDestinations.exDestination;
+
+            try {
+                const courseConfig = await loadCourseFlowConfig(hrefPage);
+                const regionConfig = getCourseRegionConfig(courseConfig, region);
+                if (regionConfig) {
+                    newDestination = getCourseDestination(regionConfig.new) || newDestination;
+                    exDestination = getCourseDestination(regionConfig.ex) || exDestination;
+                }
+            } catch (_) {
+                // Keep static fallback routes so modal still works even if JSON fetch fails on host.
+            }
+
             openEnrollmentTypeModal(
-                getCourseDestination(regionConfig.new),
-                getCourseDestination(regionConfig.ex),
+                newDestination,
+                exDestination,
                 courseInfo.courseSlug,
                 region
             );
         };
 
         link.addEventListener("click", openEnrollmentModal);
-        link.addEventListener("pointerdown", openEnrollmentModal);
-        link.addEventListener("pointerup", openEnrollmentModal);
-        link.addEventListener("touchstart", openEnrollmentModal, { passive: false });
-        link.addEventListener("touchend", openEnrollmentModal, { passive: false });
     });
 }
 
