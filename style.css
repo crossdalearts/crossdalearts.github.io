@@ -683,7 +683,217 @@ nav{
     background: #111;
     border-radius: 2px;
 }
+.statement-chip{
+  margin-left: -10px;
+}
 
+
+/* Masterclass page */
+#masterclass-page{
+    width: min(1180px, 100% - 48px);
+    margin: 26px auto 38px;
+}
+
+.masterclass-shell{
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    align-items: flex-end;
+    background: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 26px;
+    padding: 32px;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.24);
+}
+
+.masterclass-shell::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.28) 8%, rgba(0, 0, 0, 0.74) 74%),
+        linear-gradient(120deg, rgba(7, 7, 7, 0.12), rgba(7, 7, 7, 0.6));
+    z-index: 1;
+}
+
+.masterclass-bg-media{
+    position: absolute;
+    inset: 0;
+}
+
+.masterclass-bg-media img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.95) contrast(1.05);
+}
+
+.masterclass-copy{
+    position: relative;
+    z-index: 2;
+    max-width: min(760px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.masterclass-eyebrow{
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #ffd1d1;
+    font-weight: 700;
+}
+
+.masterclass-copy h1{
+    font-size: clamp(30px, 4.3vw, 44px);
+    line-height: 1.08;
+    color: #ffffff;
+    text-shadow: 0 5px 20px rgba(0, 0, 0, 0.45);
+}
+
+.masterclass-description{
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.masterclass-meta{
+    display: grid;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.masterclass-meta p{
+    display: block;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+.masterclass-meta strong{
+    color: #ffffff;
+}
+
+.masterclass-cta{
+    margin-top: 12px;
+    width: fit-content;
+}
+
+.masterclass-actions{
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.masterclass-actions .masterclass-register-cta,
+.masterclass-actions .masterclass-cta{
+    margin-top: 0;
+}
+
+.masterclass-actions .masterclass-register-cta{
+    background: #ff4242;
+    color: #fff;
+    border: 1px solid #ff4242;
+    backdrop-filter: none;
+}
+#masterclass-register-button{
+  background: rgb(255, 66, 66) !important;
+  width: 250px;
+}
+#mystory-button-masterclass{
+  width: 250px;
+}
+
+.masterclass-actions .masterclass-register-cta:hover{
+    background: #e93636;
+    border-color: #e93636;
+}
+.masterclass-meta p{
+  font-size: 17px;
+}
+
+.masterclass-registration-inline-link{
+    margin: 10px 0 12px;
+    text-align: center;
+}
+
+.masterclass-registration-inline-link a{
+    color: rgb(255, 66, 66);
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.masterclass-registration-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.masterclass-registration-container .payment-page-iframe{
+    flex: 1 1 auto;
+    min-height: 520px;
+}
+
+@media (max-width: 980px){
+    #masterclass-page{
+        width: min(100% - 34px, 920px);
+        margin-top: -10px !important;
+    }
+
+    .masterclass-shell{
+        min-height: 420px;
+        padding: 22px;
+    }
+
+    .masterclass-copy h1{
+        font-size: clamp(28px, 7vw, 36px);
+    }
+
+    .masterclass-description{
+        font-size: 16px;
+    }
+
+    .masterclass-meta p{
+        font-size: 15px;
+    }
+
+    .masterclass-actions{
+        width: 100%;
+    }
+
+    .masterclass-registration-container .payment-page-iframe{
+        min-height: 620px;
+    }
+}
+
+@media (max-width: 576px){
+    #masterclass-page{
+        width: min(100% - 24px, 640px);
+        margin-top: -10px;
+    }
+
+    .masterclass-shell{
+        border-radius: 20px;
+        padding: 18px;
+    }
+
+    .masterclass-actions{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .masterclass-actions .masterclass-register-cta,
+    .masterclass-actions .masterclass-cta{
+        width: 100% !important;
+        margin-left: 0;
+        margin-right: 0;
+        text-align: center;
+    }
+}
 
 /* artist-statement */
 #artist-statement{
@@ -941,6 +1151,7 @@ body #feedback-widget-anchor{
     .feedback-card,
     #qualification-note,
     #artist-network-note,
+    .masterclass-shell,
     .gallery-showcase,
     .course-card,
     .story-card,
@@ -956,6 +1167,8 @@ body #feedback-widget-anchor{
     .gallery-lightbox-close,
     .gallery-video-fallback a,
     .course-card-link,
+    .masterclass-cta,
+    .masterclass-register-cta,
     #my-story-button,
     #enrollment-button,
     .download-course-details-button,
@@ -973,6 +1186,7 @@ body #feedback-widget-anchor{
     .feedback-card,
     #qualification-note,
     #artist-network-note,
+    .masterclass-shell,
     .gallery-showcase,
     .course-card,
     .story-card,
@@ -988,6 +1202,8 @@ body #feedback-widget-anchor{
     .gallery-lightbox-close,
     .gallery-video-fallback a,
     .course-card-link,
+    .masterclass-cta,
+    .masterclass-register-cta,
     #my-story-button,
     #enrollment-button,
     .download-course-details-button,
@@ -998,6 +1214,7 @@ body #feedback-widget-anchor{
     .feedback-card,
     #qualification-note,
     #artist-network-note,
+    .masterclass-shell,
     .course-card,
     .story-card,
     
@@ -1013,6 +1230,8 @@ body #feedback-widget-anchor{
     .gallery-lightbox-close,
     .gallery-video-fallback a,
     .course-card-link,
+    .masterclass-cta,
+    .masterclass-register-cta,
     #my-story-button,
     #enrollment-button,
     .download-course-details-button,
@@ -1024,6 +1243,7 @@ body #feedback-widget-anchor{
     #qualification-note,
     
     #artist-network-note,
+    .masterclass-shell,
     .course-card,
     .story-card,
     .story-section,
@@ -1048,6 +1268,7 @@ body #feedback-widget-anchor{
     .feedback-card,
     #qualification-note,
     #artist-network-note,
+    .masterclass-shell,
     .course-card,
     .story-card,
     .story-section,
@@ -1062,6 +1283,8 @@ body #feedback-widget-anchor{
     .gallery-lightbox-close,
     .gallery-video-fallback a,
     .course-card-link,
+    .masterclass-cta,
+    .masterclass-register-cta,
     #my-story-button,
     #enrollment-button,
     .download-course-details-button,
@@ -1878,12 +2101,6 @@ footer p{
     color: #555;
 }               
 
-
-
-
-
-
-
 /* course */
 #courses-page{
     width: 90%;
@@ -2445,6 +2662,9 @@ footer p{
         margin-top: -41px;
     }
     #recognitions, #exhibitions{
+        margin-top: 0px;
+    }
+    #recognitions{
         margin-top: -40px;
     }
     #art-gallery{
@@ -2603,6 +2823,9 @@ footer p{
         min-width: 170px;
         margin-bottom: 10px;
     }
+    .course-page-details-button{
+      margin-top: -10px;
+    }
     #course-image{
         width: 80%;
         max-width: 100vw;
@@ -2617,7 +2840,7 @@ footer p{
     }
     #story-page{
         width: 90%;
-        margin-top: 36px;
+        margin-top: -10px !important;
     }
     .story-hero{
         padding-top: 0;
@@ -2654,13 +2877,16 @@ footer p{
     body .surface-section,
     body .story-hero,
     body .story-quote,
-    body #course-content,
     body .course-card,
     body #courses-page,
     body footer p{
         width: 95% !important;
         margin-left: auto !important;
         margin-right: auto !important;
+    }
+    body #course-content{
+      width: 100% !important;
+      margin: auto !important;
     }
     body #navbar{
         width: 90% !important;
@@ -4061,10 +4287,8 @@ footer p {
   color: var(--refresh-ink-soft);
 }
 
-#courses-page,
-#story-page,
 #whole-container-course {
-  margin-top: 22px;
+  margin-top: -10px !important;
   margin-bottom: 60px;
 }
 
@@ -4143,6 +4367,19 @@ footer p {
   color: var(--refresh-accent-deep);
   font-weight: 800;
   background: rgba(255, 66, 66, 0.12);
+}
+
+.course-card-actions .course-card-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 132px;
+  padding: 0 16px;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .best-seller-badge {
@@ -4436,6 +4673,16 @@ footer p {
   color: rgba(249, 247, 243, 0.84);
 }
 
+.feedback-modal-message {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+  overflow: visible !important;
+  text-overflow: initial !important;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .feedback-modal-top h2,
 .feedback-modal-top h4,
 .feedback-modal-name {
@@ -4606,6 +4853,10 @@ footer p {
   #courses-page {
     width: 100%;
     padding: var(--refresh-card-padding);
+    margin-top: -10px !important;
+  }
+  #course-content {
+    margin-top: -10px !important;
   }
 
   #enrollment-layout,
@@ -4782,6 +5033,71 @@ footer p {
 
   .course-region-actions {
     grid-template-columns: 1fr;
+  }
+
+  .course-cta-group,
+  #enrollment-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .course-cta-group > a,
+  #enrollment-buttons > a {
+    width: 100%;
+    display: flex;
+  }
+
+  .course-cta-group > a > #enrollment-button,
+  .course-cta-group > .download-course-details-button,
+  .course-cta-group > a > .download-course-details-button,
+  #enrollment-buttons > a > button,
+  #enrollment-buttons button,
+  #enrollment-button,
+  .download-course-details-button {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+.feedback-overlay {
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-modal {
+  margin: 0;
+  max-height: calc(100dvh - 40px);
+}
+
+@media (max-width: 576px) {
+  .feedback-modal {
+    margin: 0;
+    max-height: calc(100dvh - 24px);
+  }
+}
+
+.feedback-overlay {
+  overflow: hidden;
+}
+
+.feedback-modal {
+  overflow: hidden;
+}
+
+.feedback-modal.is-feedback-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback-modal.is-feedback-detail .feedback-modal-message {
+  max-height: calc(100dvh - 220px);
+  overflow-y: auto !important;
+  padding-right: 6px;
+}
+
+@media (max-width: 576px) {
+  .feedback-modal.is-feedback-detail .feedback-modal-message {
+    max-height: calc(100dvh - 190px);
   }
 }
 
@@ -5418,3 +5734,43 @@ body #feedback-widget-anchor {
 
 
 
+
+@media (max-width: 576px) {
+  .hero-actions,
+  .course-cta-group,
+  .masterclass-actions,
+  #enrollment-buttons {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .hero-actions > a,
+  .course-cta-group > a,
+  .masterclass-actions > a,
+  #enrollment-buttons > a {
+    width: 100% !important;
+    display: flex !important;
+  }
+
+  .primary-cta,
+  .secondary-cta,
+  .masterclass-cta,
+  .masterclass-register-cta,
+  #enrollment-buttons button,
+  #my-story-button,
+  #enrollment-button,
+  .download-course-details-button,
+  .course-card-link,
+  #bonus,
+  .feedback-leave-btn,
+  .feedback-form-submit {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 52px !important;
+    padding: 0 18px !important;
+    box-sizing: border-box;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+}

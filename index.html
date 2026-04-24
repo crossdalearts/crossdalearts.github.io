@@ -49,6 +49,7 @@
         </button>
         <ul>
           <li><a href="pages/courses.html">Courses</a></li>
+          <li><a href="pages/masterclass.html" data-masterclass-nav="true">Masterclass</a></li>
           <li><a href="pages/my-story.html">My Story</a></li>
           <li><a href="https://www.instagram.com/crossdale_arts/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
           <li><a href="https://wa.me/8858762510" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
@@ -75,6 +76,7 @@
             </p>
             <div class="hero-actions">
               <a class="primary-cta" href="pages/courses.html">Explore Courses</a>
+              <a class="secondary-cta" href="pages/masterclass.html" data-masterclass-hero="true">Masterclass</a>
               <a class="secondary-cta" href="pages/my-story.html">Read My Story</a>
             </div>
             <div class="hero-metrics" aria-label="CrossdaleArts highlights" style="display:flex; width:100%; gap:14px; justify-content:space-between; align-items:stretch;">
@@ -133,6 +135,7 @@
               </p>
               <div id="enrollment-buttons">
                 <a href="pages/courses.html"><button type="button">View Courses</button></a>
+                <a class="secondary-cta" href="pages/masterclass.html" data-masterclass-hero="true">Register for Masterclass</a>
               </div>
               <ul class="benefit-list">
                 <li>Small-seat batches for better interaction</li>
@@ -199,44 +202,7 @@
         </div>
       </section>
 
-      <section id="expertise-note-row" class="dual-surface">
-        <section id="art-expertise" class="surface-section compact-card">
-          <p class="section-eyebrow">Expertise</p>
-          <h3>Creative disciplines I work across</h3>
-          <ul>
-            <li>Conceptual Art</li>
-            <li>Dark Art</li>
-            <li>Comic Art</li>
-            <li>Digital Illustration</li>
-            <li>Vector Art</li>
-            <li>Calligraphy</li>
-            <li>Logo Design</li>
-            <li>Cover Design</li>
-          </ul>
-        </section>
-
-        <section id="qualification-note" class="surface-section compact-card">
-          <p class="section-eyebrow">Perspective</p>
-          <h3>Why lived understanding matters more in art education..??</h3>
-          <br>
-          <div class="note-content" data-mobile-collapsible="true">
-            <p id="qualification-note-text">
-              <b style="color: rgb(255, 66, 66);">There are two kinds of qualifications:</b> One is <b>personal qualification</b>, and the other is <b>academic qualification</b>. When it comes to <b>intellectual or philosophical matters</b>, personal qualification holds more importance than academic qualification. Personal qualification is based on <b>experience, knowledge, and records</b>, things that can be verified, and in many cases, it can be more authentic than academic qualifications.
-This is because it is often seen that even people who have completed a postgraduate degree in Hindi many a times <b>mispronounce</b> basic words, for example, saying “sareer” instead of “shareer.” Even if they <b>don’t have any knowledge</b>, they will still be considered postgraduates because they have the academic qualification, that is, <b style="color: rgb(255, 66, 66)">degree</b>.
-            </p>
-            <button
-              type="button"
-              id="qualification-note-toggle"
-              class="note-toggle"
-              aria-expanded="false"
-              aria-controls="qualification-note-text"
-            >
-              Read more
-            </button>
-          </div>
-        </section>
-      </section>
-
+      
       <section id="art-gallery" class="surface-section">
         <div class="section-heading-row">
           <div>
@@ -245,31 +211,69 @@ This is because it is often seen that even people who have completed a postgradu
           </div>
         </div>
         <div
-          class="gallery-showcase gallery-showcase-full"
-          id="gallery-showcase"
-          role="button"
-          tabindex="0"
-          aria-label="Open gallery"
+        class="gallery-showcase gallery-showcase-full"
+        id="gallery-showcase"
+        role="button"
+        tabindex="0"
+        aria-label="Open gallery"
         >
-          <div class="gallery-showcase-copy">
-            <p class="gallery-showcase-eyebrow"><b>Visual Archive</b></p>
-            <h4>Open the CrossdaleArts gallery</h4>
-            <p class="gallery-showcase-text">
-              Browse category by category through artworks, calligraphy, live classes, archives, and more.
-            </p>
-            <p class="gallery-showcase-context">
-              I have met prominent artists from different parts of India, including notable writers,
-              curators, art directors, senior public officials, and personalities whose names have
-              appeared in the Guinness World Records.
-            </p>
-            <div class="gallery-showcase-meta">
-              <span id="gallery-showcase-count">Loading gallery...</span>
-              <span class="gallery-showcase-action">Open Gallery</span>
-            </div>
+        <div class="gallery-showcase-copy">
+          <p class="gallery-showcase-eyebrow"><b>Visual Archive</b></p>
+          <h4>Open the CrossdaleArts gallery</h4>
+          <p class="gallery-showcase-text">
+            Browse category by category through artworks, calligraphy, live classes, archives, and more.
+          </p>
+          <p class="gallery-showcase-context">
+            I have met prominent artists from different parts of India, including notable writers,
+            curators, art directors, senior public officials, and personalities whose names have
+            appeared in the Guinness World Records.
+          </p>
+          <div class="gallery-showcase-meta">
+            <span id="gallery-showcase-count">Loading gallery...</span>
+            <span class="gallery-showcase-action">Open Gallery</span>
           </div>
-          <div class="gallery-showcase-preview" id="gallery-showcase-preview" aria-hidden="true"></div>
+        </div>
+        <div class="gallery-showcase-preview" id="gallery-showcase-preview" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section id="expertise-note-row" class="dual-surface">
+      <section id="art-expertise" class="surface-section compact-card">
+        <p class="section-eyebrow">Expertise</p>
+        <h3>Creative disciplines I work across</h3>
+        <ul>
+          <li>Conceptual Art</li>
+          <li>Dark Art</li>
+          <li>Comic Art</li>
+          <li>Digital Illustration</li>
+          <li>Vector Art</li>
+          <li>Calligraphy</li>
+          <li>Logo Design</li>
+          <li>Cover Design</li>
+        </ul>
+      </section>
+
+      <section id="qualification-note" class="surface-section compact-card">
+        <p class="section-eyebrow">Perspective</p>
+        <h3>Why lived understanding matters more in art education..??</h3>
+        <br>
+        <div class="note-content" data-mobile-collapsible="true">
+          <p id="qualification-note-text">
+            <b style="color: rgb(255, 66, 66);">There are two kinds of qualifications:</b> One is <b>personal qualification</b>, and the other is <b>academic qualification</b>. When it comes to <b>intellectual or philosophical matters</b>, personal qualification holds more importance than academic qualification. Personal qualification is based on <b>experience, knowledge, and records</b>, things that can be verified, and in many cases, it can be more authentic than academic qualifications.
+This is because it is often seen that even people who have completed a postgraduate degree in Hindi many a times <b>mispronounce</b> basic words, for example, saying “sareer” instead of “shareer.” Even if they <b>don’t have any knowledge</b>, they will still be considered postgraduates because they have the academic qualification, that is, <b style="color: rgb(255, 66, 66)">degree</b>.
+          </p>
+          <button
+            type="button"
+            id="qualification-note-toggle"
+            class="note-toggle"
+            aria-expanded="false"
+            aria-controls="qualification-note-text"
+          >
+            Read more
+          </button>
         </div>
       </section>
+    </section>
 
       <section class="bottom-grid">
         <section id="exhibitions" class="surface-section compact-card">

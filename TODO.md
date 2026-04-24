@@ -11,33 +11,48 @@
 - 11-04-2026
 
 
-The Realism Within - New course Name *{Done}
-The Early Bird Discount - (Button Addition in New and Ex Student Modal) *{Done}
+1. The Realism Within - New course Name *{Done}
+2. The Early Bird Discount - (Button Addition in New and Ex Student Modal) *{Done}
 
 - 13-04-2026
 
 
-Enroll Now Button In the end also after View Details Button *{Done}
-Preprocess the Image to Webp before proceeding *{Done}
-Market Research Gallery *{Done}
-Seperate JSON for Market research Gallery *{Done}
-Bottom CTA include gallery but top CTA include PDF *{Done}
-View Details button in Bottom Also (PDF) *{Done}
+1. Enroll Now Button In the end also after View Details Button *{Done}
+2. Preprocess the Image to Webp before proceeding *{Done}
+3. Market Research Gallery *{Done}
+4. Seperate JSON for Market research Gallery *{Done}
+5. Bottom CTA include gallery but top CTA include PDF *{Done}
+6. View Details button in Bottom Also (PDF) *{Done}
 
 - 16-04-2026
 
 
-Border in small screen *{Done}
-Add Registration Open and Close Alert *{Done}
-Wise Authenticity Certificate *{Done}
-Market Research Folder (Title Change {JSON}) *{Done}
-Add More Snapshots in Market Research Folder *{Done}
-Price Difference 40$ in The Art of Meaning, Cheaper Price Difference Percentage *{Done}
-Card Fixed Ratio in all screens
+1. Border in small screen *{Done}
+2. Add Registration Open and Close Alert *{Done}
+3. Wise Authenticity Certificate *{Done}
+4. Market Research Folder (Title Change {JSON}) *{Done}
+5. Add More Snapshots in Market Research Folder *{Done}
+6. Price Difference 40$ in The Art of Meaning, Cheaper Price Difference Percentage *{Done}
 
 - 17-04-2026
 
-
-PDF Download Security (Not Possible without backend)
+*PDF Download Security (Not Possible without backend)
 {Future Enhancement}
+
 - 18-04-2026
+
+1. Early Bird discount change *{Discarded}
+2. Width overall to not look squized between edges *{Done}
+3. masterclass button in red *{Done}
+4. Gallery card shift above 2 cards *{Done}
+5. upcoming masterclass and registration button inside it to pay and register for the masterclass *{Done}
+6. Add one more masterclass button after view course button *{Done}
+7. Card Fixed Ratio in all screens *{Overruled}
+8. register now button in red *{Overruled}
+9. new payment page in razorpay *{Done}
+
+Optimize (remove unnessary code which is not used)
+Changing image with transition in masterclass card
+bumpy effect on hover
+
+- 22-04-2026

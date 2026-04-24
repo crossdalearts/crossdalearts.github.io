@@ -1727,6 +1727,7 @@ function createFeedbackModal() {
     function close() {
         overlay.classList.remove("is-open");
         overlay.setAttribute("aria-hidden", "true");
+        modal.classList.remove("is-feedback-detail");
         modal.innerHTML = "";
         document.body.classList.remove("gallery-lightbox-open");
     }
@@ -1746,6 +1747,7 @@ function openFeedbackDetailModal(detailModal, feedback) {
     const safe = sanitizeFeedback(feedback);
     if (!safe) return;
 // <div class="feedback-modal-stars">${renderStars(safe.rating)}</div>
+    detailModal.modal.classList.add("is-feedback-detail");
     detailModal.modal.innerHTML = `
         <div class="feedback-modal-top">
             <h2>Learners Feedback</h2>
@@ -1763,6 +1765,7 @@ function openFeedbackDetailModal(detailModal, feedback) {
 
 function openFeedbackFormModal(detailModal, onSubmit) {
     const saveModeLabel = "Crossdale Arts Database";
+    detailModal.modal.classList.remove("is-feedback-detail");
 
     detailModal.modal.innerHTML = `
         <div class="feedback-modal-top">
@@ -1861,7 +1864,7 @@ function getLocalFeedbacks() {
 function sanitizeFeedback(raw) {
     if (!raw || typeof raw !== "object") return null;
     const name = String(raw.name || "").trim().slice(0, 60);
-    const message = String(raw.message || "").trim().slice(0, 500);
+    const message = String(raw.message || "").trim();
     const rating = Math.max(1, Math.min(5, Number(raw.rating) || 0));
     if (!name || !message || !rating) return null;
     return { name, message, rating };
@@ -1951,8 +1954,11 @@ const COURSE_FLOW_CACHE = new Map();
 const EX_STUDENT_DATA_CACHE = new Map();
 const EARLY_BIRD_CONFIG_PATH = "data/early-bird-config.json";
 const EARLY_BIRD_CONFIG_CACHE = new Map();
+const MASTERCLASS_CONFIG_PATH = "data/masterclass-config.json";
+let masterclassConfigPromise = null;
 let courseRegionModalState = null;
 let enrollmentTypeModalState = null;
+let masterclassRegistrationModalState = null;
 const COURSE_ENTRY_PAGE_NAMES = new Set([
     "courses.html",
     "fundamental-of-arts.html",
@@ -2011,6 +2017,382 @@ async function loadEarlyBirdConfig() {
     const config = await response.json();
     EARLY_BIRD_CONFIG_CACHE.set(EARLY_BIRD_CONFIG_PATH, config);
     return config;
+}
+
+function normalizeConfigPath(path, fallbackPath = "") {
+    const trimmed = String(path || "").trim().replace(/\\/g, "/");
+    const withoutPrefixes = trimmed.replace(/^(\.\.\/)+/, "").replace(/^\.\//, "");
+    return withoutPrefixes || fallbackPath;
+}
+
+function getDefaultMasterclassConfig() {
+    return {
+        enabled: true,
+        pagePath: "pages/masterclass.html",
+        labels: {
+            nav: "Masterclass",
+            heroButton: "Masterclass"
+        },
+        page: {
+            title: "Masterclass - CrossdaleArts",
+            description: "Upcoming CrossdaleArts masterclass details and class focus."
+        },
+        upcomingClass: {
+            title: "Upcoming Masterclass",
+            forClass: "The Realism Within (Basic to Advance)",
+            shortDescription: "A focused session on visual storytelling, composition planning, and making ideas original before final rendering.",
+            image: "images/basictoadvance.png",
+            imageAlt: "Upcoming CrossdaleArts masterclass artwork",
+            date: "",
+            mode: "Live online session",
+            ctaLabel: "My Story",
+            ctaLink: "pages/my-story.html"
+        },
+        registration: {
+            buttonLabel: "Registrations",
+            pagePath: "pages/masterclass-registration.html",
+            pageTitle: "Masterclass Registration - CrossdaleArts",
+            pageDescription: "Complete your registration for the upcoming CrossdaleArts masterclass.",
+            statusText: "Complete your registration for the upcoming masterclass using the secure payment option below.",
+            paymentLinkLabel: "Open Razorpay payment in new tab",
+            paymentUrl: "https://rzp.io/rzp/MoKp92J",
+            paymentLinks: {
+                indian: "https://rzp.io/rzp/MoKp92J",
+                international: ""
+            }
+        }
+    };
+}
+
+function getMasterclassPagePath(config) {
+    const fallbackPath = getDefaultMasterclassConfig().pagePath;
+    return normalizeConfigPath(config?.pagePath || config?.page?.path, fallbackPath);
+}
+
+function getMasterclassLinkHref(config) {
+    return getAssetUrl(getMasterclassPagePath(config));
+}
+
+function getMasterclassRegistrationPagePath(config) {
+    const fallbackPath = getDefaultMasterclassConfig().registration.pagePath;
+    return normalizeConfigPath(config?.registration?.pagePath, fallbackPath);
+}
+
+async function loadMasterclassConfig() {
+    if (masterclassConfigPromise) return masterclassConfigPromise;
+
+    masterclassConfigPromise = (async () => {
+        const response = await fetch(getAssetUrl(MASTERCLASS_CONFIG_PATH), { cache: "no-store" });
+        if (!response.ok) {
+            throw new Error("Unable to load masterclass configuration.");
+        }
+
+        const config = await response.json();
+        return config && typeof config === "object" ? config : {};
+    })();
+
+    try {
+        return await masterclassConfigPromise;
+    } catch (error) {
+        masterclassConfigPromise = null;
+        throw error;
+    }
+}
+
+function upsertMasterclassNavLink(config) {
+    const navList = document.querySelector("#navbar ul");
+    if (!navList) return;
+
+    const isEnabled = config?.enabled !== false;
+    const existingLink = navList.querySelector("a[data-masterclass-nav]");
+    const existingItem = existingLink?.closest("li");
+
+    if (!isEnabled) {
+        if (existingItem) existingItem.remove();
+        return;
+    }
+
+    let anchor = existingLink;
+    let listItem = existingItem;
+
+    if (!anchor) {
+        listItem = document.createElement("li");
+        anchor = document.createElement("a");
+        anchor.dataset.masterclassNav = "true";
+        listItem.appendChild(anchor);
+
+        const myStoryLink = [...navList.querySelectorAll("a")].find((link) => /my-story\.html$/i.test(link.getAttribute("href") || ""));
+        const myStoryItem = myStoryLink?.closest("li");
+        if (myStoryItem) navList.insertBefore(listItem, myStoryItem);
+        else navList.appendChild(listItem);
+    }
+
+    const navLabel = String(config?.labels?.nav || config?.navLabel || "Masterclass").trim() || "Masterclass";
+    anchor.textContent = navLabel;
+    anchor.href = getMasterclassLinkHref(config);
+}
+
+function upsertMasterclassHeroButton(config) {
+    const heroActions = document.querySelector(".hero-actions");
+    if (!heroActions) return;
+
+    const isEnabled = config?.enabled !== false;
+    let button = heroActions.querySelector("a[data-masterclass-hero]");
+
+    if (!isEnabled) {
+        if (button) button.remove();
+        return;
+    }
+
+    if (!button) {
+        button = document.createElement("a");
+        button.dataset.masterclassHero = "true";
+        button.className = "secondary-cta";
+        const myStoryButton = [...heroActions.querySelectorAll("a")].find((link) => /my-story\.html$/i.test(link.getAttribute("href") || ""));
+        if (myStoryButton) heroActions.insertBefore(button, myStoryButton);
+        else heroActions.appendChild(button);
+    }
+
+    const heroLabel = String(config?.labels?.heroButton || config?.heroButtonLabel || "Masterclass").trim() || "Masterclass";
+    button.textContent = heroLabel;
+    button.href = getMasterclassLinkHref(config);
+}
+
+function setTextContentBySelector(selector, value) {
+    const element = document.querySelector(selector);
+    if (!element) return;
+    element.textContent = String(value || "").trim();
+}
+
+function setParagraphContentWithBreaks(selector, value) {
+    const element = document.querySelector(selector);
+    if (!element) return;
+    const rawText = String(value || "").trim();
+    const escapedText = rawText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    // Allow only <br> tags from config and convert plain new lines to breaks.
+    element.innerHTML = escapedText
+        .replace(/&lt;br\s*\/?&gt;/gi, "<br>")
+        .replace(/\r?\n/g, "<br>");
+}
+
+function createMasterclassRegistrationRegionModal() {
+    const existing = document.getElementById("masterclass-registration-region-modal");
+    if (existing) return existing;
+
+    const modal = document.createElement("div");
+    modal.id = "masterclass-registration-region-modal";
+    modal.className = "course-region-modal";
+    modal.setAttribute("aria-hidden", "true");
+
+    modal.innerHTML = `
+        <div class="course-region-dialog" role="dialog" aria-modal="true" aria-labelledby="masterclass-region-title">
+            <p class="course-region-eyebrow">Masterclass Registration</p>
+            <h2 id="masterclass-region-title">Select your region</h2>
+            <p class="course-region-copy">Choose the payment page that matches your location.</p>
+            <div class="course-region-actions">
+                <button type="button" class="course-region-choice" data-masterclass-region="indian">Indian</button>
+                <button type="button" class="course-region-choice is-secondary" data-masterclass-region="international">International</button>
+            </div>
+            <p class="course-region-note">International Artists must send their screenshots on instagram..!!</code>.</p>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const chooseRegion = (event) => {
+        const button = event.target.closest("[data-masterclass-region]");
+        if (!button || button.disabled) return;
+        event.preventDefault();
+
+        const region = button.dataset.masterclassRegion === "international" ? "international" : "indian";
+        const targetUrl = masterclassRegistrationModalState?.paymentLinks?.[region] || "";
+        if (!targetUrl) return;
+
+        closeCourseModals();
+        window.location.href = targetUrl;
+    };
+
+    modal.querySelectorAll("[data-masterclass-region]").forEach((button) => {
+        button.addEventListener("click", chooseRegion);
+    });
+
+    modal.addEventListener("click", (event) => {
+        if (event.target !== modal) return;
+        closeCourseModals();
+    });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!modal.classList.contains("is-open")) return;
+        closeCourseModals();
+    });
+
+    return modal;
+}
+
+function openMasterclassRegistrationRegionModal(registrationConfig, fallbackRegistration) {
+    const modal = createMasterclassRegistrationRegionModal();
+    const configLinks = registrationConfig?.paymentLinks && typeof registrationConfig.paymentLinks === "object"
+        ? registrationConfig.paymentLinks
+        : {};
+    const fallbackLinks = fallbackRegistration?.paymentLinks && typeof fallbackRegistration.paymentLinks === "object"
+        ? fallbackRegistration.paymentLinks
+        : {};
+
+    const indianUrl = String(
+        configLinks.indian ||
+        registrationConfig?.paymentUrl ||
+        fallbackLinks.indian ||
+        fallbackRegistration?.paymentUrl ||
+        ""
+    ).trim();
+    const internationalUrl = String(
+        configLinks.international ||
+        fallbackLinks.international ||
+        ""
+    ).trim();
+
+    masterclassRegistrationModalState = {
+        paymentLinks: {
+            indian: indianUrl,
+            international: internationalUrl
+        }
+    };
+
+    const indianButton = modal.querySelector('[data-masterclass-region="indian"]');
+    const internationalButton = modal.querySelector('[data-masterclass-region="international"]');
+    if (indianButton) indianButton.disabled = !indianUrl;
+    if (internationalButton) internationalButton.disabled = !internationalUrl;
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+}
+
+function applyMasterclassPageContent(config) {
+    const pageRoot = document.getElementById("masterclass-page");
+    if (!pageRoot) return;
+
+    const fallback = getDefaultMasterclassConfig();
+    const masterclass = {
+        ...fallback.upcomingClass,
+        ...(config?.upcomingClass && typeof config.upcomingClass === "object" ? config.upcomingClass : {})
+    };
+    const pageConfig = {
+        ...fallback.page,
+        ...(config?.page && typeof config.page === "object" ? config.page : {})
+    };
+    const registrationConfig = {
+        ...fallback.registration,
+        ...(config?.registration && typeof config.registration === "object" ? config.registration : {})
+    };
+
+    const imagePath = normalizeConfigPath(masterclass.image, fallback.upcomingClass.image);
+    const ctaPath = normalizeConfigPath(masterclass.ctaLink, fallback.upcomingClass.ctaLink);
+    const imageElement = pageRoot.querySelector("[data-masterclass-image]");
+    const ctaElement = pageRoot.querySelector("[data-masterclass-cta]");
+    const registerElement = pageRoot.querySelector("[data-masterclass-register-cta]");
+
+    setTextContentBySelector("[data-masterclass-title]", masterclass.title);
+    setParagraphContentWithBreaks("[data-masterclass-description]", masterclass.shortDescription);
+    setTextContentBySelector("[data-masterclass-for-class]", masterclass.forClass);
+    setTextContentBySelector("[data-masterclass-date]", masterclass.date || "To be announced");
+    setTextContentBySelector("[data-masterclass-mode]", masterclass.mode);
+
+    if (imageElement) {
+        imageElement.src = getAssetUrl(imagePath);
+        imageElement.alt = String(masterclass.imageAlt || fallback.upcomingClass.imageAlt).trim();
+    }
+
+    if (ctaElement) {
+        ctaElement.textContent = String(masterclass.ctaLabel || fallback.upcomingClass.ctaLabel).trim();
+        ctaElement.href = getAssetUrl(ctaPath);
+    }
+
+    if (registerElement) {
+        const label = String(registrationConfig.buttonLabel || fallback.registration.buttonLabel).trim() || fallback.registration.buttonLabel;
+        registerElement.textContent = label;
+        registerElement.href = getAssetUrl(getMasterclassRegistrationPagePath(config));
+        registerElement.onclick = (event) => {
+            if (event.defaultPrevented) return;
+            if (event.type === "click" && event.button !== 0) return;
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            openMasterclassRegistrationRegionModal(registrationConfig, fallback.registration);
+        };
+    }
+
+    if (pageConfig.title) document.title = String(pageConfig.title).trim();
+    const descriptionMeta = document.querySelector('meta[name="description"]');
+    if (descriptionMeta && pageConfig.description) {
+        descriptionMeta.setAttribute("content", String(pageConfig.description).trim());
+    }
+}
+
+function applyMasterclassRegistrationPageContent(config) {
+    const pageRoot = document.getElementById("masterclass-registration-page");
+    if (!pageRoot) return;
+
+    const fallback = getDefaultMasterclassConfig();
+    const registration = {
+        ...fallback.registration,
+        ...(config?.registration && typeof config.registration === "object" ? config.registration : {})
+    };
+
+    const paymentUrl = String(registration.paymentUrl || fallback.registration.paymentUrl).trim();
+    const statusEl = pageRoot.querySelector("[data-masterclass-registration-status]");
+    const linkEl = pageRoot.querySelector("[data-masterclass-registration-link]");
+    const iframeEl = pageRoot.querySelector("[data-masterclass-registration-iframe]");
+
+    if (statusEl) {
+        statusEl.textContent = String(registration.statusText || fallback.registration.statusText).trim();
+    }
+
+    if (linkEl) {
+        linkEl.textContent = String(registration.paymentLinkLabel || fallback.registration.paymentLinkLabel).trim();
+        linkEl.href = paymentUrl;
+    }
+
+    if (iframeEl) {
+        iframeEl.src = paymentUrl;
+    }
+
+    if (registration.pageTitle) document.title = String(registration.pageTitle).trim();
+    const descriptionMeta = document.querySelector('meta[name="description"]');
+    if (descriptionMeta && registration.pageDescription) {
+        descriptionMeta.setAttribute("content", String(registration.pageDescription).trim());
+    }
+}
+
+async function initMasterclassExperience() {
+    const fallbackConfig = getDefaultMasterclassConfig();
+
+    try {
+        const config = await loadMasterclassConfig();
+        const mergedConfig = {
+            ...fallbackConfig,
+            ...config,
+            labels: { ...fallbackConfig.labels, ...(config?.labels || {}) },
+            page: { ...fallbackConfig.page, ...(config?.page || {}) },
+            upcomingClass: { ...fallbackConfig.upcomingClass, ...(config?.upcomingClass || {}) },
+            registration: { ...fallbackConfig.registration, ...(config?.registration || {}) }
+        };
+
+        upsertMasterclassNavLink(mergedConfig);
+        upsertMasterclassHeroButton(mergedConfig);
+        applyMasterclassPageContent(mergedConfig);
+        applyMasterclassRegistrationPageContent(mergedConfig);
+    } catch (error) {
+        console.warn("Masterclass config could not be loaded.", error);
+        upsertMasterclassNavLink(fallbackConfig);
+        upsertMasterclassHeroButton(fallbackConfig);
+        applyMasterclassPageContent(fallbackConfig);
+        applyMasterclassRegistrationPageContent(fallbackConfig);
+    }
 }
 
 function normalizeCouponCode(value) {
@@ -2151,6 +2533,7 @@ function closeCourseModals() {
     document.body.classList.remove("course-region-modal-open");
     courseRegionModalState = null;
     enrollmentTypeModalState = null;
+    masterclassRegistrationModalState = null;
 }
 
 async function findExStudentRecord(paymentId, courseSlug, region) {
@@ -3094,6 +3477,7 @@ function initScrollReveal() {
         "#exhibitions",
         "#recognitions",
         "#courses-page > *",
+        "#masterclass-page > *",
         ".course-card",
         "#story-page > *",
         ".story-card",
@@ -3147,3 +3531,4 @@ initDetailsGalleryButtons();
 initSectionLottieIcons();
 initCourseRegionSelection();
 initExStudentPaymentPage();
+initMasterclassExperience();

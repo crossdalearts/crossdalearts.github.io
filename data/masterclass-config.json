@@ -1,0 +1,36 @@
+{
+  "enabled": true,
+  "pagePath": "pages/masterclass.html",
+  "labels": {
+    "nav": "Masterclass",
+    "heroButton": "Register for Masterclass"
+  },
+  "page": {
+    "title": "Masterclass - CrossdaleArts",
+    "description": "Discover the upcoming CrossdaleArts masterclass and preview the class it is designed for."
+  },
+  "upcomingClass": {
+    "title": "The Artist’s Clarity Masterclass: Fix Your Approach, Find Your Path",
+    "forClass": "1:30 hours on Google Meet",
+    "shortDescription": "Join this 1:30 hrs Live Masterclass to understand:<br><br>• How to start earning faster than other artists?<br>• Why people always ask for free painting?<br>• Why skills matter more than a degree in art?<br>• How to earn from art?<br>• How to find the right audience & clients?<br>• Whether art has a strong career scope?<br>• And how I, being a self-taught artist, earn more than degree-holder artists?<br><br>Register now to find out the answers and don't miss this opportunity..!!<br>Everyone is welcome to join..!!",
+    "image": "images/my-story-image.jpeg",
+    "imageAlt": "The Realism Within class artwork used for the upcoming masterclass",
+    "date": "Upcoming Sunday Evening",
+    "mode": "Live online session",
+    "ctaLabel": "My Story",
+    "ctaLink": "pages/my-story.html"
+  },
+  "registration": {
+    "buttonLabel": "Register Now",
+    "pagePath": "pages/masterclass-registration.html",
+    "pageTitle": "Masterclass Registration - CrossdaleArts",
+    "pageDescription": "Complete your registration for the upcoming CrossdaleArts masterclass.",
+    "statusText": "Complete your registration for the upcoming masterclass using the secure payment option below.",
+    "paymentLinkLabel": "Open payment page in new tab",
+    "paymentUrl": "https://rzp.io/rzp/38F9Al50",
+    "paymentLinks": {
+      "indian": "https://rzp.io/rzp/38F9Al50",
+      "international": "https://wise.com/pay/r/6YlS7_bSMmZxR-s"
+    }
+  }
+}
