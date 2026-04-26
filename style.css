@@ -5774,3 +5774,28 @@ body #feedback-widget-anchor {
     text-align: center !important;
   }
 }
+
+#masterclass-bottom-cta{
+  width: 140%;
+  display: flex;
+  justify-content: space-between;
+}
+#registration-fees{
+  margin-top: 13px;
+  font-family: "Fraunces", serif !important;
+}
+#registration-fees p{
+  color: white;
+  font-weight: bold;
+  font-family: "Fraunces", serif !important;
+}
+@media (max-width: 1175px) {
+  #masterclass-bottom-cta{
+    width: 100%;
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  #registration-fees{
+        margin: 10px;
+  }
+}
