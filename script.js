@@ -252,6 +252,22 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
 
     for (const category of config.categories) {
         const validEntries = category.items.filter((item) => item && typeof item.path === "string");
+        const fallbackResolvedItems = validEntries
+            .map((item) => {
+                const rawSrc = String(item.path || "").trim().replace(/\\/g, "/");
+                const src = resolveGalleryAssetPath(rawSrc);
+                const type = String(item.type || "").trim().toLowerCase();
+                const title = String(item.title || "").trim();
+                if (!src) return null;
+                if (type !== "image" && type !== "video" && type !== "pdf") return null;
+                return buildGalleryItem({
+                    src,
+                    type,
+                    title,
+                    category: category.name
+                });
+            })
+            .filter(Boolean);
         const checks = validEntries.map(async (item) => {
             const rawSrc = String(item.path || "").trim().replace(/\\/g, "/");
             const src = resolveGalleryAssetPath(rawSrc);
@@ -277,7 +293,10 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
             });
         });
 
-        const resolvedItems = (await Promise.all(checks)).filter(Boolean);
+        let resolvedItems = (await Promise.all(checks)).filter(Boolean);
+        if (!resolvedItems.length && fallbackResolvedItems.length) {
+            resolvedItems = fallbackResolvedItems;
+        }
         if (!resolvedItems.length) continue;
 
         let previewItem = null;
@@ -295,6 +314,14 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
                         : await probeImageSource(resolvedPreviewSrc);
 
                 if (exists) {
+                    previewItem = buildGalleryItem({
+                        src: resolvedPreviewSrc,
+                        type: previewType,
+                        title: previewTitle,
+                        category: category.name
+                    });
+                }
+                if (!previewItem) {
                     previewItem = buildGalleryItem({
                         src: resolvedPreviewSrc,
                         type: previewType,
@@ -330,6 +357,13 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
                         : await probeImageSource(resolvedPreviewSrc);
 
                 if (exists) {
+                    homepagePreview = buildGalleryItem({
+                        src: resolvedPreviewSrc,
+                        type: previewType,
+                        title: previewTitle
+                    });
+                }
+                if (!homepagePreview) {
                     homepagePreview = buildGalleryItem({
                         src: resolvedPreviewSrc,
                         type: previewType,
