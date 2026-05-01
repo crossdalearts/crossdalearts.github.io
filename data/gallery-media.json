@@ -13,7 +13,7 @@
     },
     {
       "name": "Archives",
-      "preview": { "path": "images/Gallery/archives/archives-01.jpeg", "title": "Painting", "type": "image" },
+      "preview": { "path": "images/Gallery/archives/archives-01.webp", "title": "Painting", "type": "image" },
       "items": [
         { "path": "Videos/gallery-video-3.mp4", "title": "With Curator", "type": "video" },
         { "path": "images/Gallery/archives/archives-01.webp", "title": "National Spokesperson", "type": "image" },
@@ -34,7 +34,7 @@
     },
     {
       "name": "Artworks",
-      "preview": { "path": "images/Gallery/artworks/artworks-01.JPEG", "title": "Painting", "type": "image" },
+      "preview": { "path": "images/Gallery/artworks/artworks-01.webp", "title": "Painting", "type": "image" },
       "items": [
         { "path": "images/Gallery/artworks/artworks-01.webp", "title": "Artwork", "type": "image" },
         { "path": "images/Gallery/artworks/artworks-02.webp", "title": "Artwork", "type": "image" },
@@ -74,7 +74,6 @@
         { "path": "images/Gallery/artworks/artworks-36.webp", "title": "Artwork", "type": "image" },
         { "path": "images/Gallery/artworks/artworks-37.webp", "title": "Artwork", "type": "image" },
         { "path": "images/Gallery/artworks/artworks-38.webp", "title": "Artwork", "type": "image" },
-        { "path": "images/Gallery/artworks/painting35.webp", "title": "Artwork", "type": "image" },
         { "path": "images/Gallery/artworks/artworks-39.webp", "title": "Artwork", "type": "image" },
         { "path": "images/Gallery/artworks/artworks-40.webp", "title": "Artwork", "type": "image" },
         { "path": "images/Gallery/artworks/artworks-41.webp", "title": "Artwork", "type": "image" },
@@ -112,7 +111,7 @@
     },
     {
       "name": "Calligraphy",
-      "preview": { "path": "images/Gallery/calligraphy/calligraphy-02.jpg", "title": "Painting", "type": "image" },
+      "preview": { "path": "images/Gallery/calligraphy/calligraphy-02.webp", "title": "Painting", "type": "image" },
       "items": [
         { "path": "images/Gallery/calligraphy/calligraphy-01.webp", "title": "Hindi Calligraphy (Digital)", "type": "image" },
         { "path": "images/Gallery/calligraphy/calligraphy-02.webp", "title": "Arabic Calligraphy (Digital)", "type": "image" },
@@ -122,7 +121,7 @@
     },
     {
       "name": "Live Classes",
-      "preview": { "path": "images/Gallery/live-classes/live-classes-01.PNG", "title": "Painting", "type": "image" },
+      "preview": { "path": "images/Gallery/live-classes/live-classes-01.webp", "title": "Painting", "type": "image" },
       "items": [
         { "path": "images/Gallery/live-classes/live-classes-01.webp", "title": "Live Masterclass", "type": "image" },
         { "path": "images/Gallery/live-classes/live-classes-02.webp", "title": "Live Class", "type": "image" },
@@ -135,7 +134,7 @@
     },
     {
       "name": "Wrong Approach",
-      "preview": { "path": "images/Gallery/wrong-approach/wrong-approach-02.png", "title": "Painting", "type": "image" },
+      "preview": { "path": "images/Gallery/wrong-approach/wrong-approach-02.webp", "title": "Painting", "type": "image" },
       "items": [
         { "path": "images/Gallery/wrong-approach/wrong-approach-01.webp", "title": "Work", "type": "image" },
         { "path": "images/Gallery/wrong-approach/wrong-approach-02.webp", "title": "Work", "type": "image" },
@@ -154,7 +153,7 @@
     },
     {
       "name": "Right Approach",
-      "preview": { "path": "images/Gallery/right-approach/right-approach-20.jpeg", "title": "Painting", "type": "image" },
+      "preview": { "path": "images/Gallery/right-approach/right-approach-20.webp", "title": "Painting", "type": "image" },
       "items": [
         { "path": "images/Gallery/right-approach/right-approach-01.webp", "title": "Work", "type": "image" },
         { "path": "images/Gallery/right-approach/right-approach-02.webp", "title": "Work", "type": "image" },
