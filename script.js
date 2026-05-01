@@ -700,38 +700,54 @@ function renderGalleryPreviewMedia(item, imageLoading = "lazy") {
 function renderGalleryImageWithLoader(imgEl, src) {
     const targetSrc = String(src || "").trim();
     if (!imgEl || !targetSrc) return;
+    imgEl.style.display = "block";
+    imgEl.style.visibility = "visible";
+    imgEl.style.opacity = "1";
 
     const render = async () => {
-        const directLoadable = await probeImageSource(targetSrc);
-        if (directLoadable) {
-            imgEl.src = targetSrc;
-            return;
-        }
-
+        // Force browser-side rendering from fetched bytes first.
         try {
             const response = await fetch(targetSrc, { method: "GET", cache: "no-store" });
             if (!response.ok) {
-                imgEl.src = targetSrc;
-                return;
+                throw new Error("Image fetch failed");
             }
             const blob = await response.blob();
             const objectUrl = URL.createObjectURL(blob);
             imgEl.dataset.objectUrl = objectUrl;
             imgEl.src = objectUrl;
         } catch (_) {
+            // Fallback to direct URL render path.
             imgEl.src = targetSrc;
         }
     };
 
     imgEl.addEventListener("load", () => {
+        imgEl.style.display = "block";
+        imgEl.style.visibility = "visible";
+        imgEl.style.opacity = "1";
         const objectUrl = imgEl.dataset.objectUrl;
         if (!objectUrl) return;
-        URL.revokeObjectURL(objectUrl);
-        delete imgEl.dataset.objectUrl;
+        // Revoke on next frame to avoid rare blank frames on some browsers.
+        requestAnimationFrame(() => {
+            URL.revokeObjectURL(objectUrl);
+            delete imgEl.dataset.objectUrl;
+        });
+    }, { once: true });
+
+    imgEl.addEventListener("error", () => {
+        if (imgEl.dataset.retryWithDirect === "true") return;
+        imgEl.dataset.retryWithDirect = "true";
+        imgEl.src = `${targetSrc}${targetSrc.includes("?") ? "&" : "?"}v=${Date.now()}`;
+        imgEl.style.display = "block";
+        imgEl.style.visibility = "visible";
+        imgEl.style.opacity = "1";
     }, { once: true });
 
     render().catch(() => {
         imgEl.src = targetSrc;
+        imgEl.style.display = "block";
+        imgEl.style.visibility = "visible";
+        imgEl.style.opacity = "1";
     });
 }
 
