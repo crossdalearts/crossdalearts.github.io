@@ -454,9 +454,11 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
             lightbox.content.appendChild(iframe);
         } else {
             const img = document.createElement("img");
-            img.src = item.src;
             img.alt = item.title || item.alt || "Gallery image";
             img.className = "gallery-lightbox-media";
+            img.loading = "eager";
+            img.decoding = "async";
+            renderGalleryImageWithLoader(img, item.src);
             lightbox.content.appendChild(img);
         }
 
@@ -688,11 +690,49 @@ function renderGalleryPreviewMedia(item, imageLoading = "lazy") {
 
     const mediaEl = document.createElement("img");
     mediaEl.className = "gallery-preview-media";
-    mediaEl.src = item.src;
     mediaEl.alt = item.title || "Gallery preview";
     mediaEl.loading = imageLoading;
     mediaEl.decoding = "async";
+    renderGalleryImageWithLoader(mediaEl, item.src);
     return mediaEl;
+}
+
+function renderGalleryImageWithLoader(imgEl, src) {
+    const targetSrc = String(src || "").trim();
+    if (!imgEl || !targetSrc) return;
+
+    const render = async () => {
+        const directLoadable = await probeImageSource(targetSrc);
+        if (directLoadable) {
+            imgEl.src = targetSrc;
+            return;
+        }
+
+        try {
+            const response = await fetch(targetSrc, { method: "GET", cache: "no-store" });
+            if (!response.ok) {
+                imgEl.src = targetSrc;
+                return;
+            }
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            imgEl.dataset.objectUrl = objectUrl;
+            imgEl.src = objectUrl;
+        } catch (_) {
+            imgEl.src = targetSrc;
+        }
+    };
+
+    imgEl.addEventListener("load", () => {
+        const objectUrl = imgEl.dataset.objectUrl;
+        if (!objectUrl) return;
+        URL.revokeObjectURL(objectUrl);
+        delete imgEl.dataset.objectUrl;
+    }, { once: true });
+
+    render().catch(() => {
+        imgEl.src = targetSrc;
+    });
 }
 
 function createGalleryBrowserModal(modalId = "gallery-browser-modal", titleText = "CrossdaleArts Gallery") {
@@ -858,9 +898,11 @@ async function initGalleryExperience() {
             lightbox.content.appendChild(iframe);
         } else {
             const img = document.createElement("img");
-            img.src = item.src;
             img.alt = item.title || item.alt || "Gallery image";
             img.className = "gallery-lightbox-media";
+            img.loading = "eager";
+            img.decoding = "async";
+            renderGalleryImageWithLoader(img, item.src);
             lightbox.content.appendChild(img);
         }
 
@@ -1352,9 +1394,11 @@ function setupCourseImagePreview() {
         lightbox.content.innerHTML = "";
 
         const img = document.createElement("img");
-        img.src = imgEl.src;
         img.alt = imgEl.alt || "Course image";
         img.className = "gallery-lightbox-media";
+        img.loading = "eager";
+        img.decoding = "async";
+        renderGalleryImageWithLoader(img, imgEl.currentSrc || imgEl.src);
         lightbox.content.appendChild(img);
         lightbox.title.textContent = imgEl.alt || "Course image";
 
