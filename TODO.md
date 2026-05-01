@@ -56,3 +56,7 @@ Changing image with transition in masterclass card
 bumpy effect on hover
 
 - 22-04-2026
+
+Polish Site Broken Elements
+
+- 01-05-2026
