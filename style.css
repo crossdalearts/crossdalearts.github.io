@@ -4432,7 +4432,7 @@ footer p {
 .story-quote p,
 .story-quote p b {
   color: #222128;
-  font-size: clamp(0.9rem, 1vw, 1.6rem);
+  font-size: clamp(1rem, 1vw, 1.6rem);
   line-height: 1.7;
 }
 
@@ -4917,6 +4917,12 @@ footer p {
   footer p {
     padding: var(--refresh-card-padding);
   }
+  .story-quote p,
+.story-quote p b {
+  color: #222128;
+  font-size: clamp(0.9rem, 1vw, 1.6rem);
+  line-height: 1.7;
+}
 }
 
 @media (max-width: 576px) {
