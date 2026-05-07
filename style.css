@@ -144,8 +144,8 @@ a{
     --font-size-story-body-mobile: 16px;
     --font-size-story-section-title: 24px;
     --font-size-story-section-title-mobile: 22px;
-    --font-size-story-quote: 22px;
-    --font-size-story-quote-mobile: 19px;
+    --font-size-story-quote: 17px;
+    --font-size-story-quote-mobile: 17px;
     --font-size-story-button: 15px;
     --font-size-course-content: 18px;
     --font-size-course-content-mobile: 16px;
@@ -4432,7 +4432,7 @@ footer p {
 .story-quote p,
 .story-quote p b {
   color: #222128;
-  font-size: clamp(1.2rem, 1vw, 1.6rem);
+  font-size: clamp(0.9rem, 1vw, 1.6rem);
   line-height: 1.7;
 }
 
