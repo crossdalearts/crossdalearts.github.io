@@ -1,0 +1,25 @@
+{
+  "homepage_preview": null,
+  "categories": [
+    {
+      "name": "My Story Gallery",
+      "preview": {
+        "path": "images/my-story-gallery/my-story-gallery-1.png",
+        "title": "My Story Artwork",
+        "type": "image"
+      },
+      "items": [
+        {
+          "path": "images/my-story-gallery/my-story-gallery-1.png",
+          "title": "Winning Prize Artwork",
+          "type": "image"
+        },
+        {
+          "path": "images/my-story-gallery/my-story-gallery-2.jpeg",
+          "title": "Experience Certificate",
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}

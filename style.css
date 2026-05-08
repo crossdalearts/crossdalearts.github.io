@@ -2461,6 +2461,33 @@ footer p{
     font-size: var(--font-size-story-quote);
     line-height: 1.6;
 }
+.story-gallery-cta{
+    justify-content: flex-start;
+    margin-top: 30px !important;
+}
+.story-gallery-cta > .download-course-details-button,
+.story-gallery-cta > a > .download-course-details-button{
+    width: auto;
+    min-width: 240px;
+    padding: 13px 24px;
+    border: 1px solid rgba(28, 29, 36, 0.18);
+    border-radius: 12px;
+    /* background: linear-gradient(135deg, #1c1d24 0%, #2a2d38 100%) !important; */
+    background: #e93636 !important;
+    box-shadow: var(--surface-lift-shadow);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.story-gallery-cta > .download-course-details-button:hover,
+.story-gallery-cta > .download-course-details-button:focus-visible,
+.story-gallery-cta > a > .download-course-details-button:hover,
+.story-gallery-cta > a > .download-course-details-button:focus-visible{
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 14px 24px rgba(0, 0, 0, 0.2);
+}
 #my-story-button{
     padding: 10px 20px;
     border-radius: 10px;
@@ -4777,6 +4804,9 @@ footer p {
     /* border: none; */
     border-radius: 10px;
   }
+  .story-gallery-cta{
+    padding: 20px;
+}
 
   .hero-copy h1 {
     max-width: none;
