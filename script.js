@@ -386,6 +386,7 @@ function hydrateArtworksForSaleCache(items) {
         const titleKey = String(item.title || "").trim().toLowerCase();
         const fileNameKey = getNormalizedFileName(pathKey);
         const normalized = {
+            title: String(item.title || "").trim(),
             description: String(item.description || "").trim(),
             price: String(item.price || "").trim(),
             dimensionsNotes: String(item.dimensions_notes || "").trim(),
@@ -558,7 +559,7 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         const dimensionsNotes = meta?.dimensionsNotes || item.dimensionsNotes || "";
         const buttonText = meta?.buttonText || item.buttonText || "Enquire / Buy";
         const buttonUrl = meta?.buttonUrl || item.buttonUrl || "#";
-        const titleBase = item.title || item.alt || "Artwork";
+        const titleBase = meta?.title || item.title || item.alt || "Artwork";
 
         artworkSaleModal.title.textContent = titleBase;
         if (artworkSaleModal.price) {
@@ -705,7 +706,7 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
                 artworkMeta.byTitle.get(itemTitleKey) ||
                 artworkMeta.byFileName.get(itemFileNameKey);
             const cardPrice = itemMeta?.price || item.price || "";
-            const cardTitle = item.title || item.alt || "Untitled";
+            const cardTitle = itemMeta?.title || item.title || item.alt || "Untitled";
             title.textContent = cardTitle;
 
             const price = document.createElement("span");
@@ -724,8 +725,8 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
                 type.textContent = "Image";
             }
 
-            titleRow.appendChild(title);
             titleRow.appendChild(price);
+            titleRow.appendChild(title);
             meta.appendChild(titleRow);
             meta.appendChild(type);
             card.appendChild(mediaWrap);

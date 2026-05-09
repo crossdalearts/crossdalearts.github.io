@@ -1816,14 +1816,15 @@ body #feedback-widget-anchor{
 .gallery-browser-title-row{
     width: 100%;
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 3px;
 }
 .gallery-browser-item-title{
     font-size: var(--font-size-gallery-browser-item-title);
     line-height: 1.45;
-    color: #202020;
+    color: #000 !important;
     margin: 0;
 }
 .gallery-browser-item-price{
@@ -1832,7 +1833,7 @@ body #feedback-widget-anchor{
     font-size: clamp(14px, 1.05vw, 18px);
     color: #141414;
     line-height: 1.2;
-    text-align: right;
+    text-align: left;
     white-space: nowrap;
 }
 .gallery-browser-item-type{
@@ -2038,7 +2039,7 @@ body.gallery-lightbox-open{
         align-items: flex-start;
     }
     .gallery-browser-grid{
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         gap: 10px;
         padding: 12px;
     }
