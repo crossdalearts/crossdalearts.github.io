@@ -67,6 +67,45 @@ flipCards.forEach((card) => {
 const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "webm", "ogg", "ogv", "m4v"]);
 const DOCUMENT_EXTENSIONS = new Set(["pdf"]);
 const GALLERY_META_URL = "data/gallery-media.json";
+const GALLERY_SESSION_CACHE_PREFIX = "crossdalearts:session:";
+const galleryItemsCache = new Map();
+const artworksForSaleCache = new Map();
+const galleryImageBlobUrlCache = new Map();
+const galleryImageLoadPromiseCache = new Map();
+
+window.addEventListener("beforeunload", () => {
+    galleryImageBlobUrlCache.forEach((objectUrl) => {
+        try {
+            URL.revokeObjectURL(objectUrl);
+        } catch (_) {
+            // no-op
+        }
+    });
+    galleryImageBlobUrlCache.clear();
+    galleryImageLoadPromiseCache.clear();
+});
+
+function getSessionCacheKey(key = "") {
+    return `${GALLERY_SESSION_CACHE_PREFIX}${String(key || "").trim()}`;
+}
+
+function readSessionJSON(key) {
+    try {
+        const raw = sessionStorage.getItem(getSessionCacheKey(key));
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (_) {
+        return null;
+    }
+}
+
+function writeSessionJSON(key, value) {
+    try {
+        sessionStorage.setItem(getSessionCacheKey(key), JSON.stringify(value));
+    } catch (_) {
+        // Ignore storage failures (private mode, quota, etc.)
+    }
+}
 
 function getFileExtension(path = "") {
     const cleanPath = path.split("?")[0].split("#")[0];
@@ -257,6 +296,16 @@ async function loadGalleryConfig(url = GALLERY_META_URL) {
 }
 
 async function loadGalleryItems(url = GALLERY_META_URL) {
+    const normalizedUrl = String(url || GALLERY_META_URL).trim();
+    const cacheKey = `gallery-items:${normalizedUrl}`;
+    if (galleryItemsCache.has(cacheKey)) return galleryItemsCache.get(cacheKey);
+
+    const sessionCached = readSessionJSON(cacheKey);
+    if (sessionCached && Array.isArray(sessionCached.items) && Array.isArray(sessionCached.categories)) {
+        galleryItemsCache.set(cacheKey, sessionCached);
+        return sessionCached;
+    }
+
     const config = await loadGalleryConfig(url);
     const categories = [];
     const items = [];
@@ -393,17 +442,28 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
         }
     }
 
-    return {
+    const result = {
         homepagePreview,
         categories,
         items,
         artworksForSaleConfig: String(config?.artworksForSaleConfig || "").trim()
     };
+    galleryItemsCache.set(cacheKey, result);
+    writeSessionJSON(cacheKey, result);
+    return result;
 }
 
 async function loadArtworksForSaleConfig(url) {
     const cleanUrl = String(url || "").trim();
     if (!cleanUrl) return { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
+    if (artworksForSaleCache.has(cleanUrl)) return artworksForSaleCache.get(cleanUrl);
+
+    const sessionCached = readSessionJSON(`artworks-for-sale:${cleanUrl}`);
+    if (sessionCached && Array.isArray(sessionCached.items)) {
+        const hydrated = hydrateArtworksForSaleCache(sessionCached.items);
+        artworksForSaleCache.set(cleanUrl, hydrated);
+        return hydrated;
+    }
 
     try {
         const response = await fetch(getAssetUrl(cleanUrl), { method: "GET", cache: "no-store" });
@@ -411,29 +471,45 @@ async function loadArtworksForSaleConfig(url) {
         const data = await response.json();
         const items = Array.isArray(data?.items) ? data.items : [];
 
-        const byPath = new Map();
-        const byTitle = new Map();
-        const byFileName = new Map();
-
-        items.forEach((item) => {
-            if (!item || typeof item !== "object") return;
-            const pathKey = normalizeArtworkConfigPath(String(item.path || ""));
-            const titleKey = String(item.title || "").trim().toLowerCase();
-            const fileNameKey = getNormalizedFileName(pathKey);
-            const normalized = {
+        const normalizedItems = items
+            .filter((item) => item && typeof item === "object")
+            .map((item) => ({
+                path: String(item.path || "").trim(),
+                title: String(item.title || "").trim(),
                 description: String(item.description || "").trim(),
-                buttonText: String(item.button_text || "Enquire / Buy").trim(),
-                buttonUrl: String(item.button_url || "#").trim()
-            };
-            if (pathKey) byPath.set(pathKey, normalized);
-            if (titleKey) byTitle.set(titleKey, normalized);
-            if (fileNameKey) byFileName.set(fileNameKey, normalized);
-        });
-
-        return { byPath, byTitle, byFileName };
+                button_text: String(item.button_text || "Enquire / Buy").trim(),
+                button_url: String(item.button_url || "#").trim()
+            }));
+        const hydrated = hydrateArtworksForSaleCache(normalizedItems);
+        artworksForSaleCache.set(cleanUrl, hydrated);
+        writeSessionJSON(`artworks-for-sale:${cleanUrl}`, { items: normalizedItems });
+        return hydrated;
     } catch (_) {
         return { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
     }
+}
+
+function hydrateArtworksForSaleCache(items) {
+    const byPath = new Map();
+    const byTitle = new Map();
+    const byFileName = new Map();
+
+    items.forEach((item) => {
+        if (!item || typeof item !== "object") return;
+        const pathKey = normalizeArtworkConfigPath(String(item.path || ""));
+        const titleKey = String(item.title || "").trim().toLowerCase();
+        const fileNameKey = getNormalizedFileName(pathKey);
+        const normalized = {
+            description: String(item.description || "").trim(),
+            buttonText: String(item.button_text || "Enquire / Buy").trim(),
+            buttonUrl: String(item.button_url || "#").trim()
+        };
+        if (pathKey) byPath.set(pathKey, normalized);
+        if (titleKey) byTitle.set(titleKey, normalized);
+        if (fileNameKey) byFileName.set(fileNameKey, normalized);
+    });
+
+    return { byPath, byTitle, byFileName };
 }
 
 function normalizeArtworkConfigPath(pathValue = "") {
@@ -918,33 +994,38 @@ function renderGalleryImageWithLoader(imgEl, src) {
     imgEl.style.opacity = "1";
 
     const render = async () => {
-        // Force browser-side rendering from fetched bytes first.
-        try {
-            const response = await fetch(targetSrc, { method: "GET", cache: "no-store" });
-            if (!response.ok) {
-                throw new Error("Image fetch failed");
-            }
-            const blob = await response.blob();
-            const objectUrl = URL.createObjectURL(blob);
-            imgEl.dataset.objectUrl = objectUrl;
-            imgEl.src = objectUrl;
-        } catch (_) {
-            // Fallback to direct URL render path.
-            imgEl.src = targetSrc;
+        // Reuse already fetched image bytes in the same session to avoid repeated downloads.
+        if (galleryImageBlobUrlCache.has(targetSrc)) {
+            imgEl.src = galleryImageBlobUrlCache.get(targetSrc);
+            return;
         }
+
+        if (!galleryImageLoadPromiseCache.has(targetSrc)) {
+            const loadingPromise = fetch(targetSrc, { method: "GET", cache: "force-cache" })
+                .then((response) => {
+                    if (!response.ok) throw new Error("Image fetch failed");
+                    return response.blob();
+                })
+                .then((blob) => {
+                    const objectUrl = URL.createObjectURL(blob);
+                    galleryImageBlobUrlCache.set(targetSrc, objectUrl);
+                    return objectUrl;
+                })
+                .catch(() => targetSrc)
+                .finally(() => {
+                    galleryImageLoadPromiseCache.delete(targetSrc);
+                });
+            galleryImageLoadPromiseCache.set(targetSrc, loadingPromise);
+        }
+
+        const resolvedSrc = await galleryImageLoadPromiseCache.get(targetSrc);
+        imgEl.src = resolvedSrc;
     };
 
     imgEl.addEventListener("load", () => {
         imgEl.style.display = "block";
         imgEl.style.visibility = "visible";
         imgEl.style.opacity = "1";
-        const objectUrl = imgEl.dataset.objectUrl;
-        if (!objectUrl) return;
-        // Revoke on next frame to avoid rare blank frames on some browsers.
-        requestAnimationFrame(() => {
-            URL.revokeObjectURL(objectUrl);
-            delete imgEl.dataset.objectUrl;
-        });
     }, { once: true });
 
     imgEl.addEventListener("error", () => {
