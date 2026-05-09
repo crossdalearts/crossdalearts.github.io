@@ -2,7 +2,32 @@
   "homepage_preview": null,
   "categories": [
     {
-      "name": "My Story Gallery",
+      "name": "Artworks for sale",
+      "preview": {
+        "path": "images/my-story-gallery/intoxicated owl image.jpeg",
+        "title": "My Story Artwork",
+        "type": "image"
+      },
+      "items": [
+        {
+          "path": "images/my-story-gallery/intoxicated owl image.jpeg",
+          "title": "Intoxicated Owl",
+          "type": "image"
+        },
+        {
+          "path": "images/my-story-gallery/soul in soil.jpeg",
+          "title": "Soul in Soil",
+          "type": "image"
+        },
+        {
+          "path": "images/my-story-gallery/invention of toilet in stone age.jpeg",
+          "title": "Invention of Toilet in Stone Age",
+          "type": "image"
+        }
+      ]
+    },
+    {
+      "name": "Testimonies",
       "preview": {
         "path": "images/my-story-gallery/my-story-gallery-1.png",
         "title": "My Story Artwork",
