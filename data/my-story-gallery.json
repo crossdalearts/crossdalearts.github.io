@@ -1,5 +1,6 @@
 {
   "homepage_preview": null,
+  "artworks_for_sale_config": "data/artworks-for-sale-config.json",
   "categories": [
     {
       "name": "Artworks for sale",
@@ -12,17 +13,26 @@
         {
           "path": "images/my-story-gallery/intoxicated owl image.jpeg",
           "title": "Intoxicated Owl",
-          "type": "image"
+          "type": "image",
+          "description_html": "<p>A surreal conceptual piece exploring altered perception, instinct, and vulnerability through the symbolism of an owl.</p>",
+          "button_text": "Add Purchase Link",
+          "button_url": "#"
         },
         {
           "path": "images/my-story-gallery/soul in soil.jpeg",
           "title": "Soul in Soil",
-          "type": "image"
+          "type": "image",
+          "description_html": "<p>A symbolic artwork about roots, memory, and the relationship between inner life and the living earth.</p>",
+          "button_text": "Add Purchase Link",
+          "button_url": "#"
         },
         {
           "path": "images/my-story-gallery/invention of toilet in stone age.jpeg",
           "title": "Invention of Toilet in Stone Age",
-          "type": "image"
+          "type": "image",
+          "description_html": "<p>A satirical conceptual composition that blends humor and social commentary through an anachronistic scene.</p>",
+          "button_text": "Add Purchase Link",
+          "button_url": "#"
         }
       ]
     },

@@ -139,10 +139,19 @@ function buildGalleryItem(item) {
         return {
             ...titledItem,
             type,
-            sources: normalizeVideoSources(titledItem)
+            sources: normalizeVideoSources(titledItem),
+            descriptionHTML: String(item.description_html || item.description || "").trim(),
+            buttonText: String(item.button_text || "").trim(),
+            buttonUrl: String(item.button_url || "").trim()
         };
     }
-    return { ...titledItem, type };
+    return {
+        ...titledItem,
+        type,
+        descriptionHTML: String(item.description_html || item.description || "").trim(),
+        buttonText: String(item.button_text || "").trim(),
+        buttonUrl: String(item.button_url || "").trim()
+    };
 }
 
 async function probeImageSource(src) {
@@ -235,12 +244,14 @@ async function loadGalleryConfig(url = GALLERY_META_URL) {
             homepagePreview: data?.homepage_preview && typeof data.homepage_preview === "object"
                 ? data.homepage_preview
                 : null,
-            categories: normalizedCategories
+            categories: normalizedCategories,
+            artworksForSaleConfig: String(data?.artworks_for_sale_config || "").trim()
         };
     } catch (_) {
         return {
             homepagePreview: null,
-            categories: []
+            categories: [],
+            artworksForSaleConfig: ""
         };
     }
 }
@@ -385,7 +396,127 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
     return {
         homepagePreview,
         categories,
-        items
+        items,
+        artworksForSaleConfig: String(config?.artworksForSaleConfig || "").trim()
+    };
+}
+
+async function loadArtworksForSaleConfig(url) {
+    const cleanUrl = String(url || "").trim();
+    if (!cleanUrl) return { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
+
+    try {
+        const response = await fetch(getAssetUrl(cleanUrl), { method: "GET", cache: "no-store" });
+        if (!response.ok) throw new Error("Artworks config fetch failed");
+        const data = await response.json();
+        const items = Array.isArray(data?.items) ? data.items : [];
+
+        const byPath = new Map();
+        const byTitle = new Map();
+        const byFileName = new Map();
+
+        items.forEach((item) => {
+            if (!item || typeof item !== "object") return;
+            const pathKey = normalizeArtworkConfigPath(String(item.path || ""));
+            const titleKey = String(item.title || "").trim().toLowerCase();
+            const fileNameKey = getNormalizedFileName(pathKey);
+            const normalized = {
+                description: String(item.description || "").trim(),
+                buttonText: String(item.button_text || "Enquire / Buy").trim(),
+                buttonUrl: String(item.button_url || "#").trim()
+            };
+            if (pathKey) byPath.set(pathKey, normalized);
+            if (titleKey) byTitle.set(titleKey, normalized);
+            if (fileNameKey) byFileName.set(fileNameKey, normalized);
+        });
+
+        return { byPath, byTitle, byFileName };
+    } catch (_) {
+        return { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
+    }
+}
+
+function normalizeArtworkConfigPath(pathValue = "") {
+    const cleanPath = String(pathValue || "").trim().replace(/\\/g, "/");
+    if (!cleanPath) return "";
+    return cleanPath.replace(/^\.?\//, "").toLowerCase();
+}
+
+function normalizeArtworkRuntimePath(srcValue = "") {
+    const raw = String(srcValue || "").trim();
+    if (!raw) return "";
+
+    try {
+        const parsed = new URL(raw, window.location.href);
+        const decodedPath = decodeURIComponent(String(parsed.pathname || ""));
+        return decodedPath
+            .replace(/^\/+/, "")
+            .replace(/\\/g, "/")
+            .toLowerCase();
+    } catch (_) {
+        return normalizeArtworkConfigPath(raw);
+    }
+}
+
+function getNormalizedFileName(pathValue = "") {
+    const normalizedPath = String(pathValue || "").trim().replace(/\\/g, "/").toLowerCase();
+    if (!normalizedPath) return "";
+    const parts = normalizedPath.split("/");
+    return String(parts[parts.length - 1] || "").trim();
+}
+
+function createArtworkSaleModal() {
+    const existing = document.getElementById("artwork-sale-modal");
+    if (existing) {
+        return {
+            root: existing,
+            closeBtn: existing.querySelector(".artwork-sale-close"),
+            fullscreenBtn: existing.querySelector(".artwork-sale-fullscreen"),
+            image: existing.querySelector(".artwork-sale-image"),
+            imageWrap: existing.querySelector(".artwork-sale-image-wrap"),
+            title: existing.querySelector(".artwork-sale-title"),
+            description: existing.querySelector(".artwork-sale-description"),
+            cta: existing.querySelector(".artwork-sale-cta")
+        };
+    }
+
+    const root = document.createElement("div");
+    root.id = "artwork-sale-modal";
+    root.className = "artwork-sale-modal";
+    root.setAttribute("aria-hidden", "true");
+    root.innerHTML = `
+        <div class="artwork-sale-box" role="dialog" aria-modal="true" aria-label="Artwork details">
+            <div class="artwork-sale-left">
+                <div class="artwork-sale-toolbar">
+                    <button type="button" class="artwork-sale-fullscreen">Full Screen</button>
+                </div>
+                <div class="artwork-sale-image-wrap">
+                    <img class="artwork-sale-image" alt="Artwork image" />
+                </div>
+            </div>
+            <div class="artwork-sale-right">
+                <div class="artwork-sale-right-inner">
+                    <div class="artwork-sale-top">
+                        <h3 class="artwork-sale-title">Artwork</h3>
+                        <button type="button" class="artwork-sale-close">Close</button>
+                    </div>
+                    <div class="artwork-sale-description"></div>
+                    <a class="artwork-sale-cta" href="#" target="_blank" rel="noopener noreferrer">Enquire / Buy</a>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(root);
+    return {
+        root,
+        closeBtn: root.querySelector(".artwork-sale-close"),
+        fullscreenBtn: root.querySelector(".artwork-sale-fullscreen"),
+        image: root.querySelector(".artwork-sale-image"),
+        imageWrap: root.querySelector(".artwork-sale-image-wrap"),
+        title: root.querySelector(".artwork-sale-title"),
+        description: root.querySelector(".artwork-sale-description"),
+        cta: root.querySelector(".artwork-sale-cta")
     };
 }
 
@@ -395,9 +526,14 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
     const galleryCategories = galleryConfig.categories;
     const browser = createGalleryBrowserModal("details-gallery-browser-modal", pageTitle);
     const lightbox = createGalleryLightbox();
+    const artworkSaleModal = createArtworkSaleModal();
+    const artworkMeta = await loadArtworksForSaleConfig(galleryConfig.artworksForSaleConfig);
 
     const syncOverlayScrollLock = () => {
-        const hasOpenOverlay = browser.root.classList.contains("is-open") || lightbox.root.classList.contains("is-open");
+        const hasOpenOverlay =
+            browser.root.classList.contains("is-open") ||
+            lightbox.root.classList.contains("is-open") ||
+            artworkSaleModal.root.classList.contains("is-open");
         document.body.classList.toggle("gallery-lightbox-open", hasOpenOverlay);
     };
 
@@ -420,6 +556,54 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         lightbox.content.innerHTML = "";
         syncOverlayScrollLock();
         lightbox.fullscreenBtn.textContent = "Full Screen";
+    };
+
+    const syncArtworkFullscreenButton = () => {
+        const isFullscreen = document.fullscreenElement === artworkSaleModal.imageWrap;
+        artworkSaleModal.fullscreenBtn.textContent = isFullscreen ? "Exit Full Screen" : "Full Screen";
+    };
+
+    const closeArtworkSaleModal = () => {
+        if (document.fullscreenElement === artworkSaleModal.imageWrap && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+        }
+        artworkSaleModal.root.classList.remove("is-open");
+        artworkSaleModal.root.setAttribute("aria-hidden", "true");
+        syncOverlayScrollLock();
+        syncArtworkFullscreenButton();
+    };
+
+    const openArtworkSaleModal = (item) => {
+        if (!item || item.type !== "image") {
+            openLightbox(item);
+            return;
+        }
+
+        const pathKey = normalizeArtworkRuntimePath(item.src);
+        const titleKey = String(item.title || item.alt || "").trim().toLowerCase();
+        const fileNameKey = getNormalizedFileName(pathKey);
+        const meta =
+            artworkMeta.byPath.get(pathKey) ||
+            artworkMeta.byTitle.get(titleKey) ||
+            artworkMeta.byFileName.get(fileNameKey);
+        const description = meta?.description || item.descriptionHTML || "<p>Brief description will be added soon.</p>";
+        const buttonText = meta?.buttonText || item.buttonText || "Enquire / Buy";
+        const buttonUrl = meta?.buttonUrl || item.buttonUrl || "#";
+
+        artworkSaleModal.title.textContent = item.title || item.alt || "Artwork";
+        artworkSaleModal.description.innerHTML = description;
+        artworkSaleModal.cta.textContent = buttonText;
+        artworkSaleModal.cta.href = buttonUrl;
+        artworkSaleModal.cta.setAttribute("aria-label", buttonText);
+        artworkSaleModal.image.alt = item.title || item.alt || "Artwork image";
+        artworkSaleModal.image.loading = "eager";
+        artworkSaleModal.image.decoding = "async";
+        renderGalleryImageWithLoader(artworkSaleModal.image, item.src);
+
+        artworkSaleModal.root.classList.add("is-open");
+        artworkSaleModal.root.setAttribute("aria-hidden", "false");
+        syncOverlayScrollLock();
+        syncArtworkFullscreenButton();
     };
 
     const openLightbox = (item) => {
@@ -543,7 +727,13 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
             card.appendChild(mediaWrap);
             card.appendChild(meta);
 
-            card.addEventListener("click", () => openLightbox(item));
+            card.addEventListener("click", () => {
+                if (String(category.name || "").trim().toLowerCase() === "artworks for sale") {
+                    openArtworkSaleModal(item);
+                    return;
+                }
+                openLightbox(item);
+            });
             browser.grid.appendChild(card);
         });
     };
@@ -610,13 +800,36 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
             }
         });
 
+        artworkSaleModal.closeBtn.addEventListener("click", closeArtworkSaleModal);
+        artworkSaleModal.root.addEventListener("click", (event) => {
+            if (event.target === artworkSaleModal.root) closeArtworkSaleModal();
+        });
+        artworkSaleModal.fullscreenBtn.addEventListener("click", async () => {
+            try {
+                if (document.fullscreenElement === artworkSaleModal.imageWrap) {
+                    if (document.exitFullscreen) await document.exitFullscreen();
+                } else if (artworkSaleModal.imageWrap.requestFullscreen) {
+                    await artworkSaleModal.imageWrap.requestFullscreen();
+                }
+            } catch (_) {
+                // no-op fallback
+            } finally {
+                syncArtworkFullscreenButton();
+            }
+        });
+
         document.addEventListener("fullscreenchange", () => {
             syncBrowserFullscreenButton();
             syncLightboxFullscreenButton();
+            syncArtworkFullscreenButton();
         });
 
         window.addEventListener("keydown", (event) => {
             if (event.key !== "Escape") return;
+            if (artworkSaleModal.root.classList.contains("is-open")) {
+                closeArtworkSaleModal();
+                return;
+            }
             if (lightbox.root.classList.contains("is-open")) {
                 closeLightbox();
                 return;
