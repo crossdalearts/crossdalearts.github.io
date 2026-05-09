@@ -193,57 +193,9 @@ function buildGalleryItem(item) {
     };
 }
 
-async function probeImageSource(src) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
-        img.src = src;
-    });
-}
-
-async function probeVideoSource(src) {
-    return new Promise((resolve) => {
-        const video = document.createElement("video");
-        let settled = false;
-
-        const cleanup = (result) => {
-            if (settled) return;
-            settled = true;
-            video.removeAttribute("src");
-            video.load();
-            resolve(result);
-        };
-
-        const timeoutId = window.setTimeout(() => cleanup(false), 3200);
-
-        video.preload = "metadata";
-        video.muted = true;
-        video.playsInline = true;
-        video.onloadedmetadata = () => {
-            window.clearTimeout(timeoutId);
-            cleanup(true);
-        };
-        video.onerror = () => {
-            window.clearTimeout(timeoutId);
-            cleanup(false);
-        };
-        video.src = src;
-    });
-}
-
-async function probePdfSource(src) {
-    try {
-        const response = await fetch(src, { method: "HEAD", cache: "no-store" });
-        return response.ok;
-    } catch (_) {
-        return false;
-    }
-}
-
 async function loadGalleryConfig(url = GALLERY_META_URL) {
     try {
-        const response = await fetch(getAssetUrl(url), { method: "GET", cache: "no-store" });
+        const response = await fetch(getAssetUrl(url), { method: "GET", cache: "force-cache" });
         if (!response.ok) throw new Error("Gallery metadata fetch failed");
         const data = await response.json();
 
@@ -312,7 +264,7 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
 
     for (const category of config.categories) {
         const validEntries = category.items.filter((item) => item && typeof item.path === "string");
-        const fallbackResolvedItems = validEntries
+        const resolvedItems = validEntries
             .map((item) => {
                 const rawSrc = String(item.path || "").trim().replace(/\\/g, "/");
                 const src = resolveGalleryAssetPath(rawSrc);
@@ -328,35 +280,6 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
                 });
             })
             .filter(Boolean);
-        const checks = validEntries.map(async (item) => {
-            const rawSrc = String(item.path || "").trim().replace(/\\/g, "/");
-            const src = resolveGalleryAssetPath(rawSrc);
-            const type = String(item.type || "").trim().toLowerCase();
-            const title = String(item.title || "").trim();
-
-            if (!src) return null;
-            if (type !== "image" && type !== "video" && type !== "pdf") return null;
-
-            const exists = type === "video"
-                ? await probeVideoSource(src)
-                : type === "pdf"
-                    ? await probePdfSource(src)
-                    : await probeImageSource(src);
-
-            if (!exists) return null;
-
-            return buildGalleryItem({
-                src,
-                type,
-                title,
-                category: category.name
-            });
-        });
-
-        let resolvedItems = (await Promise.all(checks)).filter(Boolean);
-        if (!resolvedItems.length && fallbackResolvedItems.length) {
-            resolvedItems = fallbackResolvedItems;
-        }
         if (!resolvedItems.length) continue;
 
         let previewItem = null;
@@ -367,28 +290,12 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
 
             if (previewSrc && (previewType === "image" || previewType === "video" || previewType === "pdf")) {
                 const resolvedPreviewSrc = resolveGalleryAssetPath(previewSrc);
-                const exists = previewType === "video"
-                    ? await probeVideoSource(resolvedPreviewSrc)
-                    : previewType === "pdf"
-                        ? await probePdfSource(resolvedPreviewSrc)
-                        : await probeImageSource(resolvedPreviewSrc);
-
-                if (exists) {
-                    previewItem = buildGalleryItem({
-                        src: resolvedPreviewSrc,
-                        type: previewType,
-                        title: previewTitle,
-                        category: category.name
-                    });
-                }
-                if (!previewItem) {
-                    previewItem = buildGalleryItem({
-                        src: resolvedPreviewSrc,
-                        type: previewType,
-                        title: previewTitle,
-                        category: category.name
-                    });
-                }
+                previewItem = buildGalleryItem({
+                    src: resolvedPreviewSrc,
+                    type: previewType,
+                    title: previewTitle,
+                    category: category.name
+                });
             }
         }
 
@@ -410,26 +317,11 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
 
             if (previewSrc && (previewType === "image" || previewType === "video" || previewType === "pdf")) {
                 const resolvedPreviewSrc = resolveGalleryAssetPath(previewSrc);
-                const exists = previewType === "video"
-                    ? await probeVideoSource(resolvedPreviewSrc)
-                    : previewType === "pdf"
-                        ? await probePdfSource(resolvedPreviewSrc)
-                        : await probeImageSource(resolvedPreviewSrc);
-
-                if (exists) {
-                    homepagePreview = buildGalleryItem({
-                        src: resolvedPreviewSrc,
-                        type: previewType,
-                        title: previewTitle
-                    });
-                }
-                if (!homepagePreview) {
-                    homepagePreview = buildGalleryItem({
-                        src: resolvedPreviewSrc,
-                        type: previewType,
-                        title: previewTitle
-                    });
-                }
+                homepagePreview = buildGalleryItem({
+                    src: resolvedPreviewSrc,
+                    type: previewType,
+                    title: previewTitle
+                });
             }
         }
 
@@ -466,7 +358,7 @@ async function loadArtworksForSaleConfig(url) {
     }
 
     try {
-        const response = await fetch(getAssetUrl(cleanUrl), { method: "GET", cache: "no-store" });
+        const response = await fetch(getAssetUrl(cleanUrl), { method: "GET", cache: "force-cache" });
         if (!response.ok) throw new Error("Artworks config fetch failed");
         const data = await response.json();
         const items = Array.isArray(data?.items) ? data.items : [];
@@ -597,13 +489,12 @@ function createArtworkSaleModal() {
 }
 
 async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
-    const galleryConfig = await loadGalleryItems(configUrl);
-    const galleryItems = galleryConfig.items;
-    const galleryCategories = galleryConfig.categories;
     const browser = createGalleryBrowserModal("details-gallery-browser-modal", pageTitle);
     const lightbox = createGalleryLightbox();
     const artworkSaleModal = createArtworkSaleModal();
-    const artworkMeta = await loadArtworksForSaleConfig(galleryConfig.artworksForSaleConfig);
+    let galleryItems = [];
+    let galleryCategories = [];
+    let artworkMeta = { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
 
     const syncOverlayScrollLock = () => {
         const hasOpenOverlay =
@@ -825,13 +716,10 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
     };
 
     const openBrowser = () => {
-        if (!galleryItems.length) {
-            browser.root.classList.add("is-open");
-            browser.root.setAttribute("aria-hidden", "false");
-            syncOverlayScrollLock();
-            return;
-        }
-        renderCategoryFolders();
+        browser.grid.innerHTML = `<p class="gallery-empty-message">Loading gallery...</p>`;
+        browser.title.textContent = pageTitle;
+        browser.counter.textContent = "Please wait";
+        browser.backBtn.hidden = true;
         browser.root.classList.add("is-open");
         browser.root.setAttribute("aria-hidden", "false");
         syncOverlayScrollLock();
@@ -919,6 +807,26 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
     }
 
     openBrowser();
+
+    try {
+        const galleryConfig = await loadGalleryItems(configUrl);
+        galleryItems = galleryConfig.items;
+        galleryCategories = galleryConfig.categories;
+        artworkMeta = await loadArtworksForSaleConfig(galleryConfig.artworksForSaleConfig);
+
+        if (!browser.root.classList.contains("is-open")) return;
+        if (!galleryItems.length) {
+            browser.grid.innerHTML = `<p class="gallery-empty-message">Gallery details are not available yet.</p>`;
+            browser.counter.textContent = "0 works";
+            return;
+        }
+        renderCategoryFolders();
+        syncBrowserFullscreenButton();
+    } catch (_) {
+        if (!browser.root.classList.contains("is-open")) return;
+        browser.grid.innerHTML = `<p class="gallery-empty-message">Unable to load gallery right now. Please try again.</p>`;
+        browser.counter.textContent = "Unavailable";
+    }
 }
 
 function initDetailsGalleryButtons() {
@@ -926,6 +834,21 @@ function initDetailsGalleryButtons() {
     if (!detailButtons.length) return;
 
     detailButtons.forEach((button) => {
+        let prefetched = false;
+        const prefetchGallery = () => {
+            if (prefetched) return;
+            prefetched = true;
+            const configUrl = String(button.dataset.galleryConfig || "").trim();
+            if (!configUrl) return;
+            loadGalleryItems(configUrl)
+                .then((galleryConfig) => loadArtworksForSaleConfig(galleryConfig.artworksForSaleConfig))
+                .catch(() => {});
+        };
+
+        button.addEventListener("pointerenter", prefetchGallery, { once: true });
+        button.addEventListener("focus", prefetchGallery, { once: true });
+        button.addEventListener("touchstart", prefetchGallery, { once: true, passive: true });
+
         button.addEventListener("click", (event) => {
             event.preventDefault();
             const configUrl = String(button.dataset.galleryConfig || "").trim();
