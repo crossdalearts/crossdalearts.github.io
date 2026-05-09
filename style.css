@@ -5965,9 +5965,17 @@ body #feedback-widget-anchor {
     font-size: var(--font-size-gallery-browser-button);
 }
 @media (max-width: 900px){
+    .artwork-sale-modal{
+        align-items: center;
+        overflow: hidden;
+    }
     .artwork-sale-box{
         grid-template-columns: 1fr;
         height: min(92vh, 920px);
+        max-height: min(92vh, 920px);
+        margin: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     .artwork-sale-left{
         border-right: 0;
@@ -5975,6 +5983,7 @@ body #feedback-widget-anchor {
         min-height: 280px;
     }
     .artwork-sale-right{
-        max-height: 46vh;
+        max-height: none;
+        overflow: visible;
     }
 }

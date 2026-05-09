@@ -350,15 +350,8 @@ async function loadArtworksForSaleConfig(url) {
     if (!cleanUrl) return { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
     if (artworksForSaleCache.has(cleanUrl)) return artworksForSaleCache.get(cleanUrl);
 
-    const sessionCached = readSessionJSON(`artworks-for-sale:${cleanUrl}`);
-    if (sessionCached && Array.isArray(sessionCached.items)) {
-        const hydrated = hydrateArtworksForSaleCache(sessionCached.items);
-        artworksForSaleCache.set(cleanUrl, hydrated);
-        return hydrated;
-    }
-
     try {
-        const response = await fetch(getAssetUrl(cleanUrl), { method: "GET", cache: "force-cache" });
+        const response = await fetch(getAssetUrl(cleanUrl), { method: "GET", cache: "no-store" });
         if (!response.ok) throw new Error("Artworks config fetch failed");
         const data = await response.json();
         const items = Array.isArray(data?.items) ? data.items : [];
@@ -374,7 +367,6 @@ async function loadArtworksForSaleConfig(url) {
             }));
         const hydrated = hydrateArtworksForSaleCache(normalizedItems);
         artworksForSaleCache.set(cleanUrl, hydrated);
-        writeSessionJSON(`artworks-for-sale:${cleanUrl}`, { items: normalizedItems });
         return hydrated;
     } catch (_) {
         return { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
