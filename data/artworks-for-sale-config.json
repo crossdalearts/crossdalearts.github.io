@@ -2,23 +2,29 @@
   "items": [
     {
       "path": "images/my-story-gallery/intoxicated owl image.jpeg",
-      "title": "Intoxicated Owl",
+      "title": "The Intoxicated Owl",
+      "price": "USD 1,100$",
+      "dimensions_notes": "Dimensions: 75 x 65 cm. \nAcrylic on paper, framed, Bold and full of life. $1,100 (flexible).",
       "description": "<p><b>The Intoxicated Owl</b> is a whimsical imaginary artwork inspired by the mysterious charm of owls, creatures often associated with <b>wisdom, curiosity, and quiet observation</b> across many cultures. This piece captures an owl in a <i>dreamy, intoxicated state</i>, balancing humor with personality and atmosphere. The carefully chosen <b>color palette</b> allows the artwork to complement a wide variety of interior spaces, adding character and presence to any wall. The artwork is <b>completely original</b> and created entirely from imagination, without copying or using references from existing artworks or images found online. Its <i>concept, composition, and character</i> are uniquely developed as an independent creative expression. Created to spark <b>imagination and conversation</b>, this painting carries a <i>playful yet thoughtful energy</i> that invites viewers to pause, observe, and interpret it in their own way.</p>",
-      "button_text": "Add Purchase Link",
+      "button_text": "Enquire for Purchase",
       "button_url": "#"
     },
     {
       "path": "images/my-story-gallery/soul in soil.jpeg",
       "title": "Soul in Soil",
-      "description": "<p>A symbolic artwork about roots, memory, and the relationship between inner life and the living earth.</p>",
-      "button_text": "Add Purchase Link",
+      "price": "USD 970$",
+      "dimensions_notes": "Dimensions: 75 x 65 cm. \nAcrylic on paper, Warm and earthy. Would feel right at home in a restaurant that takes its atmosphere seriously. $970 (flexible).",
+      "description": "<p><b>This painting reflects what it truly means to be human</b> — a being shaped from dust, living on the same earth, bound to time, nature, and the unseen force that sustains all existence. On the left, the <b>wooden clock</b> holds <i>Roman, Arabic, and Hindi numbers</i> — three voices from three eras. Roman echoes a language long gone, Arabic stands as an ancient tongue still alive, and Hindi represents the young pulse of the present. Together, they show how <b>time moves through civilizations</b> while remaining unchanged in its silent flow. At the center sits a <b>faceless human</b>. The absence of a face allows every viewer to find themselves within this figure. Humanity is not defined by intellect, but by our simple origin: <i>shaped from earth, fed by earth</i>, dependent on its plants, waters, and creatures — and sustained by the One who created us from dust. The <b>roots above</b> symbolize ancestry and the weight of all that came before us. The <b>blue water below</b> represents life — ever-moving and ever-returning. The <i>vines, flowers, and small creatures</i> show how nature nurtures us even when we forget our beginnings. The <b>single flower</b> in the figure's hand becomes a gesture of <i>gratitude and awareness</i> of the intelligent designer in all creation. This artwork is a reminder that no matter where we go — <b>we remain dust</b>, carried by time, and sustained by the same Source that breathed life into us.</p>",
+      "button_text": "Enquire for Purchase",
       "button_url": "#"
     },
     {
       "path": "images/my-story-gallery/invention of toilet in stone age.jpeg",
       "title": "Invention of Toilet in Stone Age",
-      "description": "<p>A satirical conceptual composition that blends humor and social commentary through an anachronistic scene.</p>",
-      "button_text": "Add Purchase Link",
+      "price": "USD 400$",
+      "dimensions_notes": "Dimensions: 75 x 65 cm. \nOil pastels on paper, Funny and sharp. The kind of piece that makes a table of people point and laugh and then keep talking about it. $400 (flexible).",
+      "description": "<p><b>The Invention of Toilet in the Stone Age</b> is a completely original imaginary artwork created entirely from imagination. The concept explores a <b>humorous and thought-provoking vision</b> of what the invention of a toilet might have looked like if it had existed during the <i>Stone Age</i>. The painting features various <b>primitive elements</b> associated with early human civilization, including <i>stone tools, raw meat, handmade weapons, hut-like shelters</i>, and expressive characters reacting with <b>surprise and curiosity</b> toward the unusual invention before them. Blending <b>comedy, creativity, and storytelling</b>, the artwork creates a playful contrast between <i>ancient human life and modern ideas</i>. Every element in the composition is <b>uniquely designed</b> as an independent creative expression and is not copied or recreated from existing artworks or online references. With its <i>detailed atmosphere and imaginative concept</i>, this piece adds <b>character, conversation, and artistic energy</b> to any interior space while standing as a distinctive example of <b>original creative art</b>.</p>",
+      "button_text": "Enquire for Purchase",
       "button_url": "#"
     }
   ]

@@ -1813,11 +1813,27 @@ body #feedback-widget-anchor{
     align-self: start;
     gap: 4px;
 }
+.gallery-browser-title-row{
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
 .gallery-browser-item-title{
     font-size: var(--font-size-gallery-browser-item-title);
     line-height: 1.45;
     color: #202020;
     margin: 0;
+}
+.gallery-browser-item-price{
+    font-family: "Fraunces", serif !important;
+    font-weight: 700;
+    font-size: clamp(14px, 1.05vw, 18px);
+    color: #141414;
+    line-height: 1.2;
+    text-align: right;
+    white-space: nowrap;
 }
 .gallery-browser-item-type{
     font-size: var(--font-size-gallery-browser-item-type);
@@ -2035,9 +2051,16 @@ body.gallery-lightbox-open{
         flex-direction: column;
         gap: 4px;
     }
+    .gallery-browser-title-row{
+        align-items: flex-start;
+        gap: 6px;
+    }
     .gallery-browser-item-title{
         font-size: var(--font-size-gallery-browser-item-title-mobile);
         line-height: 1.35;
+    }
+    .gallery-browser-item-price{
+        font-size: clamp(12px, 3vw, 14px);
     }
     .gallery-browser-item-type{
         font-size: var(--font-size-gallery-browser-item-type-mobile);
@@ -5938,6 +5961,25 @@ body #feedback-widget-anchor {
     font-size: var(--font-size-gallery-lightbox-title);
     color: #171717;
     line-height: 1.25;
+    font-family: "Fraunces", serif !important;
+    font-weight: 700;
+}
+.artwork-sale-price{
+    margin: 2px 0 0;
+    color: #111;
+    font-size: clamp(18px, 1.25vw, 22px);
+    line-height: 1.3;
+    font-family: "Fraunces", serif !important;
+    font-weight: 700;
+}
+.artwork-sale-dimensions-notes{
+    margin: 2px 0 0;
+    color: #111;
+    font-size: clamp(16px, 1.15vw, 19px);
+    line-height: 1.45;
+    font-family: "Fraunces", serif !important;
+    font-weight: 700;
+    white-space: pre-line;
 }
 .artwork-sale-close{
     border: 1px solid #d6d6d6;
@@ -5953,6 +5995,10 @@ body #feedback-widget-anchor {
     color: #252525;
     line-height: 1.65;
     white-space: pre-wrap;
+}
+.gallery-browser-card .gallery-browser-item-title{
+    font-family: "Fraunces", serif !important;
+    font-weight: 700;
 }
 .artwork-sale-cta{
     margin-top: auto;

@@ -362,6 +362,8 @@ async function loadArtworksForSaleConfig(url) {
                 path: String(item.path || "").trim(),
                 title: String(item.title || "").trim(),
                 description: String(item.description || "").trim(),
+                price: String(item.price || "").trim(),
+                dimensions_notes: String(item.dimensions_notes || "").trim(),
                 button_text: String(item.button_text || "Enquire / Buy").trim(),
                 button_url: String(item.button_url || "#").trim()
             }));
@@ -385,6 +387,8 @@ function hydrateArtworksForSaleCache(items) {
         const fileNameKey = getNormalizedFileName(pathKey);
         const normalized = {
             description: String(item.description || "").trim(),
+            price: String(item.price || "").trim(),
+            dimensionsNotes: String(item.dimensions_notes || "").trim(),
             buttonText: String(item.button_text || "Enquire / Buy").trim(),
             buttonUrl: String(item.button_url || "#").trim()
         };
@@ -460,6 +464,8 @@ function createArtworkSaleModal() {
                         <h3 class="artwork-sale-title">Artwork</h3>
                         <button type="button" class="artwork-sale-close">Close</button>
                     </div>
+                    <p class="artwork-sale-price" hidden></p>
+                    <p class="artwork-sale-dimensions-notes" hidden></p>
                     <div class="artwork-sale-description"></div>
                     <a class="artwork-sale-cta" href="#" target="_blank" rel="noopener noreferrer">Enquire / Buy</a>
                 </div>
@@ -475,6 +481,8 @@ function createArtworkSaleModal() {
         image: root.querySelector(".artwork-sale-image"),
         imageWrap: root.querySelector(".artwork-sale-image-wrap"),
         title: root.querySelector(".artwork-sale-title"),
+        price: root.querySelector(".artwork-sale-price"),
+        dimensionsNotes: root.querySelector(".artwork-sale-dimensions-notes"),
         description: root.querySelector(".artwork-sale-description"),
         cta: root.querySelector(".artwork-sale-cta")
     };
@@ -546,10 +554,21 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
             artworkMeta.byTitle.get(titleKey) ||
             artworkMeta.byFileName.get(fileNameKey);
         const description = meta?.description || item.descriptionHTML || "<p>Brief description will be added soon.</p>";
+        const price = meta?.price || item.price || "";
+        const dimensionsNotes = meta?.dimensionsNotes || item.dimensionsNotes || "";
         const buttonText = meta?.buttonText || item.buttonText || "Enquire / Buy";
         const buttonUrl = meta?.buttonUrl || item.buttonUrl || "#";
+        const titleBase = item.title || item.alt || "Artwork";
 
-        artworkSaleModal.title.textContent = item.title || item.alt || "Artwork";
+        artworkSaleModal.title.textContent = titleBase;
+        if (artworkSaleModal.price) {
+            artworkSaleModal.price.textContent = price;
+            artworkSaleModal.price.hidden = !price;
+        }
+        if (artworkSaleModal.dimensionsNotes) {
+            artworkSaleModal.dimensionsNotes.textContent = dimensionsNotes;
+            artworkSaleModal.dimensionsNotes.hidden = !dimensionsNotes;
+        }
         artworkSaleModal.description.innerHTML = description;
         artworkSaleModal.cta.textContent = buttonText;
         artworkSaleModal.cta.href = buttonUrl;
@@ -673,15 +692,41 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
             const meta = document.createElement("div");
             meta.className = "gallery-browser-meta";
 
+            const titleRow = document.createElement("div");
+            titleRow.className = "gallery-browser-title-row";
+
             const title = document.createElement("p");
             title.className = "gallery-browser-item-title";
-            title.textContent = item.title || item.alt || "Untitled";
+            const itemPathKey = normalizeArtworkRuntimePath(item.src);
+            const itemTitleKey = String(item.title || item.alt || "").trim().toLowerCase();
+            const itemFileNameKey = getNormalizedFileName(itemPathKey);
+            const itemMeta =
+                artworkMeta.byPath.get(itemPathKey) ||
+                artworkMeta.byTitle.get(itemTitleKey) ||
+                artworkMeta.byFileName.get(itemFileNameKey);
+            const cardPrice = itemMeta?.price || item.price || "";
+            const cardTitle = item.title || item.alt || "Untitled";
+            title.textContent = cardTitle;
+
+            const price = document.createElement("span");
+            price.className = "gallery-browser-item-price";
+            price.textContent = cardPrice;
+            price.hidden = !cardPrice;
 
             const type = document.createElement("span");
             type.className = "gallery-browser-item-type";
-            type.textContent = item.type === "video" ? "Video" : "Image";
+            const isArtworkForSaleCategory = String(category.name || "").trim().toLowerCase() === "artworks for sale";
+            if (item.type === "video") {
+                type.textContent = "Video";
+            } else if (isArtworkForSaleCategory) {
+                type.textContent = "Image & description";
+            } else {
+                type.textContent = "Image";
+            }
 
-            meta.appendChild(title);
+            titleRow.appendChild(title);
+            titleRow.appendChild(price);
+            meta.appendChild(titleRow);
             meta.appendChild(type);
             card.appendChild(mediaWrap);
             card.appendChild(meta);
