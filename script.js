@@ -70,8 +70,10 @@ const GALLERY_META_URL = "data/gallery-media.json";
 const GALLERY_SESSION_CACHE_PREFIX = "crossdalearts:session:";
 const galleryItemsCache = new Map();
 const artworksForSaleCache = new Map();
+const artworksForSalePaymentCache = new Map();
 const galleryImageBlobUrlCache = new Map();
 const galleryImageLoadPromiseCache = new Map();
+const ARTWORKS_BUY_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxkoaAKb7VWL3dOPPHBB2CpbnUyNwceMUdtZQNiBhm07YgPnlSlxHPxKLEuf1pt-mT4/exec";
 
 window.addEventListener("beforeunload", () => {
     galleryImageBlobUrlCache.forEach((objectUrl) => {
@@ -236,13 +238,15 @@ async function loadGalleryConfig(url = GALLERY_META_URL) {
                 ? data.homepage_preview
                 : null,
             categories: normalizedCategories,
-            artworksForSaleConfig: String(data?.artworks_for_sale_config || "").trim()
+            artworksForSaleConfig: String(data?.artworks_for_sale_config || "").trim(),
+            artworksForSalePaymentConfig: String(data?.artworks_for_sale_payment_config || "").trim()
         };
     } catch (_) {
         return {
             homepagePreview: null,
             categories: [],
-            artworksForSaleConfig: ""
+            artworksForSaleConfig: "",
+            artworksForSalePaymentConfig: ""
         };
     }
 }
@@ -338,7 +342,8 @@ async function loadGalleryItems(url = GALLERY_META_URL) {
         homepagePreview,
         categories,
         items,
-        artworksForSaleConfig: String(config?.artworksForSaleConfig || "").trim()
+        artworksForSaleConfig: String(config?.artworksForSaleConfig || "").trim(),
+        artworksForSalePaymentConfig: String(config?.artworksForSalePaymentConfig || "").trim()
     };
     galleryItemsCache.set(cacheKey, result);
     writeSessionJSON(cacheKey, result);
@@ -401,6 +406,56 @@ function hydrateArtworksForSaleCache(items) {
     return { byPath, byTitle, byFileName };
 }
 
+async function loadArtworksForSalePaymentConfig(url) {
+    const cleanUrl = String(url || "").trim();
+    if (!cleanUrl) return { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
+    if (artworksForSalePaymentCache.has(cleanUrl)) return artworksForSalePaymentCache.get(cleanUrl);
+
+    try {
+        const response = await fetch(getAssetUrl(cleanUrl), { method: "GET", cache: "no-store" });
+        if (!response.ok) throw new Error("Artworks payment config fetch failed");
+        const data = await response.json();
+        const items = Array.isArray(data?.items) ? data.items : [];
+        const normalizedItems = items
+            .filter((item) => item && typeof item === "object")
+            .map((item) => ({
+                path: String(item.path || "").trim(),
+                title: String(item.title || "").trim(),
+                payment_links: {
+                    indian: String(item?.payment_links?.indian || "").trim(),
+                    international: String(item?.payment_links?.international || "").trim()
+                }
+            }));
+        const hydrated = hydrateArtworksForSalePaymentCache(normalizedItems);
+        artworksForSalePaymentCache.set(cleanUrl, hydrated);
+        return hydrated;
+    } catch (_) {
+        return { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
+    }
+}
+
+function hydrateArtworksForSalePaymentCache(items) {
+    const byPath = new Map();
+    const byTitle = new Map();
+    const byFileName = new Map();
+    items.forEach((item) => {
+        if (!item || typeof item !== "object") return;
+        const normalized = {
+            paymentLinks: {
+                indian: String(item?.payment_links?.indian || "").trim(),
+                international: String(item?.payment_links?.international || "").trim()
+            }
+        };
+        const pathKey = normalizeArtworkConfigPath(String(item.path || ""));
+        const titleKey = String(item.title || "").trim().toLowerCase();
+        const fileNameKey = getNormalizedFileName(pathKey);
+        if (pathKey) byPath.set(pathKey, normalized);
+        if (titleKey) byTitle.set(titleKey, normalized);
+        if (fileNameKey) byFileName.set(fileNameKey, normalized);
+    });
+    return { byPath, byTitle, byFileName };
+}
+
 function normalizeArtworkConfigPath(pathValue = "") {
     const cleanPath = String(pathValue || "").trim().replace(/\\/g, "/");
     if (!cleanPath) return "";
@@ -428,6 +483,98 @@ function getNormalizedFileName(pathValue = "") {
     if (!normalizedPath) return "";
     const parts = normalizedPath.split("/");
     return String(parts[parts.length - 1] || "").trim();
+}
+
+function normalizeArtworkBuyWebAppUrl() {
+    const url = String(ARTWORKS_BUY_WEBAPP_URL || "").trim();
+    if (!url) return "";
+    return url.replace(/\/+$/, "");
+}
+
+function createArtworkBuyFlowModal() {
+    const existing = document.getElementById("artwork-buy-flow-modal");
+    if (existing) {
+        if (!existing.querySelector(".artwork-buy-flow-content")) {
+            existing.innerHTML = `
+                <div class="course-region-dialog artwork-buy-flow-dialog" role="dialog" aria-modal="true" aria-label="Artwork purchase details">
+                    <div class="artwork-buy-flow-content"></div>
+                </div>
+            `;
+        }
+        return {
+            root: existing,
+            dialog: existing.querySelector(".artwork-buy-flow-dialog"),
+            content: existing.querySelector(".artwork-buy-flow-content")
+        };
+    }
+
+    const root = document.createElement("div");
+    root.id = "artwork-buy-flow-modal";
+    root.className = "course-region-modal artwork-buy-flow-modal";
+    root.setAttribute("aria-hidden", "true");
+    root.innerHTML = `
+        <div class="course-region-dialog artwork-buy-flow-dialog" role="dialog" aria-modal="true" aria-label="Artwork purchase details">
+            <div class="artwork-buy-flow-content"></div>
+        </div>
+    `;
+    document.body.appendChild(root);
+
+    return {
+        root,
+        dialog: root.querySelector(".artwork-buy-flow-dialog"),
+        content: root.querySelector(".artwork-buy-flow-content")
+    };
+}
+
+function closeArtworkBuyFlowModal() {
+    const modal = document.getElementById("artwork-buy-flow-modal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("course-region-modal-open");
+}
+
+function openArtworkBuyFlowModal() {
+    const modal = createArtworkBuyFlowModal();
+    modal.root.classList.add("is-open");
+    modal.root.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+    return modal;
+}
+
+function getSafeArtworkPaymentUrl(buttonUrl = "") {
+    const raw = String(buttonUrl || "").trim();
+    if (!raw || raw === "#") return "";
+    try {
+        const parsed = new URL(raw, window.location.href);
+        if (parsed.protocol === "http:" || parsed.protocol === "https:") return parsed.href;
+    } catch (_) {
+        return "";
+    }
+    return "";
+}
+
+async function submitArtworkLeadToSheet(payload) {
+    const endpoint = normalizeArtworkBuyWebAppUrl();
+    if (!endpoint) return { ok: false, reason: "missing_endpoint" };
+    const params = new URLSearchParams();
+    Object.entries(payload || {}).forEach(([key, value]) => {
+        if (value === undefined || value === null) return;
+        params.append(key, typeof value === "boolean" ? String(value) : String(value));
+    });
+    params.append("payload", JSON.stringify(payload || {}));
+    params.append("source", "artwork_buy_form");
+    try {
+        await fetch(endpoint, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+            body: params.toString()
+        });
+        return { ok: true };
+    } catch (error) {
+        return { ok: false, reason: String(error?.message || "request_failed") };
+    }
 }
 
 function createArtworkSaleModal() {
@@ -493,15 +640,19 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
     const browser = createGalleryBrowserModal("details-gallery-browser-modal", pageTitle);
     const lightbox = createGalleryLightbox();
     const artworkSaleModal = createArtworkSaleModal();
+    const artworkBuyFlowModal = createArtworkBuyFlowModal();
     let galleryItems = [];
     let galleryCategories = [];
     let artworkMeta = { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
+    let artworkPaymentMeta = { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
+    let selectedArtworkSaleContext = null;
 
     const syncOverlayScrollLock = () => {
         const hasOpenOverlay =
             browser.root.classList.contains("is-open") ||
             lightbox.root.classList.contains("is-open") ||
-            artworkSaleModal.root.classList.contains("is-open");
+            artworkSaleModal.root.classList.contains("is-open") ||
+            artworkBuyFlowModal.root.classList.contains("is-open");
         document.body.classList.toggle("gallery-lightbox-open", hasOpenOverlay);
     };
 
@@ -560,6 +711,16 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         const buttonText = meta?.buttonText || item.buttonText || "Enquire / Buy";
         const buttonUrl = meta?.buttonUrl || item.buttonUrl || "#";
         const titleBase = meta?.title || item.title || item.alt || "Artwork";
+        selectedArtworkSaleContext = {
+            title: titleBase,
+            price,
+            dimensionsNotes,
+            buttonText,
+            buttonUrl,
+            imagePath: item.src || "",
+            region: "indian",
+            description: description
+        };
 
         artworkSaleModal.title.textContent = titleBase;
         if (artworkSaleModal.price) {
@@ -574,6 +735,10 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         artworkSaleModal.cta.textContent = buttonText;
         artworkSaleModal.cta.href = buttonUrl;
         artworkSaleModal.cta.setAttribute("aria-label", buttonText);
+        artworkSaleModal.cta.onclick = (event) => {
+            event.preventDefault();
+            renderArtworkRegionStep();
+        };
         artworkSaleModal.image.alt = item.title || item.alt || "Artwork image";
         artworkSaleModal.image.loading = "eager";
         artworkSaleModal.image.decoding = "async";
@@ -583,6 +748,245 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         artworkSaleModal.root.setAttribute("aria-hidden", "false");
         syncOverlayScrollLock();
         syncArtworkFullscreenButton();
+    };
+
+    const renderArtworkRegionStep = () => {
+        const ctx = selectedArtworkSaleContext;
+        if (!ctx) return;
+        const modal = openArtworkBuyFlowModal();
+        if (modal.dialog) {
+            modal.dialog.classList.remove("artwork-buy-flow-dialog");
+        }
+        modal.content.innerHTML = `
+            <p class="course-region-eyebrow">Artwork Purchase</p>
+            <h2 id="artwork-region-title">Select your region</h2>
+            <p class="course-region-copy">Choose your location for this artwork request: <b>${escapeHTML(ctx.title)}</b>.</p>
+            <div class="course-region-actions">
+                <button type="button" class="course-region-choice" data-artwork-region="indian">Indian</button>
+                <button type="button" class="course-region-choice is-secondary" data-artwork-region="international">International</button>
+            </div>
+            <p class="course-region-note">This helps us follow up with the right process and pricing conversation.</p>
+        `;
+        modal.content.querySelectorAll("[data-artwork-region]").forEach((btn) => {
+            btn.addEventListener("click", () => renderArtworkFormStep(btn.getAttribute("data-artwork-region") || ""));
+        });
+        syncOverlayScrollLock();
+    };
+
+    const renderArtworkSuccessStep = (submission) => {
+        const modal = openArtworkBuyFlowModal();
+        if (modal.dialog) {
+            modal.dialog.classList.add("artwork-buy-flow-dialog");
+        }
+        const payUrl = getSafeArtworkPaymentUrl(selectedArtworkSaleContext?.buttonUrl || "");
+        const isNegotiation = Boolean(submission?.wantNegotiation);
+        const successMessage = isNegotiation
+            ? "Thank you. Your proposal has been sent. We will contact you in a few days on your email or social handle."
+            : "Thank you. Your details were shared successfully. You can proceed with direct payment now.";
+
+        modal.content.innerHTML = `
+            <div class="artwork-buy-flow-top">
+                <h3 class="artwork-buy-flow-title">Request Submitted</h3>
+                <button type="button" class="course-region-close artwork-buy-flow-close" data-buy-close aria-label="Close success modal">&times;</button>
+            </div>
+            <p class="artwork-buy-flow-success">${escapeHTML(successMessage)}</p>
+            <div class="artwork-buy-flow-actions">
+                ${!isNegotiation && payUrl ? `<a class="course-region-choice artwork-buy-danger" href="${escapeHTML(payUrl)}" target="_blank" rel="noopener noreferrer">Proceed to Payment</a>` : ""}
+                <button type="button" class="course-region-choice is-secondary" data-buy-close>Done</button>
+            </div>
+        `;
+
+        modal.content.querySelectorAll("[data-buy-close]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                closeArtworkBuyFlowModal();
+                syncOverlayScrollLock();
+            });
+        });
+        syncOverlayScrollLock();
+    };
+
+    const resolveArtworkPaymentLink = (ctx, region) => {
+        if (!ctx) return "";
+        const regionKey = String(region || "indian").trim().toLowerCase() === "international" ? "international" : "indian";
+        const pathKey = normalizeArtworkRuntimePath(ctx.imagePath || "");
+        const titleKey = String(ctx.title || "").trim().toLowerCase();
+        const fileNameKey = getNormalizedFileName(pathKey);
+        const entry =
+            artworkPaymentMeta.byPath.get(pathKey) ||
+            artworkPaymentMeta.byTitle.get(titleKey) ||
+            artworkPaymentMeta.byFileName.get(fileNameKey);
+        const configured = String(entry?.paymentLinks?.[regionKey] || "").trim();
+        if (configured) return configured;
+        return String(ctx.buttonUrl || "").trim();
+    };
+
+    const renderArtworkPaymentStep = (submission) => {
+        const modal = openArtworkBuyFlowModal();
+        if (modal.dialog) modal.dialog.classList.add("artwork-buy-flow-dialog");
+        const payUrl = getSafeArtworkPaymentUrl(resolveArtworkPaymentLink(selectedArtworkSaleContext, submission?.region || "indian"));
+        modal.content.innerHTML = `
+            <div class="artwork-buy-flow-top">
+                <h3 class="artwork-buy-flow-title">Confirm Payment</h3>
+                <button type="button" class="course-region-close artwork-buy-flow-close" data-buy-close aria-label="Close payment modal">&times;</button>
+            </div>
+            <p class="artwork-buy-flow-success">Artwork Price: <b>${escapeHTML(String(selectedArtworkSaleContext?.price || "Price will be shared"))}</b></p>
+            <div class="artwork-buy-flow-actions">
+                ${payUrl ? `<a class="course-region-choice artwork-buy-danger" href="${escapeHTML(payUrl)}" target="_blank" rel="noopener noreferrer">Pay</a>` : ""}
+                <button type="button" class="course-region-choice is-secondary" data-buy-close>Cancel</button>
+            </div>
+            ${!payUrl ? `<p class="artwork-buy-note">Payment link is not configured yet for this region.</p>` : ""}
+        `;
+        modal.content.querySelectorAll("[data-buy-close]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                closeArtworkBuyFlowModal();
+                syncOverlayScrollLock();
+            });
+        });
+        syncOverlayScrollLock();
+    };
+
+    const renderArtworkFormStep = (region) => {
+        const normalizedRegion = String(region || "").trim().toLowerCase();
+        const regionLabel = normalizedRegion === "international" ? "International" : "Indian";
+        const ctx = selectedArtworkSaleContext;
+        if (!ctx) return;
+        selectedArtworkSaleContext.region = normalizedRegion || "indian";
+
+        const modal = openArtworkBuyFlowModal();
+        if (modal.dialog) {
+            modal.dialog.classList.add("artwork-buy-flow-dialog");
+        }
+        modal.content.innerHTML = `
+            <div class="artwork-buy-flow-top">
+                <h3 class="artwork-buy-flow-title">${escapeHTML(regionLabel)} Buyer Details</h3>
+                <button type="button" class="course-region-close artwork-buy-flow-close" data-buy-close aria-label="Close buyer form">&times;</button>
+            </div>
+            <form id="artwork-buy-form" class="artwork-buy-form" novalidate>
+                <label class="artwork-buy-field">
+                    <span>Name</span>
+                    <input type="text" name="name" required maxlength="120" />
+                </label>
+                <label class="artwork-buy-field">
+                    <span>Email</span>
+                    <input type="email" name="email" required maxlength="180" />
+                </label>
+                <label class="artwork-buy-field">
+                    <span>Social Handle (optional)</span>
+                    <input type="text" name="socialHandle" maxlength="180" placeholder="@username / profile link" />
+                </label>
+                <label class="artwork-buy-field">
+                    <span>Brief Address</span>
+                    <textarea name="address" rows="3" required maxlength="500"></textarea>
+                </label>
+                <label class="artwork-buy-check">
+                    <input type="checkbox" name="wantNegotiation" />
+                    <span>I want to propose a different price and negotiate</span>
+                </label>
+                <label class="artwork-buy-field" id="proposed-price-field" hidden>
+                    <span>Proposed Price</span>
+                    <input type="text" name="proposedPrice" maxlength="60" placeholder="Enter your proposed price" />
+                </label>
+                <p class="artwork-buy-note">If negotiation is selected, we will contact you in a few days by email or social handle.</p>
+                <div class="artwork-buy-actions">
+                    <button type="button" class="course-region-choice is-secondary" data-buy-back>Back</button>
+                    <button type="submit" class="course-region-choice artwork-buy-danger" id="artwork-buy-submit">Submit</button>
+                </div>
+                <p class="artwork-buy-error" id="artwork-buy-error" hidden></p>
+            </form>
+        `;
+
+        modal.content.querySelectorAll("[data-buy-close]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                closeArtworkBuyFlowModal();
+                syncOverlayScrollLock();
+            });
+        });
+        modal.content.querySelector("[data-buy-back]")?.addEventListener("click", renderArtworkRegionStep);
+
+        const form = modal.content.querySelector("#artwork-buy-form");
+        const errorEl = modal.content.querySelector("#artwork-buy-error");
+        const negotiationInput = form?.querySelector('input[name="wantNegotiation"]');
+        const proposedField = modal.content.querySelector("#proposed-price-field");
+        const proposedInput = form?.querySelector('input[name="proposedPrice"]');
+        const submitBtn = modal.content.querySelector("#artwork-buy-submit");
+        const toggleProposedPrice = () => {
+            const checked = Boolean(negotiationInput?.checked);
+            if (proposedField) proposedField.hidden = !checked;
+            if (proposedInput) proposedInput.required = checked;
+        };
+        toggleProposedPrice();
+        negotiationInput?.addEventListener("change", toggleProposedPrice);
+
+        form?.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (!form) return;
+            if (errorEl) {
+                errorEl.hidden = true;
+                errorEl.textContent = "";
+            }
+            if (!normalizeArtworkBuyWebAppUrl()) {
+                if (errorEl) {
+                    errorEl.textContent = "Form endpoint is missing. Please set ARTWORKS_BUY_WEBAPP_URL in script.js.";
+                    errorEl.hidden = false;
+                }
+                return;
+            }
+
+            const fd = new FormData(form);
+            const submission = {
+                submittedAt: new Date().toISOString(),
+                region: regionLabel,
+                artworkTitle: String(ctx.title || "").trim(),
+                artworkPrice: String(ctx.price || "").trim(),
+                artworkDimensionsNotes: String(ctx.dimensionsNotes || "").trim(),
+                artworkImagePath: String(ctx.imagePath || "").trim(),
+                name: String(fd.get("name") || "").trim(),
+                email: String(fd.get("email") || "").trim(),
+                socialHandle: String(fd.get("socialHandle") || "").trim(),
+                address: String(fd.get("address") || "").trim(),
+                wantNegotiation: Boolean(fd.get("wantNegotiation")),
+                proposedPrice: String(fd.get("proposedPrice") || "").trim(),
+                sourcePage: window.location.href
+            };
+
+            if (!submission.name || !submission.email || !submission.address) {
+                if (errorEl) {
+                    errorEl.textContent = "Please fill all required fields.";
+                    errorEl.hidden = false;
+                }
+                return;
+            }
+            if (submission.wantNegotiation && !submission.proposedPrice) {
+                if (errorEl) {
+                    errorEl.textContent = "Please enter your proposed price for negotiation.";
+                    errorEl.hidden = false;
+                }
+                return;
+            }
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Submitting...";
+            }
+            const result = await submitArtworkLeadToSheet(submission);
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit";
+            }
+            if (!result.ok) {
+                if (errorEl) {
+                    errorEl.textContent = "Submission failed. Please check your Apps Script deployment access and try again.";
+                    errorEl.hidden = false;
+                }
+                return;
+            }
+            if (submission.wantNegotiation) {
+                renderArtworkSuccessStep(submission);
+                return;
+            }
+            renderArtworkPaymentStep(submission);
+        });
+
+        syncOverlayScrollLock();
     };
 
     const openLightbox = (item) => {
@@ -819,6 +1223,11 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
                 syncArtworkFullscreenButton();
             }
         });
+        artworkBuyFlowModal.root.addEventListener("click", (event) => {
+            if (event.target !== artworkBuyFlowModal.root) return;
+            closeArtworkBuyFlowModal();
+            syncOverlayScrollLock();
+        });
 
         document.addEventListener("fullscreenchange", () => {
             syncBrowserFullscreenButton();
@@ -828,6 +1237,11 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
 
         window.addEventListener("keydown", (event) => {
             if (event.key !== "Escape") return;
+            if (artworkBuyFlowModal.root.classList.contains("is-open")) {
+                closeArtworkBuyFlowModal();
+                syncOverlayScrollLock();
+                return;
+            }
             if (artworkSaleModal.root.classList.contains("is-open")) {
                 closeArtworkSaleModal();
                 return;
@@ -851,6 +1265,7 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         galleryItems = galleryConfig.items;
         galleryCategories = galleryConfig.categories;
         artworkMeta = await loadArtworksForSaleConfig(galleryConfig.artworksForSaleConfig);
+        artworkPaymentMeta = await loadArtworksForSalePaymentConfig(galleryConfig.artworksForSalePaymentConfig);
 
         if (!browser.root.classList.contains("is-open")) return;
         if (!galleryItems.length) {
@@ -879,7 +1294,12 @@ function initDetailsGalleryButtons() {
             const configUrl = String(button.dataset.galleryConfig || "").trim();
             if (!configUrl) return;
             loadGalleryItems(configUrl)
-                .then((galleryConfig) => loadArtworksForSaleConfig(galleryConfig.artworksForSaleConfig))
+                .then((galleryConfig) =>
+                    Promise.all([
+                        loadArtworksForSaleConfig(galleryConfig.artworksForSaleConfig),
+                        loadArtworksForSalePaymentConfig(galleryConfig.artworksForSalePaymentConfig)
+                    ])
+                )
                 .catch(() => {});
         };
 

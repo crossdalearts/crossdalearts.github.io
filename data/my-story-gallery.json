@@ -1,6 +1,7 @@
 {
   "homepage_preview": null,
   "artworks_for_sale_config": "data/artworks-for-sale-config.json",
+  "artworks_for_sale_payment_config": "data/artworks-for-sale-payment-config.json",
   "categories": [
     {
       "name": "Artworks for sale",

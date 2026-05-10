@@ -6011,6 +6011,211 @@ body #feedback-widget-anchor {
     padding: 10px 16px;
     font-size: var(--font-size-gallery-browser-button);
 }
+.artwork-buy-flow-modal{
+    z-index: 2060 !important;
+    background: rgba(14, 14, 14, 0.78);
+    backdrop-filter: blur(3px);
+}
+.artwork-buy-flow-modal.is-open{
+    z-index: 2060 !important;
+}
+.artwork-buy-flow-dialog{
+    width: min(640px, 94vw);
+    max-height: min(90vh, 760px);
+    overflow-y: auto;
+    border: 1px solid #e2e2e2;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7f7f7 100%);
+    box-shadow: 0 22px 42px rgba(0, 0, 0, 0.22);
+}
+.artwork-buy-flow-content{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 4px 2px;
+}
+.artwork-buy-flow-top{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    padding-right: 56px;
+}
+.artwork-buy-flow-title{
+    margin: 0;
+    font-family: "Fraunces", serif !important;
+    font-size: clamp(21px, 2.2vw, 29px);
+    color: #151515;
+}
+.artwork-buy-flow-close{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid #d6d0c9;
+    background: #faf8f5;
+    color: #151515;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    font-size: 22px;
+    line-height: 1;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: filter 180ms ease;
+}
+.artwork-buy-flow-close:hover,
+.artwork-buy-flow-close:focus-visible{
+    filter: brightness(1.12);
+}
+.artwork-buy-flow-subtitle{
+    margin: 0;
+    color: #2b2b2b;
+    font-family: "Fraunces", serif !important;
+    letter-spacing: 0.1px;
+}
+.artwork-buy-form{
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    border-top: 1px solid #ededed;
+    padding-top: 12px;
+    text-align: left;
+}
+.artwork-buy-field{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.artwork-buy-field span{
+    font-weight: 600;
+    color: #171717;
+    font-family: "Fraunces", serif !important;
+    letter-spacing: 0.1px;
+}
+.artwork-buy-field input,
+.artwork-buy-field textarea{
+    width: 100%;
+    margin-top: 0;
+    border: 1px solid #d6d0c9;
+    border-radius: 14px;
+    padding: 13px 14px;
+    font-size: 1rem;
+    color: #111;
+    background: #faf8f5;
+    font-family: inherit;
+    transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+.artwork-buy-field input:focus,
+.artwork-buy-field textarea:focus{
+    outline: 2px solid rgba(255, 66, 66, 0.18);
+    outline-offset: 1px;
+    border-color: rgba(255, 66, 66, 0.45);
+    background: #fffdfa;
+}
+.artwork-buy-field textarea{
+    resize: vertical;
+    min-height: 86px;
+}
+.artwork-buy-check{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #171717;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.artwork-buy-check input[type="checkbox"]{
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 2px 0 0;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid #222;
+    border-radius: 5px;
+    background: #fff;
+    display: inline-grid;
+    place-content: center;
+    cursor: pointer;
+}
+.artwork-buy-check input[type="checkbox"]::before{
+    content: "";
+    width: 10px;
+    height: 10px;
+    transform: scale(0);
+    transition: transform 120ms ease-in-out;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    background: #111;
+}
+.artwork-buy-check input[type="checkbox"]:checked::before{
+    transform: scale(1);
+}
+.artwork-buy-check input[type="checkbox"]:focus-visible{
+    outline: 2px solid rgba(255, 66, 66, 0.24);
+    outline-offset: 2px;
+}
+.artwork-buy-note{
+    margin: 0;
+    color: #2c2c2c;
+    font-size: 14px;
+    line-height: 1.55;
+}
+.artwork-buy-actions,
+.artwork-buy-flow-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.artwork-buy-actions{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+.artwork-buy-actions .course-region-option,
+.artwork-buy-flow-actions .course-region-option{
+    width: auto;
+    margin: 0;
+    border-radius: 999px;
+    font-family: "Fraunces", serif !important;
+}
+.artwork-buy-actions .course-region-choice,
+.artwork-buy-flow-actions .course-region-choice{
+    text-decoration: none;
+    min-height: 52px;
+    border-radius: 14px;
+    font-size: 0.98rem;
+}
+.artwork-buy-danger{
+    background: #e53935 !important;
+    color: #fff !important;
+    border-color: #e53935 !important;
+}
+.artwork-buy-danger:hover,
+.artwork-buy-danger:focus-visible{
+    background: #d32f2f !important;
+    border-color: #d32f2f !important;
+}
+.artwork-buy-actions .course-region-choice[disabled]{
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.artwork-buy-error{
+    margin: 0;
+    color: #b01818;
+    font-size: 14px;
+}
+.artwork-buy-flow-success{
+    margin: 0;
+    color: #1a1a1a;
+    line-height: 1.6;
+    font-size: 15px;
+}
 @media (max-width: 900px){
     .artwork-sale-modal{
         align-items: center;
@@ -6032,5 +6237,11 @@ body #feedback-widget-anchor {
     .artwork-sale-right{
         max-height: none;
         overflow: visible;
+    }
+    .artwork-buy-flow-dialog{
+        width: min(94vw, 94vw);
+    }
+    .artwork-buy-actions{
+        grid-template-columns: 1fr;
     }
 }
