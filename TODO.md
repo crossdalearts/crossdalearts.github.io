@@ -60,3 +60,8 @@ bumpy effect on hover
 Polish Site Broken Elements
 
 - 01-05-2026
+
+1. Connect Payment Links to Artworks for sale
+2. Polish the Section
+
+- 10-05-2026

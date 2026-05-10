@@ -6004,12 +6004,17 @@ body #feedback-widget-anchor {
 .artwork-sale-cta{
     margin-top: auto;
     align-self: flex-start;
-    border: 1px solid #d6d6d6;
-    background: #111;
+    border: 1px solid #e53935;
+    background: #e53935;
     color: #fff;
     border-radius: 999px;
     padding: 10px 16px;
     font-size: var(--font-size-gallery-browser-button);
+}
+.artwork-sale-cta:hover,
+.artwork-sale-cta:focus-visible{
+    background: #d32f2f;
+    border-color: #d32f2f;
 }
 .artwork-buy-flow-modal{
     z-index: 2060 !important;
@@ -6066,11 +6071,12 @@ body #feedback-widget-anchor {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: filter 180ms ease;
+    transition: filter 180ms ease, background-color 180ms ease, border-color 180ms ease;
 }
 .artwork-buy-flow-close:hover,
 .artwork-buy-flow-close:focus-visible{
     filter: brightness(1.12);
+    transform: translateY(-50%);
 }
 .artwork-buy-flow-subtitle{
     margin: 0;
@@ -6124,7 +6130,7 @@ body #feedback-widget-anchor {
 .artwork-buy-check{
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
     color: #171717;
     font-size: 14px;
     line-height: 1.5;
@@ -6133,19 +6139,20 @@ body #feedback-widget-anchor {
     appearance: none;
     -webkit-appearance: none;
     margin: 2px 0 0;
-    width: 18px;
-    height: 18px;
+    width: 10px;
+    height: 10px;
     border: 1.5px solid #222;
     border-radius: 5px;
     background: #fff;
     display: inline-grid;
     place-content: center;
     cursor: pointer;
+    margin-right: 5px;
 }
 .artwork-buy-check input[type="checkbox"]::before{
     content: "";
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     transform: scale(0);
     transition: transform 120ms ease-in-out;
     clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);

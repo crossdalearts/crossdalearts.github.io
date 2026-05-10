@@ -830,12 +830,37 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
                 <button type="button" class="course-region-close artwork-buy-flow-close" data-buy-close aria-label="Close payment modal">&times;</button>
             </div>
             <p class="artwork-buy-flow-success">Artwork Price: <b>${escapeHTML(String(selectedArtworkSaleContext?.price || "Price will be shared"))}</b></p>
-            <div class="artwork-buy-flow-actions">
-                ${payUrl ? `<a class="course-region-choice artwork-buy-danger" href="${escapeHTML(payUrl)}" target="_blank" rel="noopener noreferrer">Pay</a>` : ""}
+            <div class="course-region-actions">
+                <button type="button" class="course-region-choice artwork-buy-danger" data-buy-pay>Pay</button>
                 <button type="button" class="course-region-choice is-secondary" data-buy-close>Cancel</button>
             </div>
-            ${!payUrl ? `<p class="artwork-buy-note">Payment link is not configured yet for this region.</p>` : ""}
         `;
+        const showPaymentUnavailable = () => {
+            modal.content.innerHTML = `
+                <div class="artwork-buy-flow-top">
+                    <h3 class="artwork-buy-flow-title">Sorry</h3>
+                    <button type="button" class="course-region-close artwork-buy-flow-close" data-buy-close aria-label="Close sorry modal">&times;</button>
+                </div>
+                <p class="artwork-buy-flow-success">Sorry, payment link is not available right now. Please try again later or contact us.</p>
+                <div class="course-region-actions">
+                    <button type="button" class="course-region-choice is-secondary" data-buy-close>Close</button>
+                </div>
+            `;
+            modal.content.querySelectorAll("[data-buy-close]").forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    closeArtworkBuyFlowModal();
+                    syncOverlayScrollLock();
+                });
+            });
+        };
+        modal.content.querySelector("[data-buy-pay]")?.addEventListener("click", () => {
+            if (!payUrl) {
+                showPaymentUnavailable();
+                return;
+            }
+            const win = window.open(payUrl, "_blank", "noopener,noreferrer");
+            if (!win) window.location.href = payUrl;
+        });
         modal.content.querySelectorAll("[data-buy-close]").forEach((btn) => {
             btn.addEventListener("click", () => {
                 closeArtworkBuyFlowModal();
@@ -864,19 +889,19 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
             <form id="artwork-buy-form" class="artwork-buy-form" novalidate>
                 <label class="artwork-buy-field">
                     <span>Name</span>
-                    <input type="text" name="name" required maxlength="120" />
+                    <input type="text" name="name" required maxlength="120" placeholder="Enter your full name" />
                 </label>
                 <label class="artwork-buy-field">
                     <span>Email</span>
-                    <input type="email" name="email" required maxlength="180" />
+                    <input type="email" name="email" required maxlength="180" placeholder="Enter your email for updates" />
                 </label>
                 <label class="artwork-buy-field">
                     <span>Social Handle (optional)</span>
-                    <input type="text" name="socialHandle" maxlength="180" placeholder="@username / profile link" />
+                    <input type="text" name="socialHandle" maxlength="180" placeholder="@username or profile link (optional)" />
                 </label>
                 <label class="artwork-buy-field">
                     <span>Brief Address</span>
-                    <textarea name="address" rows="3" required maxlength="500"></textarea>
+                    <textarea name="address" rows="3" required maxlength="500" placeholder="City, State, Country (or brief delivery address)"></textarea>
                 </label>
                 <label class="artwork-buy-check">
                     <input type="checkbox" name="wantNegotiation" />
@@ -884,7 +909,7 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
                 </label>
                 <label class="artwork-buy-field" id="proposed-price-field" hidden>
                     <span>Proposed Price</span>
-                    <input type="text" name="proposedPrice" maxlength="60" placeholder="Enter your proposed price" />
+                    <input type="text" name="proposedPrice" maxlength="60" placeholder="Enter your offer price (e.g. $900 or ₹75,000)" />
                 </label>
                 <p class="artwork-buy-note">If negotiation is selected, we will contact you in a few days by email or social handle.</p>
                 <div class="artwork-buy-actions">
