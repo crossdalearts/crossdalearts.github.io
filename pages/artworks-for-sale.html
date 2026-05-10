@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="../images/logo.ico" type="image/x-icon">
+    <title>Artworks for Sale - CrossdaleArts</title>
+    <meta name="description" content="Explore original artworks for sale by CrossdaleArts with details, pricing, and direct purchase/negotiation flow." />
+    <meta property="og:title" content="Artworks for Sale - CrossdaleArts" />
+    <meta property="og:description" content="Browse original artworks, view details, and submit purchase requests." />
+    <meta property="og:image" content="https://crossdalearts.com/images/my-story-gallery/intoxicated%20owl%20image.jpeg" />
+    <meta property="og:url" content="https://crossdalearts.com/pages/artworks-for-sale.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CrossdaleArts" />
+</head>
+<body>
+    <nav>
+      <div id="navbar">
+        <p>
+          <b id="site-title"><a href="../index.html">CrossdaleArts</a></b> <!-- <span class="site-tagline">&nbsp;&nbsp;&nbsp;&nbsp; Imagination Flows, Art Follows</span> -->
+        </p>
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul>
+          <li><a href="courses.html">Courses</a></li>
+          <li><a href="masterclass.html">Masterclass</a></li>
+          <!--<li><a href="my-story.html">My Story</a></li>-->
+          <li><a href="artworks-for-sale.html">Artworks</a></li>
+          <li><a href="https://www.instagram.com/crossdale_arts/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          <li><a href="https://wa.me/8858762510" target="_blank" rel="noopener noreferrer">Whatsapp</a></li>
+          <li><a href="mailto:contact@crossdalearts.com">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main id="story-page">
+      <section class="story-hero">
+        <p class="story-eyebrow">Artworks for Sale</p>
+        <div class="story-copy">
+          <p class="story-intro">
+            Explore original conceptual artworks and open each piece to view full details, dimensions, and purchase options.
+          </p>
+          <div
+            id="artworks-for-sale-grid"
+            class="artworks-sale-grid"
+            data-sale-config="../data/artworks-for-sale-config.json"
+            data-gallery-config="../data/artworks-for-sale-gallery.json"
+            data-gallery-title="Artworks for Sale"
+            aria-live="polite"
+          >
+            <p class="gallery-empty-message">Loading artworks...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026-2027 CrossdaleArts. All rights reserved.</p>
+    </footer>
+</body>
+<script src="../script.js"></script>
+</html>

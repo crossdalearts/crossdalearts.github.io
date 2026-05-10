@@ -1,0 +1,32 @@
+{
+  "homepage_preview": null,
+  "artworks_for_sale_config": "data/artworks-for-sale-config.json",
+  "artworks_for_sale_payment_config": "data/artworks-for-sale-payment-config.json",
+  "categories": [
+    {
+      "name": "Artworks for sale",
+      "preview": {
+        "path": "images/my-story-gallery/intoxicated owl image.jpeg",
+        "title": "Artworks for Sale",
+        "type": "image"
+      },
+      "items": [
+        {
+          "path": "images/my-story-gallery/intoxicated owl image.jpeg",
+          "title": "The Intoxicated owl",
+          "type": "image"
+        },
+        {
+          "path": "images/my-story-gallery/soul in soil.jpeg",
+          "title": "Soul in Soil",
+          "type": "image"
+        },
+        {
+          "path": "images/my-story-gallery/invention of toilet in stone age.jpeg",
+          "title": "Invention of Toilet in Stone Age",
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}

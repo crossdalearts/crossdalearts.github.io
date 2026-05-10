@@ -5982,6 +5982,42 @@ body #feedback-widget-anchor {
     font-weight: 700;
     white-space: pre-line;
 }
+.artwork-sale-secondary-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.artwork-sale-watch-video,
+.artwork-sale-instagram{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: var(--font-size-gallery-browser-button);
+    text-decoration: none;
+    border: 1px solid transparent;
+}
+.artwork-sale-watch-video{
+    background: #e53935;
+    border-color: #e53935;
+    color: #fff;
+}
+.artwork-sale-watch-video:hover,
+.artwork-sale-watch-video:focus-visible{
+    background: #d32f2f;
+    border-color: #d32f2f;
+}
+.artwork-sale-instagram{
+    background: #111;
+    border-color: #111;
+    color: #fff;
+}
+.artwork-sale-instagram:hover,
+.artwork-sale-instagram:focus-visible{
+    background: #000;
+    border-color: #000;
+}
 .artwork-sale-close{
     border: 1px solid #d6d6d6;
     background: #fff;
@@ -6003,11 +6039,13 @@ body #feedback-widget-anchor {
 }
 .artwork-sale-cta{
     margin-top: auto;
-    align-self: flex-start;
+    align-self: stretch;
+    width: 100%;
+    text-align: center;
     border: 1px solid #e53935;
     background: #e53935;
     color: #fff;
-    border-radius: 999px;
+    border-radius: 12px;
     padding: 10px 16px;
     font-size: var(--font-size-gallery-browser-button);
 }
@@ -6206,6 +6244,63 @@ body #feedback-widget-anchor {
     background: #d32f2f !important;
     border-color: #d32f2f !important;
 }
+.home-artworks-entry{
+    padding-top: 8px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px !important;
+}
+.home-artworks-entry-inner{
+    border: 1px solid rgba(18, 19, 26, 0.08);
+    border-radius: var(--refresh-radius-md);
+    background: linear-gradient(180deg, rgba(255, 225, 223, 0.34), rgba(255, 255, 255, 0.96));
+    box-shadow: 0 12px 26px rgba(18, 19, 26, 0.08);
+    padding: 24px 22px;
+    padding-bottom: 30px;
+    text-align: center;
+}
+.home-artworks-entry-inner h3{
+    margin: 0 0 14px;
+}
+.artworks-sale-grid{
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+.artworks-sale-card{
+    border: 1px solid rgba(18, 19, 26, 0.08);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fff 0%, #f7f9fc 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.artworks-sale-card-image{
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background: #f2f2f2;
+}
+.artworks-sale-card-body{
+    padding: 12px;
+    display: grid;
+    gap: 8px;
+}
+.artworks-sale-card-body h3{
+    margin: 0;
+    font-family: "Fraunces", serif !important;
+    font-size: 20px;
+}
+.artworks-sale-card-body p{
+    margin: 0;
+    color: #1f1f1f;
+    font-weight: 600;
+}
+.artworks-sale-card .download-course-details-button{
+    width: 100%;
+    text-align: center;
+}
 .artwork-buy-actions .course-region-choice[disabled]{
     opacity: 0.65;
     cursor: not-allowed;
@@ -6249,6 +6344,14 @@ body #feedback-widget-anchor {
         width: min(94vw, 94vw);
     }
     .artwork-buy-actions{
+        grid-template-columns: 1fr;
+    }
+    .artworks-sale-grid{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 640px){
+    .artworks-sale-grid{
         grid-template-columns: 1fr;
     }
 }

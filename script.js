@@ -370,7 +370,9 @@ async function loadArtworksForSaleConfig(url) {
                 price: String(item.price || "").trim(),
                 dimensions_notes: String(item.dimensions_notes || "").trim(),
                 button_text: String(item.button_text || "Enquire / Buy").trim(),
-                button_url: String(item.button_url || "#").trim()
+                button_url: String(item.button_url || "#").trim(),
+                watch_video_url: String(item.watch_video_url || "#").trim(),
+                instagram_url: String(item.instagram_url || "#").trim()
             }));
         const hydrated = hydrateArtworksForSaleCache(normalizedItems);
         artworksForSaleCache.set(cleanUrl, hydrated);
@@ -396,7 +398,9 @@ function hydrateArtworksForSaleCache(items) {
             price: String(item.price || "").trim(),
             dimensionsNotes: String(item.dimensions_notes || "").trim(),
             buttonText: String(item.button_text || "Enquire / Buy").trim(),
-            buttonUrl: String(item.button_url || "#").trim()
+            buttonUrl: String(item.button_url || "#").trim(),
+            watchVideoUrl: String(item.watch_video_url || "#").trim(),
+            instagramUrl: String(item.instagram_url || "#").trim()
         };
         if (pathKey) byPath.set(pathKey, normalized);
         if (titleKey) byTitle.set(titleKey, normalized);
@@ -588,7 +592,9 @@ function createArtworkSaleModal() {
             imageWrap: existing.querySelector(".artwork-sale-image-wrap"),
             title: existing.querySelector(".artwork-sale-title"),
             description: existing.querySelector(".artwork-sale-description"),
-            cta: existing.querySelector(".artwork-sale-cta")
+            cta: existing.querySelector(".artwork-sale-cta"),
+            watchVideoBtn: existing.querySelector(".artwork-sale-watch-video"),
+            instagramBtn: existing.querySelector(".artwork-sale-instagram")
         };
     }
 
@@ -614,6 +620,10 @@ function createArtworkSaleModal() {
                     </div>
                     <p class="artwork-sale-price" hidden></p>
                     <p class="artwork-sale-dimensions-notes" hidden></p>
+                    <div class="artwork-sale-secondary-actions">
+                        <a class="artwork-sale-watch-video" href="#" target="_blank" rel="noopener noreferrer">Watch video</a>
+                        <a class="artwork-sale-instagram" href="#" target="_blank" rel="noopener noreferrer">Visit Instagram</a>
+                    </div>
                     <div class="artwork-sale-description"></div>
                     <a class="artwork-sale-cta" href="#" target="_blank" rel="noopener noreferrer">Enquire / Buy</a>
                 </div>
@@ -632,7 +642,9 @@ function createArtworkSaleModal() {
         price: root.querySelector(".artwork-sale-price"),
         dimensionsNotes: root.querySelector(".artwork-sale-dimensions-notes"),
         description: root.querySelector(".artwork-sale-description"),
-        cta: root.querySelector(".artwork-sale-cta")
+        cta: root.querySelector(".artwork-sale-cta"),
+        watchVideoBtn: root.querySelector(".artwork-sale-watch-video"),
+        instagramBtn: root.querySelector(".artwork-sale-instagram")
     };
 }
 
@@ -710,6 +722,8 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         const dimensionsNotes = meta?.dimensionsNotes || item.dimensionsNotes || "";
         const buttonText = meta?.buttonText || item.buttonText || "Enquire / Buy";
         const buttonUrl = meta?.buttonUrl || item.buttonUrl || "#";
+        const watchVideoUrl = meta?.watchVideoUrl || "#";
+        const instagramUrl = meta?.instagramUrl || "#";
         const titleBase = meta?.title || item.title || item.alt || "Artwork";
         selectedArtworkSaleContext = {
             title: titleBase,
@@ -735,6 +749,12 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         artworkSaleModal.cta.textContent = buttonText;
         artworkSaleModal.cta.href = buttonUrl;
         artworkSaleModal.cta.setAttribute("aria-label", buttonText);
+        if (artworkSaleModal.watchVideoBtn) {
+            artworkSaleModal.watchVideoBtn.href = watchVideoUrl;
+        }
+        if (artworkSaleModal.instagramBtn) {
+            artworkSaleModal.instagramBtn.href = instagramUrl;
+        }
         artworkSaleModal.cta.onclick = (event) => {
             event.preventDefault();
             renderArtworkRegionStep();
@@ -1345,6 +1365,71 @@ function initDetailsGalleryButtons() {
             openGalleryBrowser(configUrl, titleText);
         });
     });
+}
+
+async function initArtworksForSaleGrid() {
+    const grid = document.getElementById("artworks-for-sale-grid");
+    if (!grid) return;
+
+    const saleConfigUrl = String(grid.dataset.saleConfig || "").trim();
+    const galleryConfigUrl = String(grid.dataset.galleryConfig || "").trim();
+    const galleryTitle = String(grid.dataset.galleryTitle || "Artworks for Sale").trim();
+
+    if (!saleConfigUrl || !galleryConfigUrl) {
+        grid.innerHTML = `<p class="gallery-empty-message">Artworks are unavailable right now.</p>`;
+        return;
+    }
+
+    try {
+        const saleMeta = await loadArtworksForSaleConfig(saleConfigUrl);
+        const allEntries = [
+            ...saleMeta.byPath.values()
+        ];
+
+        const unique = [];
+        const seen = new Set();
+        allEntries.forEach((item) => {
+            const key = `${String(item.title || "").trim().toLowerCase()}|${String(item.price || "").trim()}`;
+            if (!key || seen.has(key)) return;
+            seen.add(key);
+            unique.push(item);
+        });
+
+        if (!unique.length) {
+            grid.innerHTML = `<p class="gallery-empty-message">No artworks available right now.</p>`;
+            return;
+        }
+
+        const response = await fetch(getAssetUrl(saleConfigUrl), { method: "GET", cache: "no-store" });
+        const raw = response.ok ? await response.json() : { items: [] };
+        const sourceItems = Array.isArray(raw?.items) ? raw.items : [];
+
+        grid.innerHTML = "";
+        sourceItems.forEach((rawItem) => {
+            const title = String(rawItem?.title || "Untitled").trim();
+            const price = String(rawItem?.price || "").trim();
+            const imageSrc = resolveGalleryAssetPath(String(rawItem?.path || "").trim());
+
+            const card = document.createElement("article");
+            card.className = "artworks-sale-card";
+            card.innerHTML = `
+                <img class="artworks-sale-card-image" src="${escapeHTML(imageSrc)}" alt="${escapeHTML(title)}" loading="lazy" decoding="async" />
+                <div class="artworks-sale-card-body">
+                    <h3>${escapeHTML(title)}</h3>
+                    <p>${escapeHTML(price || "Price on request")}</p>
+                    <button type="button" class="download-course-details-button">View Details</button>
+                </div>
+            `;
+
+            card.querySelector("button")?.addEventListener("click", () => {
+                openGalleryBrowser(galleryConfigUrl, galleryTitle);
+            });
+
+            grid.appendChild(card);
+        });
+    } catch (_) {
+        grid.innerHTML = `<p class="gallery-empty-message">Unable to load artworks right now.</p>`;
+    }
 }
 
 function renderGalleryPreviewMedia(item, imageLoading = "lazy") {
@@ -2898,7 +2983,7 @@ function upsertMasterclassNavLink(config) {
     if (!navList) return;
 
     const isEnabled = config?.enabled !== false;
-    const existingLink = navList.querySelector("a[data-masterclass-nav]");
+    const existingLink = navList.querySelector("a[data-masterclass-nav]") || navList.querySelector('a[href$="masterclass.html"]');
     const existingItem = existingLink?.closest("li");
 
     if (!isEnabled) {
@@ -4322,6 +4407,7 @@ initAlertCloseButton();
 initFeedbackWidget();
 initEmbeddedPdfViewer();
 initDetailsGalleryButtons();
+initArtworksForSaleGrid();
 initSectionLottieIcons();
 initCourseRegionSelection();
 initExStudentPaymentPage();
