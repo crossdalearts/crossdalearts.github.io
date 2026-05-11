@@ -69,3 +69,10 @@ Polish Site Broken Elements
 6. Add See Video and Visit Instagram Buttons just after the artwork note *{Done}*
 
 - 10-05-2026
+
+1. Edit Payment Pages (On Razorpay)
+2. Check for final release of artworks for sale
+3. Collect more data for the database
+4. Draft Emails for the customers on (12-05-2026)
+
+- 11-05-2026
