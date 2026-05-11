@@ -72,7 +72,5 @@ Polish Site Broken Elements
 
 1. Edit Payment Pages (On Razorpay)
 2. Check for final release of artworks for sale
-3. Collect more data for the database
-4. Draft Emails for the customers on (12-05-2026)
 
 - 11-05-2026
