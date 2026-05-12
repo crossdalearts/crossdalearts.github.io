@@ -70,7 +70,7 @@ Polish Site Broken Elements
 
 - 10-05-2026
 
-1. Edit Payment Pages (On Razorpay)
+1. Edit Payment Pages (On Razorpay) *{Done}
 2. Check for final release of artworks for sale
 
 - 11-05-2026
