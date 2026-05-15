@@ -74,3 +74,10 @@ Polish Site Broken Elements
 2. Check for final release of artworks for sale
 
 - 11-05-2026
+
+1. Art of meaning (alternate days remove, fees- 1999/-, 7 days only not classes, Early bird: 1599, per class calculate, market price cheaper percentage.)
+2. Realism within (3 months, alternate days remove, fees: 5999/-, early bird: 4999/-, after only add per month calculation also, cheaper than market price calculate.)
+
+3. portfolio Enhancement
+
+- 15-05-2026
