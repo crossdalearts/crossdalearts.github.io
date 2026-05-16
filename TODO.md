@@ -79,5 +79,8 @@ Polish Site Broken Elements
 2. Realism within (3 months, alternate days remove, fees: 5999/-, early bird: 4999/-, after only add per month calculation also, cheaper than market price calculate.)
 
 3. portfolio Enhancement
+4. Finsihed Changing Payment Page on Razorpay
+
+5. Wise Payment Page Change and Enhancement
 
 - 15-05-2026
