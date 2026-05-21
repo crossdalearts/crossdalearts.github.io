@@ -84,3 +84,37 @@ Polish Site Broken Elements
 5. Wise Payment Page Change and Enhancement
 
 - 15-05-2026
+
+- Flow (Form with fields, Successful submission (Join Whatsapp Channel))
+
+Fields:
+1. Full Name
+2. Phone No.
+3. Email
+4. Instagram Handle
+
+Dual Button Cards:
+1. Are you your own decision maker (Yes, No)
+2. Are you dependent on your parents (Yes, No)
+3. Are you (Indian or International)
+4. Are you excited to learn something new & make your own identity 
+
+Dropdown:
+1. Where have you find us: {Instagram, other social media platforms, Mail, Newsletter}
+
+Checkbox:
+1. All the details filled are correct and accurate
+
+Submit Div:
+1. Know your mentor
+2. Submit Form
+
+After Submit:
+1. Join Whatsapp Channel
+
+
+
+
+Carrd website (hide Website URL and put new masterclass2026.github.io link for form)
+
+- 20-05-2026
