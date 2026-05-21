@@ -671,7 +671,7 @@ function normalizeConfigPath(path, fallbackPath = "") {
 function getDefaultMasterclassConfig() {
     return {
         enabled: true,
-        pagePath: "pages/masterclass.html",
+        pagePath: "https://crossdalearts-registration.github.io/",
         labels: {
             nav: "Masterclass",
             heroButton: "Masterclass"
