@@ -112,9 +112,10 @@ Submit Div:
 After Submit:
 1. Join Whatsapp Channel
 
-
-
-
 Carrd website (hide Website URL and put new masterclass2026.github.io link for form)
 
 - 20-05-2026
+
+
+
+- 22-05-2026

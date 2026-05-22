@@ -602,6 +602,10 @@ let masterclassConfigPromise = null;
 let courseRegionModalState = null;
 let enrollmentTypeModalState = null;
 let masterclassRegistrationModalState = null;
+const NEWSLETTER_SUBSCRIBED_KEY = "crossdalearts_newsletter_subscribed_v1";
+const NEWSLETTER_EMAIL_KEY = "crossdalearts_newsletter_email_v1";
+const NEWSLETTER_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzOk7DmxWs-9i3vsuhb6KNQzLFrSRS1OG2zeX7dIHabiGa__En7nbuKoJXVEXfEb80/exec";
+let newsletterModalTimerId = null;
 const COURSE_ENTRY_PAGE_NAMES = new Set([
     "courses.html",
     "fundamental-of-arts.html",
@@ -1734,6 +1738,187 @@ function closeExStudentModal() {
     enrollmentTypeModalState = null;
 }
 
+function createNewsletterModal() {
+    const existing = document.getElementById("newsletter-modal");
+    if (existing) return existing;
+
+    const modal = document.createElement("div");
+    modal.id = "newsletter-modal";
+    modal.className = "course-region-modal newsletter-modal";
+    modal.setAttribute("aria-hidden", "true");
+    modal.innerHTML = `
+        <div class="course-region-dialog newsletter-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="newsletter-title">
+            <button type="button" class="newsletter-modal-close" id="newsletter-close" aria-label="Close newsletter modal">&times;</button>
+            <p class="course-region-eyebrow">CrossdaleArts Updates</p>
+            <h2 id="newsletter-title">Join our newsletter</h2>
+            <p class="course-region-copy">Enter your email address and subscribe to get the latest updates regarding CrossdaleArts in your mailbox directly.</p>
+            <form id="newsletter-form" novalidate>
+                <label for="newsletter-email">
+                    Email address
+                    <input type="email" id="newsletter-email" name="email" placeholder="you@example.com" autocomplete="email" required />
+                </label>
+                <p class="course-region-note" id="newsletter-status" aria-live="polite"></p>
+                <div class="course-region-actions newsletter-actions">
+                    <button type="submit" class="course-region-choice" id="newsletter-submit">Subscribe</button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (event) => {
+        if (event.target !== modal) return;
+        closeNewsletterModal();
+    });
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!modal.classList.contains("is-open")) return;
+        closeNewsletterModal();
+    });
+
+    const closeButton = modal.querySelector("#newsletter-close");
+    closeButton?.addEventListener("click", closeNewsletterModal);
+
+    return modal;
+}
+
+function closeNewsletterModal() {
+    const modal = document.getElementById("newsletter-modal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("course-region-modal-open");
+    scheduleNewsletterModal();
+}
+
+function setNewsletterStatus(message) {
+    const status = document.getElementById("newsletter-status");
+    if (!status) return;
+    status.textContent = message || "";
+}
+
+function isNewsletterSubscribed() {
+    return localStorage.getItem(NEWSLETTER_SUBSCRIBED_KEY) === "true";
+}
+
+function getRandomNewsletterDelayMs() {
+    return Math.floor(Math.random() * (30000 - 10000 + 1)) + 10000;
+}
+
+function scheduleNewsletterModal() {
+    if (newsletterModalTimerId) {
+        clearTimeout(newsletterModalTimerId);
+    }
+
+    if (isNewsletterSubscribed()) return;
+
+    const randomDelayMs = getRandomNewsletterDelayMs();
+    newsletterModalTimerId = window.setTimeout(() => {
+        newsletterModalTimerId = null;
+        openNewsletterModal();
+    }, randomDelayMs);
+}
+
+async function submitNewsletterEmail(email) {
+    if (!NEWSLETTER_APPS_SCRIPT_URL || NEWSLETTER_APPS_SCRIPT_URL.includes("PASTE_YOUR")) {
+        throw new Error("Newsletter endpoint not configured.");
+    }
+
+    const payload = {
+        email,
+        source: window.location.pathname,
+        submittedAt: new Date().toISOString()
+    };
+
+    const formPayload = new URLSearchParams(payload).toString();
+
+    // Primary: Apps Script-friendly form POST without CORS preflight.
+    try {
+        await fetch(NEWSLETTER_APPS_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+            },
+            body: formPayload
+        });
+        return;
+    } catch (_) {
+        // Continue to fallback below.
+    }
+
+    // Fallback: query-string GET, useful for some Apps Script deployments.
+    const fallbackUrl = new URL(NEWSLETTER_APPS_SCRIPT_URL);
+    Object.entries(payload).forEach(([key, value]) => fallbackUrl.searchParams.set(key, value));
+    fallbackUrl.searchParams.set("action", "subscribe");
+
+    await fetch(fallbackUrl.toString(), {
+        method: "GET",
+        mode: "no-cors"
+    });
+}
+
+function openNewsletterModal() {
+    if (isNewsletterSubscribed()) return;
+
+    if (document.querySelector(".course-region-modal.is-open")) {
+        scheduleNewsletterModal();
+        return;
+    }
+
+    const modal = createNewsletterModal();
+    const form = modal.querySelector("#newsletter-form");
+    const emailInput = modal.querySelector("#newsletter-email");
+    const submitBtn = modal.querySelector("#newsletter-submit");
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+    setNewsletterStatus("");
+    form.reset();
+
+    form.onsubmit = async (event) => {
+        event.preventDefault();
+        setNewsletterStatus("");
+
+        const email = String(emailInput.value || "").trim();
+        if (!email || !emailInput.checkValidity()) {
+            setNewsletterStatus("Please enter a valid email address.");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Subscribing...";
+
+        try {
+            await submitNewsletterEmail(email);
+            localStorage.setItem(NEWSLETTER_SUBSCRIBED_KEY, "true");
+            localStorage.setItem(NEWSLETTER_EMAIL_KEY, email);
+            if (newsletterModalTimerId) {
+                clearTimeout(newsletterModalTimerId);
+                newsletterModalTimerId = null;
+            }
+            setNewsletterStatus("Thanks for subscribing. You'll receive CrossdaleArts updates in your mailbox.");
+            window.setTimeout(() => {
+                closeNewsletterModal();
+            }, 1400);
+        } catch (error) {
+            console.error(error);
+            setNewsletterStatus("Unable to subscribe right now. Please try again shortly.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Subscribe";
+        }
+    };
+}
+
+function initRandomNewsletterModal() {
+    if (isNewsletterSubscribed()) return;
+    scheduleNewsletterModal();
+}
+
 function setExStudentError(message) {
     const errorEl = document.getElementById("ex-student-error");
     if (!errorEl) return;
@@ -2174,3 +2359,4 @@ initSectionLottieIcons();
 initCourseRegionSelection();
 initExStudentPaymentPage();
 initMasterclassExperience();
+initRandomNewsletterModal();

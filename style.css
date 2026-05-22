@@ -4686,6 +4686,45 @@ footer p {
   margin-top: 16px;
 }
 
+.newsletter-modal-dialog {
+  position: relative;
+  padding-top: 54px;
+}
+
+.newsletter-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid #d6d0c9;
+  background: #faf8f5;
+  color: #151515;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: filter 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.newsletter-modal-close:hover,
+.newsletter-modal-close:focus-visible {
+  filter: brightness(1.12);
+}
+
+.newsletter-actions {
+  grid-template-columns: 1fr;
+}
+
+#newsletter-submit[disabled] {
+  opacity: 0.85;
+  cursor: wait;
+}
+
 .gallery-browser-box,
 .gallery-lightbox-box,
 .pdf-viewer-box,
