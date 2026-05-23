@@ -116,6 +116,4 @@ Carrd website (hide Website URL and put new masterclass2026.github.io link for f
 
 - 20-05-2026
 
-
-
 - 22-05-2026
