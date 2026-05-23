@@ -604,6 +604,7 @@ let enrollmentTypeModalState = null;
 let masterclassRegistrationModalState = null;
 const NEWSLETTER_SUBSCRIBED_KEY = "crossdalearts_newsletter_subscribed_v1";
 const NEWSLETTER_EMAIL_KEY = "crossdalearts_newsletter_email_v1";
+const NEWSLETTER_TAB_SHOWN_KEY = "crossdalearts_newsletter_shown_this_tab_v1";
 const NEWSLETTER_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzOk7DmxWs-9i3vsuhb6KNQzLFrSRS1OG2zeX7dIHabiGa__En7nbuKoJXVEXfEb80/exec";
 let newsletterModalTimerId = null;
 const COURSE_ENTRY_PAGE_NAMES = new Set([
@@ -1790,7 +1791,6 @@ function closeNewsletterModal() {
     modal.classList.remove("is-open");
     modal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("course-region-modal-open");
-    scheduleNewsletterModal();
 }
 
 function setNewsletterStatus(message) {
@@ -1803,6 +1803,14 @@ function isNewsletterSubscribed() {
     return localStorage.getItem(NEWSLETTER_SUBSCRIBED_KEY) === "true";
 }
 
+function hasNewsletterBeenShownThisTab() {
+    return sessionStorage.getItem(NEWSLETTER_TAB_SHOWN_KEY) === "true";
+}
+
+function markNewsletterShownThisTab() {
+    sessionStorage.setItem(NEWSLETTER_TAB_SHOWN_KEY, "true");
+}
+
 function getRandomNewsletterDelayMs() {
     return Math.floor(Math.random() * (30000 - 10000 + 1)) + 10000;
 }
@@ -1812,7 +1820,7 @@ function scheduleNewsletterModal() {
         clearTimeout(newsletterModalTimerId);
     }
 
-    if (isNewsletterSubscribed()) return;
+    if (isNewsletterSubscribed() || hasNewsletterBeenShownThisTab()) return;
 
     const randomDelayMs = getRandomNewsletterDelayMs();
     newsletterModalTimerId = window.setTimeout(() => {
@@ -1861,10 +1869,10 @@ async function submitNewsletterEmail(email) {
 }
 
 function openNewsletterModal() {
-    if (isNewsletterSubscribed()) return;
+    if (isNewsletterSubscribed() || hasNewsletterBeenShownThisTab()) return;
+    markNewsletterShownThisTab();
 
     if (document.querySelector(".course-region-modal.is-open")) {
-        scheduleNewsletterModal();
         return;
     }
 
