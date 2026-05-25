@@ -45,10 +45,54 @@ src="https://www.facebook.com/tr?id=4403519193296868&ev=PageView&noscript=1"
 <style>
   body{
     background-image:
-        linear-gradient(180deg, rgba(255, 248, 247, 0.312) 0%, rgba(247, 248, 251, 0.367) 100%), url("../images/background.jpg");
+        linear-gradient(180deg, rgba(255, 247, 242, 0.78) 0%, rgba(246, 242, 236, 0.82) 100%), url("../images/background.jpg");
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
   }
   #masterclass-page{
     margin-top: -20px;
+  }
+  nav{
+    display: none !important;
+  }
+  .masterclass-shell{
+    border: 0 !important;
+    box-shadow: 0 10px 24px rgba(18, 19, 26, 0.14) !important;
+  }
+  .masterclass-join-row{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .masterclass-join-row .masterclass-actions{
+    display: flex;
+    align-items: center;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+  .masterclass-join-note{
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(229, 57, 53, 0.72);
+    border: 1px solid rgba(229, 57, 53, 0.9);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    flex: 1 1 auto;
+  }
+  @media (max-width: 768px){
+    .masterclass-join-row{
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .masterclass-join-note{
+      width: 100%;
+    }
   }
   </style>
 <body>
@@ -78,6 +122,9 @@ src="https://www.facebook.com/tr?id=4403519193296868&ev=PageView&noscript=1"
           <img data-masterclass-image src="../images/basictoadvance.png" alt="Upcoming CrossdaleArts masterclass artwork">
         </div>
         <div class="masterclass-copy">
+          <div class="masterclass-actions">
+            <a class="primary-cta masterclass-cta" href="https://whatsapp.com/channel/0029VbCrPwZ1noz3UU03ra3C" target="_blank" rel="noopener noreferrer">Join WhatsApp Channel</a>
+          </div>
           <p class="masterclass-eyebrow">Upcoming Session</p>
           <h1 data-masterclass-title>Upcoming Masterclass</h1>
           <p class="masterclass-description" data-masterclass-description>
@@ -110,6 +157,12 @@ src="https://www.facebook.com/tr?id=4403519193296868&ev=PageView&noscript=1"
           <img data-masterclass-image src="../images/basictoadvance.png" alt="Upcoming CrossdaleArts masterclass artwork">
         </div>
         <div class="masterclass-copy">
+          <div class="masterclass-join-row">
+            <div class="masterclass-actions">
+              <a class="primary-cta masterclass-cta" href="https://whatsapp.com/channel/0029VbCrPwZ1noz3UU03ra3C" target="_blank" rel="noopener noreferrer">Join WhatsApp Channel</a>
+            </div>
+            <p class="masterclass-join-note">Joining the WhatsApp group is necessary to attend the masterclass.</p>
+          </div>
           <p class="masterclass-eyebrow">Upcoming Session</p>
           <h1 data-masterclass-title>Upcoming Masterclass</h1>
           <p class="masterclass-description" data-masterclass-description>
@@ -124,9 +177,8 @@ src="https://www.facebook.com/tr?id=4403519193296868&ev=PageView&noscript=1"
 
           <div id="masterclass-bottom-cta">
           <div class="masterclass-actions">
-            <!-- <a class="secondary-cta masterclass-register-cta" id="masterclass-register-button" data-masterclass-register-cta href="https://crossdalearts-registration.github.io/">Join WhatsApp Group</a> -->
-            <a class="primary-cta masterclass-cta" id="mystory-button-masterclass" href="https://whatsapp.com/channel/0029VbCrPwZ1noz3UU03ra3C">Join WhatsApp Group</a>
-            <!-- <a class="primary-cta masterclass-cta" id="mystory-button-masterclass" data-masterclass-cta href="my-story.html">My Story</a> -->
+            <!-- <a class="secondary-cta masterclass-register-cta" id="masterclass-register-button" data-masterclass-register-cta href="https://crossdalearts-registration.github.io/" target="_blank" rel="noopener noreferrer">Join WhatsApp Group</a> -->
+            <a class="primary-cta masterclass-cta" id="mystory-button-masterclass" href="https://whatsapp.com/channel/0029VbCrPwZ1noz3UU03ra3C" target="_blank" rel="noopener noreferrer">Join WhatsApp Group</a>
           </div>
           <!-- <div id="registration-fees">
             <h1>₹99/-&nbsp;&nbsp;<small style="font-size: 20px; letter-spacing: 2px; font-family: Fraunces, serif !important";>Only</small></h1>
@@ -143,3 +195,4 @@ src="https://www.facebook.com/tr?id=4403519193296868&ev=PageView&noscript=1"
 </body>
 <script defer src="../script.js"></script>
 </html>
+
