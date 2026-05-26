@@ -125,3 +125,8 @@ Newsletter add in flexbox with the artworks for sale card
 4 Stage Finish
 
 - 24-05-2026
+
+1. text hover blur (text shadow)
+2. leave feedback option
+
+- 26-05-2026

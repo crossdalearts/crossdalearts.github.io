@@ -6394,3 +6394,229 @@ body #feedback-widget-anchor {
         grid-template-columns: 1fr;
     }
 }
+
+/* Feedback form polish */
+.feedback-modal {
+    font-family: "Funnel Display", sans-serif;
+}
+
+.feedback-modal-top {
+    margin: 0;
+    padding: 16px 18px;
+    border-bottom: 0 !important;
+}
+
+.feedback-modal-top h4,
+.feedback-modal-top h2,
+.feedback-modal-name,
+.feedback-modal-message,
+.feedback-form label,
+.feedback-form-note {
+    color: #ffffff;
+    font-family: "Funnel Display", sans-serif;
+}
+
+.feedback-form {
+    margin: 0;
+    padding: 16px 18px 18px;
+    display: grid;
+    gap: 12px;
+}
+
+.feedback-form label {
+    margin: 0;
+    display: grid;
+    gap: 6px;
+}
+
+.feedback-form input,
+.feedback-form textarea,
+.feedback-form select {
+    margin: 0;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    font-family: "Funnel Display", sans-serif;
+}
+
+.feedback-form input::placeholder,
+.feedback-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.feedback-form-submit,
+.feedback-modal-close {
+    font-family: "Funnel Display", sans-serif;
+}
+
+.feedback-modal-close {
+    background: transparent !important;
+    color: #ffffff !important;
+    width: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 999px !important;
+    corner-shape: initial !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    font-size: 22px !important;
+    line-height: 1 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    transform: translateY(0) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    flex: 0 0 34px !important;
+}
+
+.feedback-form-note {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.feedback-submit-status {
+    margin: 0;
+    min-height: 20px;
+    font-family: "Funnel Display", sans-serif;
+    font-size: 13px;
+}
+
+.feedback-submit-status.is-success {
+    color: #8effb6;
+}
+
+.feedback-submit-status.is-error {
+    color: #ff9a9a;
+}
+
+.feedback-modal .feedback-modal-top,
+.feedback-modal .feedback-modal-top::after {
+    border-bottom: none !important;
+    box-shadow: none !important;
+}
+
+.feedback-modal .feedback-modal-top::before {
+    content: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+.feedback-star-fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.feedback-star-fieldset legend {
+    display: none;
+    margin: 0;
+    color: #ffffff;
+    font-family: "Funnel Display", sans-serif;
+}
+
+.feedback-star-picker {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.feedback-star-picker input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.feedback-star-picker label {
+    margin: 0;
+    padding: 4px 4px 6px;
+    cursor: pointer;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.35);
+    transform: translateY(0) scale(1);
+    transition:
+        color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        text-shadow 260ms ease,
+        filter 260ms ease;
+    transform-origin: center;
+    will-change: transform, color, filter;
+}
+
+.feedback-star-icon {
+    display: inline-block;
+    font-size: 66px;
+    line-height: 1;
+    font-variation-settings: "FILL" 0, "wght" 600, "GRAD" 0, "opsz" 48;
+    transition: inherit;
+}
+
+.feedback-star-picker label:hover,
+.feedback-star-picker label:hover ~ label,
+.feedback-star-picker input:checked ~ label {
+    color: #ffd866;
+    transform: translateY(-1px) scale(1.06);
+    text-shadow: 0 0 10px rgba(255, 216, 102, 0.38);
+    filter: saturate(1.08);
+    animation: feedback-star-breathe 760ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.feedback-star-picker label:hover .feedback-star-icon,
+.feedback-star-picker label:hover ~ label .feedback-star-icon,
+.feedback-star-picker input:checked ~ label .feedback-star-icon {
+    transform: inherit;
+    filter: inherit;
+}
+
+@keyframes feedback-star-breathe {
+    0% {
+        transform: translateY(0) scale(1);
+        filter: saturate(1);
+    }
+    45% {
+        transform: translateY(-1px) scale(1.08);
+        filter: saturate(1.1);
+    }
+    100% {
+        transform: translateY(-1px) scale(1.06);
+        filter: saturate(1.08);
+    }
+}
+
+.feedback-star-picker label:nth-of-type(1),
+.feedback-star-picker label:nth-of-type(2),
+.feedback-star-picker label:nth-of-type(3),
+.feedback-star-picker label:nth-of-type(4),
+.feedback-star-picker label:nth-of-type(5) {
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Final kill-switch for any visible divider in feedback modal */
+.feedback-modal,
+.feedback-modal * {
+    border-image: none !important;
+}
+
+.feedback-modal .feedback-modal-top,
+.feedback-modal .feedback-modal-top::before,
+.feedback-modal .feedback-modal-top::after,
+.feedback-modal .feedback-form,
+.feedback-modal .feedback-form::before,
+.feedback-modal .feedback-form::after {
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+    background-image: none !important;
+}
