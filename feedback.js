@@ -1,4 +1,4 @@
-const FEEDBACK_ROTATION_MS = 400;
+﻿const FEEDBACK_ROTATION_MS = 400;
 const FEEDBACK_TRANSITION_MS = 400;
 const FEEDBACK_DATA_URL = getAssetUrl("data/feedbacks.json");
 const FEEDBACK_STORAGE_KEY = "crossdale_feedbacks";
@@ -55,6 +55,9 @@ async function initFeedbackWidget() {
 
     const count = document.createElement("span");
     count.className = "feedback-count";
+    count.setAttribute("role", "button");
+    count.setAttribute("tabindex", "0");
+    count.setAttribute("aria-label", "See all feedback");
 
     const card = document.createElement("article");
     card.className = "feedback-card";
@@ -93,7 +96,13 @@ async function initFeedbackWidget() {
     leaveFeedbackBtn.className = "feedback-leave-btn";
     leaveFeedbackBtn.textContent = "Leave Feedback";
 
+    const seeAllBtn = document.createElement("button");
+    seeAllBtn.type = "button";
+    seeAllBtn.className = "feedback-see-all-btn";
+    seeAllBtn.textContent = "See all";
+
     widgetActions.appendChild(leaveFeedbackBtn);
+    widgetActions.appendChild(seeAllBtn);
     widget.appendChild(widgetActions);
     anchor.appendChild(widget);
 
@@ -124,6 +133,9 @@ async function initFeedbackWidget() {
     anchor.appendChild(socialLinks);
 
     const detailModal = createFeedbackModal();
+    const feedbackState = {
+        getList: () => feedbacks
+    };
 
     function renderCurrent() {
         if (!feedbacks.length) {
@@ -191,10 +203,22 @@ async function initFeedbackWidget() {
         rotationTimer = null;
     }
 
+    function openDetailAt(index) {
+        const list = feedbackState.getList();
+        if (!list.length) return;
+        const safeIndex = Math.max(0, Math.min(list.length - 1, index));
+        openFeedbackDetailModal(detailModal, list, safeIndex, openDetailAt, openGridView);
+    }
+
+    function openGridView() {
+        const list = feedbackState.getList();
+        if (!list.length) return;
+        openFeedbackGridModal(detailModal, list, openDetailAt);
+    }
+
     function openFullFeedback() {
         if (!feedbacks.length) return;
-        const selected = feedbacks[currentIndex];
-        openFeedbackDetailModal(detailModal, selected);
+        openDetailAt(currentIndex);
     }
 
     async function onSubmitFeedback(entry) {
@@ -223,6 +247,14 @@ async function initFeedbackWidget() {
 
     leaveFeedbackBtn.addEventListener("click", () => {
         openFeedbackFormModal(detailModal, onSubmitFeedback);
+    });
+    seeAllBtn.addEventListener("click", openGridView);
+    count.addEventListener("click", openGridView);
+    count.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openGridView();
+        }
     });
 
     widget.addEventListener("mouseenter", stopRotation);
@@ -313,7 +345,7 @@ function createFeedbackModal() {
     function close() {
         overlay.classList.remove("is-open");
         overlay.setAttribute("aria-hidden", "true");
-        modal.classList.remove("is-feedback-detail");
+        modal.classList.remove("is-feedback-detail", "is-feedback-grid");
         modal.innerHTML = "";
         document.body.classList.remove("gallery-lightbox-open");
     }
@@ -329,21 +361,85 @@ function createFeedbackModal() {
     return { overlay, modal, close };
 }
 
-function openFeedbackDetailModal(detailModal, feedback) {
-    const safe = sanitizeFeedback(feedback);
+function openFeedbackDetailModal(detailModal, feedbacks, currentIndex, onNavigate, onSeeAll) {
+    if (!Array.isArray(feedbacks) || !feedbacks.length) return;
+    const safeIndex = Math.max(0, Math.min(feedbacks.length - 1, Number(currentIndex) || 0));
+    const safe = sanitizeFeedback(feedbacks[safeIndex]);
     if (!safe) return;
-// <div class="feedback-modal-stars">${renderStars(safe.rating)}</div>
+
+    const hasPrev = safeIndex > 0;
+    const hasNext = safeIndex < feedbacks.length - 1;
+
     detailModal.modal.classList.add("is-feedback-detail");
+    detailModal.modal.classList.remove("is-feedback-grid");
     detailModal.modal.innerHTML = `
         <div class="feedback-modal-top" style="border-bottom:none; box-shadow:none;">
             <h2>Learners Feedback</h2>
             <button type="button" class="feedback-modal-close" aria-label="Close">×</button>
         </div>
         <div class="feedback-modal-name">${escapeHTML(safe.name)}</div>
+        <div class="feedback-modal-stars">${renderStars(safe.rating)}</div>
         <p class="feedback-modal-message">${escapeHTML(safe.message)}</p>
+        <div class="feedback-detail-actions">
+            <button type="button" class="feedback-detail-nav-btn" data-feedback-nav="prev" ${hasPrev ? "" : "disabled"}>Previous</button>
+            <button type="button" class="feedback-detail-nav-btn" data-feedback-nav="next" ${hasNext ? "" : "disabled"}>Next</button>
+            <button type="button" class="feedback-detail-see-all" data-feedback-see-all>See all</button>
+        </div>
     `;
 
     detailModal.modal.querySelector(".feedback-modal-close").addEventListener("click", detailModal.close);
+    detailModal.modal.querySelector("[data-feedback-nav=\"prev\"]")?.addEventListener("click", () => {
+        if (!hasPrev) return;
+        onNavigate(safeIndex - 1);
+    });
+    detailModal.modal.querySelector("[data-feedback-nav=\"next\"]")?.addEventListener("click", () => {
+        if (!hasNext) return;
+        onNavigate(safeIndex + 1);
+    });
+    detailModal.modal.querySelector("[data-feedback-see-all]")?.addEventListener("click", onSeeAll);
+    detailModal.overlay.classList.add("is-open");
+    detailModal.overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("gallery-lightbox-open");
+}
+
+function openFeedbackGridModal(detailModal, feedbacks, onOpenDetail) {
+    if (!Array.isArray(feedbacks) || !feedbacks.length) return;
+    detailModal.modal.classList.remove("is-feedback-detail");
+    detailModal.modal.classList.add("is-feedback-grid");
+    detailModal.modal.innerHTML = `
+        <div class="feedback-modal-top" style="border-bottom:none; box-shadow:none;">
+            <h2>All Learners Feedback</h2>
+            <button type="button" class="feedback-modal-close" aria-label="Close">×</button>
+        </div>
+        <div class="feedback-grid-list">
+            ${feedbacks
+                .map((item, index) => {
+                    const safe = sanitizeFeedback(item);
+                    if (!safe) return "";
+                    return `
+                        <article class="feedback-grid-card" role="button" tabindex="0" data-feedback-index="${index}" aria-label="Open feedback by ${escapeHTML(safe.name)}">
+                            <div class="feedback-grid-name">${escapeHTML(safe.name)}</div>
+                            <div class="feedback-grid-stars">${renderStars(safe.rating)}</div>
+                            <p class="feedback-grid-message">${escapeHTML(truncateFeedback(safe.message, 220))}</p>
+                        </article>
+                    `;
+                })
+                .join("")}
+        </div>
+    `;
+
+    detailModal.modal.querySelector(".feedback-modal-close")?.addEventListener("click", detailModal.close);
+    detailModal.modal.querySelectorAll("[data-feedback-index]").forEach((card) => {
+        const open = () => onOpenDetail(Number(card.getAttribute("data-feedback-index")) || 0);
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                open();
+            }
+        });
+    });
+
     detailModal.overlay.classList.add("is-open");
     detailModal.overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("gallery-lightbox-open");
@@ -351,7 +447,7 @@ function openFeedbackDetailModal(detailModal, feedback) {
 
 function openFeedbackFormModal(detailModal, onSubmit) {
     const saveModeLabel = "Crossdale Arts Database";
-    detailModal.modal.classList.remove("is-feedback-detail");
+    detailModal.modal.classList.remove("is-feedback-detail", "is-feedback-grid");
 
     detailModal.modal.innerHTML = `
         <div class="feedback-modal-top" style="border-bottom:none; box-shadow:none;">
@@ -523,4 +619,6 @@ function truncateFeedback(text, maxLen) {
 }
 
 let lottieLibraryPromise = null;
+
+
 

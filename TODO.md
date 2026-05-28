@@ -131,9 +131,9 @@ Carrd website (hide Website URL and put new masterclass2026.github.io link for f
 
 
 1. feedback form and indiviual feedbacks in white themed modal *{Done}
-2. feedbacks actual card alignment fix
-3. feedback title to fraunces
-4. feedback modal border none
+2. feedbacks actual card alignment fix *{Done}
+3. feedback title to fraunces *{Done}
+4. feedback modal border none *{Done}
 5. all reviews in grid, all the feedbacks at once
 
 6. text hover blur (text shadow)
