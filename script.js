@@ -1793,6 +1793,16 @@ function closeNewsletterModal() {
     document.body.classList.remove("course-region-modal-open");
 }
 
+function openModalWithTransition(modal) {
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("course-region-modal-open");
+    window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+            modal.classList.add("is-open");
+        });
+    });
+}
+
 function setNewsletterStatus(message) {
     const status = document.getElementById("newsletter-status");
     if (!status) return;
@@ -1881,9 +1891,7 @@ function openNewsletterModal() {
     const emailInput = modal.querySelector("#newsletter-email");
     const submitBtn = modal.querySelector("#newsletter-submit");
 
-    modal.classList.add("is-open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.classList.add("course-region-modal-open");
+    openModalWithTransition(modal);
     setNewsletterStatus("");
     form.reset();
 
@@ -1920,6 +1928,52 @@ function openNewsletterModal() {
             submitBtn.textContent = "Subscribe";
         }
     };
+}
+
+function initPersistentNewsletterCard() {
+    const form = document.getElementById("newsletter-inline-form");
+    if (!form) return;
+
+    const emailInput = form.querySelector("#newsletter-inline-email");
+    const submitBtn = form.querySelector("#newsletter-inline-submit");
+    const status = form.querySelector("#newsletter-inline-status");
+    if (!emailInput || !submitBtn || !status) return;
+
+    if (isNewsletterSubscribed()) {
+        status.textContent = "Already subscribed. Thanks for staying with CrossdaleArts.";
+        submitBtn.disabled = true;
+        emailInput.disabled = true;
+        return;
+    }
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        status.textContent = "";
+
+        const email = String(emailInput.value || "").trim();
+        if (!email || !emailInput.checkValidity()) {
+            status.textContent = "Please enter a valid email address.";
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Subscribing...";
+
+        try {
+            await submitNewsletterEmail(email);
+            localStorage.setItem(NEWSLETTER_SUBSCRIBED_KEY, "true");
+            localStorage.setItem(NEWSLETTER_EMAIL_KEY, email);
+            status.textContent = "Subscribed successfully. Check your inbox for updates.";
+            emailInput.value = "";
+            emailInput.disabled = true;
+            submitBtn.textContent = "Subscribed";
+        } catch (error) {
+            console.error(error);
+            status.textContent = "Unable to subscribe right now. Please try again shortly.";
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Subscribe";
+        }
+    });
 }
 
 function initRandomNewsletterModal() {
@@ -2368,3 +2422,4 @@ initCourseRegionSelection();
 initExStudentPaymentPage();
 initMasterclassExperience();
 initRandomNewsletterModal();
+initPersistentNewsletterCard();

@@ -134,11 +134,11 @@ Carrd website (hide Website URL and put new masterclass2026.github.io link for f
 2. feedbacks actual card alignment fix *{Done}
 3. feedback title to fraunces *{Done}
 4. feedback modal border none *{Done}
-5. all reviews in grid, all the feedbacks at once
+5. all reviews in grid, all the feedbacks at once *{Done}
 
-6. text hover blur (text shadow)
-7. Newsletter transition (in & out)
-8. Newsletter add in flexbox with the artworks for sale card
+6. Newsletter transition (in & out) *{Done}
+7. Newsletter add in flexbox with the artworks for sale card *{Done}
+8. text hover blur (text shadow)
 
 0. add 1-2 artwork in artwork folder
 00. add ben 10 images in right approach folder
@@ -146,6 +146,5 @@ Carrd website (hide Website URL and put new masterclass2026.github.io link for f
 
 9. visual archieve (red highlight) {gallery modal}
 10. gallery inside images swipe tracking route (shift between elements without explicitly closing and opening other)
-12. 
 
 - 26-05-2026
