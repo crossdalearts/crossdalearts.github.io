@@ -6297,13 +6297,13 @@ body #feedback-widget-anchor {
     border-color: #d32f2f !important;
 }
 .home-artworks-entry{
-    padding-top: 8px;
-    padding-right: 0;
-    padding-left: 0;
+    padding-top: 20px;
+    padding-right: 0px;
+    padding-left: 0px;
     width: 90%;
     margin: 0 auto;
-    padding-inline: 10px;
-    padding-bottom: 10px !important;
+    padding-inline: 20px;
+    padding-bottom: 22px !important;
 }
 .home-artworks-entry-grid{
     display: grid;
@@ -6319,7 +6319,6 @@ body #feedback-widget-anchor {
 .home-newsletter-entry-card{
     border: 1px solid rgba(18, 19, 26, 0.08);
     border-radius: var(--refresh-radius-md);
-    background: linear-gradient(180deg, rgba(255, 225, 223, 0.34), rgba(255, 255, 255, 0.96));
     box-shadow: 0 12px 26px rgba(18, 19, 26, 0.037);
     min-height: 100%;
     padding: 16px 16px 18px;
@@ -6330,7 +6329,24 @@ body #feedback-widget-anchor {
     align-items: flex-start;
     gap: 8px;
     overflow: hidden;
+    transition: transform 0.28s cubic-bezier(0.22, 1.2, 0.36, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+    will-change: transform;
 }
+
+.home-artworks-entry-inner{
+    background:
+        radial-gradient(circle at top right, rgba(255, 66, 66, 0.022), transparent 36%),
+        #ffffff;
+}
+
+.home-artworks-entry-inner:hover{
+    transform: translateY(-4px) scale(1.018);
+}
+
+.home-newsletter-entry-card:hover{
+    transform: translateY(-5px) scale(1.022);
+}
+
 .home-artworks-entry-inner h3{
     margin: 0 0 14px;
 }
@@ -6370,7 +6386,7 @@ body #feedback-widget-anchor {
     width: 38vw;
     margin-top: 6px;
     padding: 16px 16px;
-    border: 1px solid rgba(255, 66, 66, 0.24);
+    border: 1px solid rgba(255, 66, 66, 0.108);
     border-radius: 12px;
     background: #fff;
     color: #171717;
