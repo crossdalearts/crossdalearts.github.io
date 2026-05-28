@@ -130,7 +130,7 @@ Carrd website (hide Website URL and put new masterclass2026.github.io link for f
 - 26-05-2026
 
 
-1. feedback form and indiviual feedbacks in white themed modal
+1. feedback form and indiviual feedbacks in white themed modal *{Done}
 2. feedbacks actual card alignment fix
 3. feedback title to fraunces
 4. feedback modal border none

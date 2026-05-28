@@ -6418,7 +6418,7 @@ body #feedback-widget-anchor {
 .feedback-form label,
 .feedback-form-note {
     color: #1f1f1f;
-    font-family: "Funnel Display", sans-serif;
+    font-family: "Fraunces", serif;
 }
 
 .feedback-form {
@@ -6453,6 +6453,31 @@ body #feedback-widget-anchor {
 .feedback-form-submit,
 .feedback-modal-close {
     font-family: "Funnel Display", sans-serif;
+}
+
+.feedback-widget-header h4,
+.feedback-name,
+.feedback-message {
+    font-family: "Fraunces", serif !important;
+}
+
+.feedback-card {
+    border: none !important;
+}
+
+.feedback-modal.is-feedback-detail .feedback-modal-name,
+.feedback-modal.is-feedback-detail .feedback-modal-message {
+    padding-left: 18px;
+    padding-right: 18px;
+    box-sizing: border-box;
+}
+
+.feedback-modal.is-feedback-detail .feedback-modal-name {
+    padding-top: 16px;
+}
+
+.feedback-modal.is-feedback-detail .feedback-modal-message {
+    padding-bottom: 16px;
 }
 
 .feedback-modal-close {
