@@ -118,7 +118,6 @@ Carrd website (hide Website URL and put new masterclass2026.github.io link for f
 
 - 22-05-2026
 
-Newsletter add in flexbox with the artworks for sale card
 
 - 23-05-2026
 
@@ -126,7 +125,27 @@ Newsletter add in flexbox with the artworks for sale card
 
 - 24-05-2026
 
-1. text hover blur (text shadow)
-2. leave feedback option
+2. leave feedback option *{Done}
+
+- 26-05-2026
+
+
+1. feedback form and indiviual feedbacks in white themed modal
+2. feedbacks actual card alignment fix
+3. feedback title to fraunces
+4. feedback modal border none
+5. all reviews in grid, all the feedbacks at once
+
+6. text hover blur (text shadow)
+7. Newsletter transition (in & out)
+8. Newsletter add in flexbox with the artworks for sale card
+
+0. add 1-2 artwork in artwork folder
+00. add ben 10 images in right approach folder
+000. make two folders (Before, After)
+
+9. visual archieve (red highlight) {gallery modal}
+10. gallery inside images swipe tracking route (shift between elements without explicitly closing and opening other)
+12. 
 
 - 26-05-2026

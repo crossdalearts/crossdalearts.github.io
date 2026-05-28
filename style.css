@@ -6398,12 +6398,17 @@ body #feedback-widget-anchor {
 /* Feedback form polish */
 .feedback-modal {
     font-family: "Funnel Display", sans-serif;
+    background: #ffffff !important;
+    color: #1f1f1f !important;
+    border: 1px solid rgba(220, 38, 38, 0.16) !important;
+    box-shadow: 0 24px 56px rgba(128, 24, 24, 0.2) !important;
 }
 
 .feedback-modal-top {
     margin: 0;
     padding: 16px 18px;
     border-bottom: 0 !important;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe4e6 100%) !important;
 }
 
 .feedback-modal-top h4,
@@ -6412,7 +6417,7 @@ body #feedback-widget-anchor {
 .feedback-modal-message,
 .feedback-form label,
 .feedback-form-note {
-    color: #ffffff;
+    color: #1f1f1f;
     font-family: "Funnel Display", sans-serif;
 }
 
@@ -6434,15 +6439,15 @@ body #feedback-widget-anchor {
 .feedback-form select {
     margin: 0;
     padding: 12px 14px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    color: #ffffff;
+    background: #ffffff;
+    border: 1px solid rgba(127, 29, 29, 0.24);
+    color: #1f1f1f;
     font-family: "Funnel Display", sans-serif;
 }
 
 .feedback-form input::placeholder,
 .feedback-form textarea::placeholder {
-    color: rgba(255, 255, 255, 0.72);
+    color: rgba(31, 31, 31, 0.55);
 }
 
 .feedback-form-submit,
@@ -6451,8 +6456,8 @@ body #feedback-widget-anchor {
 }
 
 .feedback-modal-close {
-    background: transparent !important;
-    color: #ffffff !important;
+    background: #ffffff !important;
+    color: rgb(255, 66, 66) !important;
     width: 34px !important;
     min-width: 34px !important;
     max-width: 34px !important;
@@ -6463,7 +6468,7 @@ body #feedback-widget-anchor {
     margin: 0 !important;
     border-radius: 999px !important;
     corner-shape: initial !important;
-    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    border: 1px solid rgba(255, 66, 66, 0.607) !important;
     font-size: 22px !important;
     line-height: 1 !important;
     padding-top: 0 !important;
@@ -6490,11 +6495,11 @@ body #feedback-widget-anchor {
 }
 
 .feedback-submit-status.is-success {
-    color: #8effb6;
+    color: #0f766e;
 }
 
 .feedback-submit-status.is-error {
-    color: #ff9a9a;
+    color: #b91c1c;
 }
 
 .feedback-modal .feedback-modal-top,
@@ -6520,7 +6525,7 @@ body #feedback-widget-anchor {
 .feedback-star-fieldset legend {
     display: none;
     margin: 0;
-    color: #ffffff;
+    color: #1f1f1f;
     font-family: "Funnel Display", sans-serif;
 }
 
@@ -6544,7 +6549,7 @@ body #feedback-widget-anchor {
     padding: 4px 4px 6px;
     cursor: pointer;
     line-height: 1;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(127, 29, 29, 0.3);
     transform: translateY(0) scale(1);
     transition:
         color 220ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -6566,9 +6571,9 @@ body #feedback-widget-anchor {
 .feedback-star-picker label:hover,
 .feedback-star-picker label:hover ~ label,
 .feedback-star-picker input:checked ~ label {
-    color: #ffd866;
+    color: #ef4444;
     transform: translateY(-1px) scale(1.06);
-    text-shadow: 0 0 10px rgba(255, 216, 102, 0.38);
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
     filter: saturate(1.08);
     animation: feedback-star-breathe 760ms cubic-bezier(0.22, 1, 0.36, 1);
 }
