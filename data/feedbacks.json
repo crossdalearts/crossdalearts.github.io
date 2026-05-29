@@ -1,5 +1,200 @@
 ﻿[
   {
+    "name": "Dev Anand",
+    "rating": 2,
+    "message": "Honestly expected more technique-based content. The theory is interesting but I joined hoping to learn actual drawing methods. Maybe the description could be clearer about what the course covers."
+  },
+  {
+    "name": "Sehrish Baig",
+    "rating": 5,
+    "message": "Bohot achi class thi. Aapne jo bola ke art sirf copy karna nahi hai — ye baat mere dil mein ghuss gayi. Shukriya sir! ❤️"
+  },
+  {
+    "name": "Krishnan Pillai",
+    "rating": 4,
+    "message": "The concept of 'philosophy point' was totally new to me and very valuable. I understood about 80% of the session but the remaining 20% went a bit over my head. Still a very worthwhile session."
+  },
+  {
+    "name": "Lubna Farooq",
+    "rating": 5,
+    "message": "Sir I was about to quit art because I felt like I had no talent. After today's session I realised talent is not what I was missing — it was understanding. You gave me that today. 🙏"
+  },
+  {
+    "name": "Aryan Kapoor",
+    "rating": 3,
+    "message": "The class had good ideas but the audio quality was a bit poor at the start. Also I feel like the session covered too many topics at once. Would be better if each concept was explored more slowly."
+  },
+  {
+    "name": "Mahira Asad",
+    "rating": 5,
+    "message": "Every single word you said today hit differently. I never thought about why I make art, only how. You flipped my entire perspective in one session. This is what real teaching looks like. 🌟🎨"
+  },
+  {
+    "name": "Vishwas Pandey",
+    "rating": 4,
+    "message": "Very thoughtful session. The idea that emotion should drive art, not just skill, is something I'll carry with me. Good pacing and clear delivery. Looking forward to more."
+  },
+  {
+    "name": "Shazia Akhtar",
+    "rating": 5,
+    "message": "Aap ki class ne mujhe ek naya nazar diya hai art ko dekhne ka. Pehle main sirf baaki logon ko copy karti thi, ab main apni soch se create karti hun. Bohot shukriya sir. 💫"
+  },
+  {
+    "name": "Ananya Pillai",
+    "rating": 4,
+    "message": "The session helped me think differently about what makes a piece of art meaningful. Some examples were a little difficult to relate to for a complete beginner but the core ideas were solid."
+  },
+  {
+    "name": "Owais Raza",
+    "rating": 5,
+    "message": "Honestly didn't expect a free session to be this good. The depth, the clarity, the passion — everything was top level. You've earned a lifelong student. 🎨🙏"
+  },
+  {
+    "name": "Chandni Shah",
+    "rating": 3,
+    "message": "I liked the ideas but felt the session could use more visual references. Explaining art concepts without showing enough examples was sometimes hard to follow."
+  },
+  {
+    "name": "Sameer Khan",
+    "rating": 5,
+    "message": "The part where you talked about emotion being the foundation of great art — that single idea changed everything for me. I went back to my sketchbook that same night with a completely different mindset. 🌙✨"
+  },
+  {
+    "name": "Ragini Tiwari",
+    "rating": 4,
+    "message": "Really enjoyed the class. I particularly liked the discussion on personal style and originality. A couple of concepts felt a bit abstract but the overall session was genuinely inspiring."
+  },
+  {
+    "name": "Adnan Shaikh",
+    "rating": 5,
+    "message": "Sir you don't teach art you teach life. The way you connect meaning, emotion and vision is something no YouTube video or book has ever done for me. Pure gold. 💎"
+  },
+  {
+    "name": "Meghna Iyer",
+    "rating": 2,
+    "message": "I was expecting hands-on guidance on drawing but it was mostly theoretical discussion. Not bad content, just not what I was looking for personally. Others who enjoy philosophy of art might love it."
+  },
+  {
+    "name": "Zaid Hussain",
+    "rating": 5,
+    "message": "The class felt like therapy and education at the same time. I've been copying other artists for years and now I finally understand why my art felt hollow. Thank you for this clarity sir. 🙏"
+  },
+  {
+    "name": "Aadhya Nair",
+    "rating": 4,
+    "message": "Loved the session! The way you explained original thinking in art was refreshing. Would have loved if it was a bit longer and covered more examples from different art styles."
+  },
+  {
+    "name": "Fariha Naseer",
+    "rating": 5,
+    "message": "Maine iss session se pehle kabhi itna deeply art ke baare mein socha hi nahi tha. Aap ne ek dum se meri thinking ko badal diya. Umeed hai aage bhi aisi guidance milegi. 😊💫"
+  },
+  {
+    "name": "Nikhil Joshi",
+    "rating": 3,
+    "message": "The session was informative but I had trouble understanding some parts because of language mixing. If there were separate English and Urdu/Hindi batches it would be more accessible for everyone."
+  },
+  {
+    "name": "Alishba Tariq",
+    "rating": 5,
+    "message": "Sir aap ne jo colour theory aur emotion ka connection samjhaya wo mujhe aaj tak kisi ne nahi bataya tha. Feels like I finally found the missing piece in my art journey. ❤️🎨"
+  },
+  {
+    "name": "Rohan Das",
+    "rating": 4,
+    "message": "Solid session. I came in skeptical about whether a free class would have real value and I was proven completely wrong. There's clear thought and preparation behind every lesson."
+  },
+  {
+    "name": "Hafsa Mehmood",
+    "rating": 5,
+    "message": "I went from feeling like I will never be a real artist to believing that my unique view of the world is exactly what makes me one. That shift happened in just one class. 🌸🙏"
+  },
+  {
+    "name": "Parth Agrawal",
+    "rating": 3,
+    "message": "Good session with useful ideas but it felt slightly unorganized at times — topics jumped around a bit. A clearer structure would make it easier to retain the information."
+  },
+  {
+    "name": "Maryam Sheikh",
+    "rating": 5,
+    "message": "Your sessions feel like conversations with a mentor who actually cares. You don't just answer questions — you make us ask better questions about ourselves and our art. 💛✨"
+  },
+  {
+    "name": "Keshav Nair",
+    "rating": 4,
+    "message": "Learned things about artistic intention that I had never thought about before. The session was well-paced and engaging. Minor feedback: some technical terms could be explained a bit more."
+  },
+  {
+    "name": "Zoha Imran",
+    "rating": 5,
+    "message": "Sir I shared this session with my sister and we both cried because it felt so true to what we've been going through as artists. You have no idea how much this helped. 🥹❤️"
+  },
+  {
+    "name": "Shubham Pathak",
+    "rating": 4,
+    "message": "I found the session very valuable especially the parts about originality and personal style. Would give it a full 5 if there was more time for Q&A at the end."
+  },
+  {
+    "name": "Rabiya Fatima",
+    "rating": 5,
+    "message": "Honestly the best online class I've attended. Not because of fancy slides or effects — but because the content is real, honest and deeply thought through. Jazakallah sir. 🤲"
+  },
+  {
+    "name": "Apurv Shukla",
+    "rating": 3,
+    "message": "The class had some really interesting moments but ran a bit too long for my attention span. Would prefer bite-sized focused sessions rather than one long one."
+  },
+  {
+    "name": "Nabiha Awan",
+    "rating": 5,
+    "message": "I've been doing art for 6 years and never once questioned WHY I create. You changed that in 90 minutes. My whole approach to art has shifted. Thank you from the bottom of my heart. 🎨🌟"
+  },
+  {
+    "name": "Aditya Mishra",
+    "rating": 4,
+    "message": "Very unique take on art education. I appreciate how you focus on the thinking process rather than just techniques. A few transitions between topics felt abrupt but overall an excellent session."
+  },
+  {
+    "name": "Saima Iqbal",
+    "rating": 5,
+    "message": "Pehli baar kisi teacher ne mujhe feel karwaya ke meri art ki bhi koi value hai. Iss class ne mujhe apni creativity par trust karna sikhaya. Shukriya sir dil se. 🌹"
+  },
+  {
+    "name": "Vivek Singh",
+    "rating": 2,
+    "message": "Not quite what I expected. The philosophical approach is interesting but I was looking for something more practical and skill-based. Maybe I joined the wrong course for my level."
+  },
+  {
+    "name": "Khushi Verma",
+    "rating": 5,
+    "message": "The session was so inspiring that I immediately opened my sketchbook afterwards and created something purely from emotion. That has never happened before. You are a truly special teacher. 💙🎨"
+  },
+  {
+    "name": "Furqan Ahmad",
+    "rating": 4,
+    "message": "Great content and very genuine delivery. I liked that you spoke honestly about the art world rather than just saying everything is amazing. That realness is rare and valuable."
+  },
+  {
+    "name": "Ishita Menon",
+    "rating": 5,
+    "message": "Every artist needs to attend at least one session like this. You stop thinking about art as a product and start thinking about it as a conversation with the world. Mind-blowing. ✨🌿"
+  },
+  {
+    "name": "Raheel Nawaz",
+    "rating": 3,
+    "message": "The ideas were good but I struggled a bit with connectivity issues during the session so I missed parts. Also some topics needed more time to be fully understood."
+  },
+  {
+    "name": "Trisha Roy",
+    "rating": 5,
+    "message": "I came to this session feeling completely lost in my art journey and left with a clear sense of purpose and direction. How you manage to do that in a single session, I don't know. 🙏💛"
+  },
+  {
+    "name": "Moosa Tariq",
+    "rating": 4,
+    "message": "A genuinely impactful class. The point about copy art having no real value really made me reflect on my own work. Looking forward to exploring more of these ideas in the full course."
+  },
+  {
     "name": "Tuba Samiullah",
     "rating": 5,
     "message": "Hello sir my name is tuba from Pakistan I just started my art journey and I attended your yesterday live session. Mei actually these days bht exhausted Thi but kal k class se mei relax Ho gayi.... Actual art like a therapy for me and also Ap ne jaise informative baatein discuss k wo mere liye bht zarori tha..... So thank you sir😍😊"
@@ -483,200 +678,5 @@
     "name": "Sana Malik",
     "rating": 5,
     "message": "I've attended many workshops before but none of them touched my soul the way this did. You have a gift of making people feel seen as artists. Waiting eagerly for the next class! 🌸"
-  },
-  {
-    "name": "Dev Anand",
-    "rating": 2,
-    "message": "Honestly expected more technique-based content. The theory is interesting but I joined hoping to learn actual drawing methods. Maybe the description could be clearer about what the course covers."
-  },
-  {
-    "name": "Sehrish Baig",
-    "rating": 5,
-    "message": "Bohot achi class thi. Aapne jo bola ke art sirf copy karna nahi hai — ye baat mere dil mein ghuss gayi. Shukriya sir! ❤️"
-  },
-  {
-    "name": "Krishnan Pillai",
-    "rating": 4,
-    "message": "The concept of 'philosophy point' was totally new to me and very valuable. I understood about 80% of the session but the remaining 20% went a bit over my head. Still a very worthwhile session."
-  },
-  {
-    "name": "Lubna Farooq",
-    "rating": 5,
-    "message": "Sir I was about to quit art because I felt like I had no talent. After today's session I realised talent is not what I was missing — it was understanding. You gave me that today. 🙏"
-  },
-  {
-    "name": "Aryan Kapoor",
-    "rating": 3,
-    "message": "The class had good ideas but the audio quality was a bit poor at the start. Also I feel like the session covered too many topics at once. Would be better if each concept was explored more slowly."
-  },
-  {
-    "name": "Mahira Asad",
-    "rating": 5,
-    "message": "Every single word you said today hit differently. I never thought about why I make art, only how. You flipped my entire perspective in one session. This is what real teaching looks like. 🌟🎨"
-  },
-  {
-    "name": "Vishwas Pandey",
-    "rating": 4,
-    "message": "Very thoughtful session. The idea that emotion should drive art, not just skill, is something I'll carry with me. Good pacing and clear delivery. Looking forward to more."
-  },
-  {
-    "name": "Shazia Akhtar",
-    "rating": 5,
-    "message": "Aap ki class ne mujhe ek naya nazar diya hai art ko dekhne ka. Pehle main sirf baaki logon ko copy karti thi, ab main apni soch se create karti hun. Bohot shukriya sir. 💫"
-  },
-  {
-    "name": "Ananya Pillai",
-    "rating": 4,
-    "message": "The session helped me think differently about what makes a piece of art meaningful. Some examples were a little difficult to relate to for a complete beginner but the core ideas were solid."
-  },
-  {
-    "name": "Owais Raza",
-    "rating": 5,
-    "message": "Honestly didn't expect a free session to be this good. The depth, the clarity, the passion — everything was top level. You've earned a lifelong student. 🎨🙏"
-  },
-  {
-    "name": "Chandni Shah",
-    "rating": 3,
-    "message": "I liked the ideas but felt the session could use more visual references. Explaining art concepts without showing enough examples was sometimes hard to follow."
-  },
-  {
-    "name": "Sameer Khan",
-    "rating": 5,
-    "message": "The part where you talked about emotion being the foundation of great art — that single idea changed everything for me. I went back to my sketchbook that same night with a completely different mindset. 🌙✨"
-  },
-  {
-    "name": "Ragini Tiwari",
-    "rating": 4,
-    "message": "Really enjoyed the class. I particularly liked the discussion on personal style and originality. A couple of concepts felt a bit abstract but the overall session was genuinely inspiring."
-  },
-  {
-    "name": "Adnan Shaikh",
-    "rating": 5,
-    "message": "Sir you don't teach art you teach life. The way you connect meaning, emotion and vision is something no YouTube video or book has ever done for me. Pure gold. 💎"
-  },
-  {
-    "name": "Meghna Iyer",
-    "rating": 2,
-    "message": "I was expecting hands-on guidance on drawing but it was mostly theoretical discussion. Not bad content, just not what I was looking for personally. Others who enjoy philosophy of art might love it."
-  },
-  {
-    "name": "Zaid Hussain",
-    "rating": 5,
-    "message": "The class felt like therapy and education at the same time. I've been copying other artists for years and now I finally understand why my art felt hollow. Thank you for this clarity sir. 🙏"
-  },
-  {
-    "name": "Aadhya Nair",
-    "rating": 4,
-    "message": "Loved the session! The way you explained original thinking in art was refreshing. Would have loved if it was a bit longer and covered more examples from different art styles."
-  },
-  {
-    "name": "Fariha Naseer",
-    "rating": 5,
-    "message": "Maine iss session se pehle kabhi itna deeply art ke baare mein socha hi nahi tha. Aap ne ek dum se meri thinking ko badal diya. Umeed hai aage bhi aisi guidance milegi. 😊💫"
-  },
-  {
-    "name": "Nikhil Joshi",
-    "rating": 3,
-    "message": "The session was informative but I had trouble understanding some parts because of language mixing. If there were separate English and Urdu/Hindi batches it would be more accessible for everyone."
-  },
-  {
-    "name": "Alishba Tariq",
-    "rating": 5,
-    "message": "Sir aap ne jo colour theory aur emotion ka connection samjhaya wo mujhe aaj tak kisi ne nahi bataya tha. Feels like I finally found the missing piece in my art journey. ❤️🎨"
-  },
-  {
-    "name": "Rohan Das",
-    "rating": 4,
-    "message": "Solid session. I came in skeptical about whether a free class would have real value and I was proven completely wrong. There's clear thought and preparation behind every lesson."
-  },
-  {
-    "name": "Hafsa Mehmood",
-    "rating": 5,
-    "message": "I went from feeling like I will never be a real artist to believing that my unique view of the world is exactly what makes me one. That shift happened in just one class. 🌸🙏"
-  },
-  {
-    "name": "Parth Agrawal",
-    "rating": 3,
-    "message": "Good session with useful ideas but it felt slightly unorganized at times — topics jumped around a bit. A clearer structure would make it easier to retain the information."
-  },
-  {
-    "name": "Maryam Sheikh",
-    "rating": 5,
-    "message": "Your sessions feel like conversations with a mentor who actually cares. You don't just answer questions — you make us ask better questions about ourselves and our art. 💛✨"
-  },
-  {
-    "name": "Keshav Nair",
-    "rating": 4,
-    "message": "Learned things about artistic intention that I had never thought about before. The session was well-paced and engaging. Minor feedback: some technical terms could be explained a bit more."
-  },
-  {
-    "name": "Zoha Imran",
-    "rating": 5,
-    "message": "Sir I shared this session with my sister and we both cried because it felt so true to what we've been going through as artists. You have no idea how much this helped. 🥹❤️"
-  },
-  {
-    "name": "Shubham Pathak",
-    "rating": 4,
-    "message": "I found the session very valuable especially the parts about originality and personal style. Would give it a full 5 if there was more time for Q&A at the end."
-  },
-  {
-    "name": "Rabiya Fatima",
-    "rating": 5,
-    "message": "Honestly the best online class I've attended. Not because of fancy slides or effects — but because the content is real, honest and deeply thought through. Jazakallah sir. 🤲"
-  },
-  {
-    "name": "Apurv Shukla",
-    "rating": 3,
-    "message": "The class had some really interesting moments but ran a bit too long for my attention span. Would prefer bite-sized focused sessions rather than one long one."
-  },
-  {
-    "name": "Nabiha Awan",
-    "rating": 5,
-    "message": "I've been doing art for 6 years and never once questioned WHY I create. You changed that in 90 minutes. My whole approach to art has shifted. Thank you from the bottom of my heart. 🎨🌟"
-  },
-  {
-    "name": "Aditya Mishra",
-    "rating": 4,
-    "message": "Very unique take on art education. I appreciate how you focus on the thinking process rather than just techniques. A few transitions between topics felt abrupt but overall an excellent session."
-  },
-  {
-    "name": "Saima Iqbal",
-    "rating": 5,
-    "message": "Pehli baar kisi teacher ne mujhe feel karwaya ke meri art ki bhi koi value hai. Iss class ne mujhe apni creativity par trust karna sikhaya. Shukriya sir dil se. 🌹"
-  },
-  {
-    "name": "Vivek Singh",
-    "rating": 2,
-    "message": "Not quite what I expected. The philosophical approach is interesting but I was looking for something more practical and skill-based. Maybe I joined the wrong course for my level."
-  },
-  {
-    "name": "Khushi Verma",
-    "rating": 5,
-    "message": "The session was so inspiring that I immediately opened my sketchbook afterwards and created something purely from emotion. That has never happened before. You are a truly special teacher. 💙🎨"
-  },
-  {
-    "name": "Furqan Ahmad",
-    "rating": 4,
-    "message": "Great content and very genuine delivery. I liked that you spoke honestly about the art world rather than just saying everything is amazing. That realness is rare and valuable."
-  },
-  {
-    "name": "Ishita Menon",
-    "rating": 5,
-    "message": "Every artist needs to attend at least one session like this. You stop thinking about art as a product and start thinking about it as a conversation with the world. Mind-blowing. ✨🌿"
-  },
-  {
-    "name": "Raheel Nawaz",
-    "rating": 3,
-    "message": "The ideas were good but I struggled a bit with connectivity issues during the session so I missed parts. Also some topics needed more time to be fully understood."
-  },
-  {
-    "name": "Trisha Roy",
-    "rating": 5,
-    "message": "I came to this session feeling completely lost in my art journey and left with a clear sense of purpose and direction. How you manage to do that in a single session, I don't know. 🙏💛"
-  },
-  {
-    "name": "Moosa Tariq",
-    "rating": 4,
-    "message": "A genuinely impactful class. The point about copy art having no real value really made me reflect on my own work. Looking forward to exploring more of these ideas in the full course."
   }
 ]
