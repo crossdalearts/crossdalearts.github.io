@@ -186,6 +186,56 @@
         { "path": "images/Gallery/right-approach/right-approach-29.webp", "title": "Work", "type": "image" },
         { "path": "images/Gallery/right-approach/right-approach-30.webp", "title": "Work", "type": "image" }
       ]
+    },
+    {
+      "name": "Before",
+      "preview": { "path": "images/Gallery/right-approach/right-approach-30.webp", "title": "Painting", "type": "image" },
+      "items": [
+        { "path": "images/Before/1.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/2.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/3.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/4.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/5.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/6.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/7.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/8.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/9.webp", "title": "Work", "type": "image" },
+        { "path": "images/Before/10.webp", "title": "Work", "type": "image" }
+      ]
+    },
+    {
+      "name": "After",
+      "preview": { "path": "images/After/18.webp", "title": "Painting", "type": "image" },
+      "items": [
+        { "path": "images/After/1.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/2.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/3.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/4.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/5.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/6.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/7.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/8.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/9.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/10.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/11.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/12.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/13.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/14.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/15.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/16.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/17.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/18.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/19.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/20.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/21.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/22.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/23.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/24.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/25.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/26.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/27.webp", "title": "Work", "type": "image" },
+        { "path": "images/After/28.webp", "title": "Work", "type": "image" },
+      ]
     }
   ]
 }
