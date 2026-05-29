@@ -189,7 +189,7 @@
     },
     {
       "name": "Before",
-      "preview": { "path": "images/Gallery/right-approach/right-approach-30.webp", "title": "Painting", "type": "image" },
+      "preview": { "path": "images/Before/7.webp", "title": "Painting", "type": "image" },
       "items": [
         { "path": "images/Before/1.webp", "title": "Work", "type": "image" },
         { "path": "images/Before/2.webp", "title": "Work", "type": "image" },
@@ -205,7 +205,7 @@
     },
     {
       "name": "After",
-      "preview": { "path": "images/After/18.webp", "title": "Painting", "type": "image" },
+      "preview": { "path": "images/After/5.webp", "title": "Painting", "type": "image" },
       "items": [
         { "path": "images/After/1.webp", "title": "Work", "type": "image" },
         { "path": "images/After/2.webp", "title": "Work", "type": "image" },
