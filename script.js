@@ -1751,7 +1751,7 @@ function createNewsletterModal() {
         <div class="course-region-dialog newsletter-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="newsletter-title">
             <button type="button" class="newsletter-modal-close" id="newsletter-close" aria-label="Close newsletter modal">&times;</button>
             <p class="course-region-eyebrow">CrossdaleArts Updates</p>
-            <h2 id="newsletter-title">Join our newsletter</h2>
+            <h2 id="newsletter-title">Join our Newsletter</h2>
             <p class="course-region-copy">Enter your email address and subscribe to get the latest updates regarding CrossdaleArts in your mailbox directly.</p>
             <form id="newsletter-form" novalidate>
                 <label for="newsletter-email">
