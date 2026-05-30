@@ -4914,6 +4914,9 @@ footer p {
   :root {
     --refresh-max: 100%;
   }
+  .home-newsletter-inline-form input{
+    width: 75vw !important;
+  }
 
   #navbar {
     width: 90% !important;
@@ -6399,13 +6402,16 @@ body #feedback-widget-anchor {
 
 .home-newsletter-inline-actions button{
     min-height: 38px;
-    padding: 0 12px;
+    padding: 12px 40px !important;
     border: 1px solid rgb(255, 66, 66);
-    border-radius: 10px;
+    border-radius: 16px;
     background: rgb(255, 66, 66);
     color: #fff;
     font-weight: 700;
     cursor: pointer;
+    position: relative;
+    top: 29px;
+    font-size: var(--font-size-download-button);
 }
 
 #newsletter-inline-status{
