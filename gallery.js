@@ -582,7 +582,7 @@ function createArtworkSaleModal() {
     };
 }
 
-async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
+async function openGalleryBrowser(configUrl, pageTitle = "Gallery", initialArtwork = null) {
     const browser = createGalleryBrowserModal("details-gallery-browser-modal", pageTitle);
     const lightbox = createGalleryLightbox();
     const artworkSaleModal = createArtworkSaleModal();
@@ -592,6 +592,9 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
     let artworkMeta = { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
     let artworkPaymentMeta = { byPath: new Map(), byTitle: new Map(), byFileName: new Map() };
     let selectedArtworkSaleContext = null;
+    const initialArtworkPathKey = normalizeArtworkConfigPath(initialArtwork?.path || initialArtwork?.src || "");
+    const initialArtworkTitleKey = String(initialArtwork?.title || initialArtwork?.alt || "").trim().toLowerCase();
+    const isDirectArtworkLaunch = Boolean(initialArtworkPathKey || initialArtworkTitleKey);
 
     const syncOverlayScrollLock = () => {
         const hasOpenOverlay =
@@ -634,8 +637,13 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
         }
         artworkSaleModal.root.classList.remove("is-open");
         artworkSaleModal.root.setAttribute("aria-hidden", "true");
+        if (isDirectArtworkLaunch && browser.root.classList.contains("is-open")) {
+            browser.root.classList.remove("is-open");
+            browser.root.setAttribute("aria-hidden", "true");
+        }
         syncOverlayScrollLock();
         syncArtworkFullscreenButton();
+        syncBrowserFullscreenButton();
     };
 
     const openArtworkSaleModal = (item) => {
@@ -1253,6 +1261,17 @@ async function openGalleryBrowser(configUrl, pageTitle = "Gallery") {
             return;
         }
         renderCategoryFolders();
+        if (initialArtworkPathKey || initialArtworkTitleKey) {
+            const matchedArtwork = galleryItems.find((item) => {
+                const itemPathKey = normalizeArtworkRuntimePath(item.src);
+                const itemTitleKey = String(item.title || item.alt || "").trim().toLowerCase();
+                return (
+                    (initialArtworkPathKey && itemPathKey === initialArtworkPathKey) ||
+                    (initialArtworkTitleKey && itemTitleKey === initialArtworkTitleKey)
+                );
+            });
+            if (matchedArtwork) openArtworkSaleModal(matchedArtwork);
+        }
         syncBrowserFullscreenButton();
     } catch (_) {
         if (!browser.root.classList.contains("is-open")) return;
@@ -1356,7 +1375,7 @@ async function initArtworksForSaleGrid() {
             `;
 
             card.querySelector("button")?.addEventListener("click", () => {
-                openGalleryBrowser(galleryConfigUrl, galleryTitle);
+                openGalleryBrowser(galleryConfigUrl, galleryTitle, rawItem);
             });
 
             grid.appendChild(card);
